@@ -15,7 +15,7 @@ class Chain(models.Model):
     dN = models.FloatField(blank=True,null=True)
     dS = models.FloatField(blank=True,null=True)
     ppi = models.IntegerField(blank=True,null=True)
-    mutant = models.BooleanField(default=False)
+    mutant = models.IntegerField(default=0)
 
     unique_together = ("chain_id", "species")
 
@@ -28,10 +28,8 @@ class Chain(models.Model):
     def stat_attr(self):
         return ["length","abundance","abundance_unlogged","evorate","conden","dostox","dN","dS","weighted_degree",'degree','ppi_degree','ppi']
 
-    def node(self,mutants=True):
-        if mutants:
-            return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"abundance_unlogged":self.abundance_unlogged,"evorate":self.evorate,"conden":self.conden,"dostox":self.dostox,"dN":self.dN,"dS":self.dS,'ppi':self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0,"mutant":self.mutant})
-        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"abundance_unlogged":self.abundance_unlogged,"evorate":self.evorate,"conden":self.conden,"dostox":self.dostox,"dN":self.dN,"dS":self.dS,'ppi':self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0})
+    def node(self):
+        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"abundance_unlogged":self.abundance_unlogged,"evorate":self.evorate,"conden":self.conden,"dostox":self.dostox,"dN":self.dN,"dS":self.dS,'ppi':self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0,"mutant":self.mutant})
         # return dict(id=self.chain_id,species=self.species,pdb=self.pdb,domain=self.domain,chain=self.chain,length=self.length,abundance=self.abundance,evorate=self.evorate,conden=self.conden,dostox=self.dostox,dN=self.dN,dS=self.dS)
 
 class DomainLocalization(models.Model):
@@ -53,7 +51,6 @@ class Domain(models.Model):
     invis = models.BooleanField(blank=True)
     obsolete = models.CharField(max_length=30,blank=True,null=True)
     species = models.IntegerField(default=0,blank=True,null=True)
-    mutant = models.BooleanField(default=False)
 
     def __str__(self):
         return self.domain
@@ -66,7 +63,7 @@ class Edge(models.Model):
     sid = models.FloatField(blank=True,null=True)
     tm = models.FloatField(blank=True,null=True)
     ppi = models.BooleanField(blank=True)
-    mutant = models.BooleanField(default=False)
+    mutant = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.sourceID) + " to " + str(self.targetID)
