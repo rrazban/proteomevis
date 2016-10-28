@@ -1,3 +1,4 @@
+var ss = {};
 var data,ID2i,attributes;
 /***********************************
 ***********************************
@@ -16,13 +17,15 @@ function main () {
 
     var force, tipLink, eventHandler = {}, node;
     $( window ).resize(function () { $(eventHandler).trigger("windowResize"); });
-    var TMi = 0,
-        TMf = 0,
-        SIDi = 0,
-        SIDf = 0,
-        cluster,
+    ss.tmi = 0;
+    ss.tmf = 0;
+    ss.sidi = 0;
+    ss.sidf = 0;
+    ss.species = 'yeast';
+    ss.mutants = true;
+
+    var cluster,
         loaded,
-        species = 'yeast',
         dom = 'degree',
         tooltip = d3.select("#tooltip"),
         link_tooltip = d3.select("#link-tooltip"),
@@ -216,14 +219,14 @@ function main () {
                 typevisBrush = status;
                 calculateState.show();
                 highlighter.updateHighlight();
-                makeRequest([TMi, TMf, SIDi, SIDf], function () { waitDataLoadUpdate(0); });
+                makeRequest(function () { waitDataLoadUpdate(0); });
 
             });
-        // triggered when you select a different species
+        // triggered when you select a different ss.species
         $(eventHandler)
             .bind("speciesChanged", function (event) {
                 calculateState.show();
-                makeRequest([TMi, TMf, SIDi, SIDf], function () {
+                makeRequest(function () {
                     document.title = "ProteomeVis";
                     proteinmediaItem.clear();
                     highlighter.removeHighlight();
@@ -257,7 +260,7 @@ function main () {
 
         $(eventHandler)
             .bind("updateSplom", function (event) {
-                makeRequest([TMi, TMf, SIDi, SIDf],
+                makeRequest([ss.tmi, ss.tmf, ss.sidi, ss.sidf],
                     function () {
                         waitDataLoadUpdate(0);
                         splomVis = new SplomVis("#splomVis");
@@ -394,22 +397,21 @@ function main () {
                 attribute.log = +attribute.log;
             });
             attributes = new AttributesManager(_attributes);
-            makeRequest(null, function () { waitDataLoadInitial(0); });
+            makeRequest(function () { waitDataLoadInitial(0); });
         });
     }
 
-    function makeRequest(_cutoffs,_callback) {
+    function makeRequest(_callback) {
         loaded = false;
-        var cutoffs = _cutoffs == null ? [0, 0, 0, 0] : _cutoffs;
         // Assign handlers immediately after making the request,
         // and remember the jqxhr object for this request
         var request = $.param({
             columns: attributes.active(),
-            species: species,
-            TMi: cutoffs[0],
-            TMf: cutoffs[1],
-            SIDi: cutoffs[2],
-            SIDf: cutoffs[3],
+            species: ss.species,
+            TMi: ss.tmi,
+            TMf: ss.tmf,
+            SIDi: ss.sidi,
+            SIDf: ss.sidf,
             mutants: true
         });
         var jqxhr_data = $.ajax({
@@ -543,7 +545,7 @@ function main () {
                         .attr("height",height)
                         .attr("transform", "translate(" + (margin.left * 2) + "," + margin.top +")")
                         .attr("preserveAspectRatio", "none")
-                        .attr("xlink:href", "../static/img/" + species + ".png");
+                        .attr("xlink:href", "../static/img/" + ss.species + ".png");
             var graph = svg
                         .append("g")
                         .attr("transform", "translate(" +margin.left + "," + margin.top + ")");
@@ -581,10 +583,10 @@ function main () {
 
             var brushed = function (that, _update) {
                 var extent = brush.extent();
-                TMi = formatFloat(extent[0][0]);
-                SIDi = formatFloat(extent[0][1]);
-                TMf = formatFloat(extent[1][0]);
-                SIDf = formatFloat(extent[1][1]);
+                ss.tmi = formatFloat(extent[0][0]);
+                ss.sidi = formatFloat(extent[0][1]);
+                ss.tmf = formatFloat(extent[1][0]);
+                ss.sidf = formatFloat(extent[1][1]);
                 if (_update) {
                     $(eventHandler).trigger("dataChanged", brush.empty());
                 }
@@ -593,20 +595,20 @@ function main () {
 
             this.updateBrush = function (_brushEvent) {
                 var extent = [
-                    [TMi, SIDi],
-                    [TMf, SIDf]
+                    [ss.tmi, ss.sidi],
+                    [ss.tmf, ss.sidf]
                 ];
                 graph.select(".brush")
                     .transition()
                     .call(brush.extent(extent));
 
-                if (_brushEvent && (TMi !== TMf) && (SIDi !== SIDf)) {
+                if (_brushEvent && (ss.tmi !== ss.tmf) && (ss.sidi !== ss.sidf)) {
                     graph.select(".brush").call(brush.event);
                 }
             };
 
             this.updateImage = function () {
-                background.attr("xlink:href", "../static/img/" + species + ".png");
+                background.attr("xlink:href", "../static/img/" + ss.species + ".png");
             };
 
             setHeight();
@@ -1015,7 +1017,7 @@ function main () {
                 domain = checkDomain(data.domains[dom]),
                 adjustDomain = adjustDomainMagnitude(magnitude);
 
-            if ((domain) && (TMi !== TMf) && (SIDi !== SIDf)) { // the domain exists, so we should
+            if ((domain) && (ss.tmi !== ss.tmf) && (ss.sidi !== ss.sidf)) { // the domain exists, so we should
                 // 1) change the legend scale appropriately
                 // 2) color the nodes appropriately
                 nodeColorScale.domain(domain);
@@ -1056,33 +1058,37 @@ function main () {
             txtSIDf = document.getElementById("SIDf"),
             speciesBtn = d3.selectAll("[name=speciesBtn]");
         speciesBtn.on("click", function () {
-            if (this.value !== species) {
-                species = this.value;
+            if (this.value !== ss.species) {
+                ss.species = this.value;
                 speciesBtn.classed("active", false);
                 d3.select(this).classed("active", true);
                 $(eventHandler).trigger("speciesChanged");
             }
         });
+        $("#toggleMutant").change(function () {
+            ss.mutants = $(this).prop('checked');
+            console.log(ss.mutants);
+            $(eventHandler).trigger("speciesChanged");
+        });
         $(".typeLimitsInput").on("enterKey", function () {
-            $(this)
-                .value = this.value;
-            TMi = txtTMi.value;
-            TMf = txtTMf.value;
-            SIDi = txtSIDi.value;
-            SIDf = txtSIDf.value;
+            $(this).value = this.value;
+            ss.tmi = txtTMi.value;
+            ss.tmf = txtTMf.value;
+            ss.sidi = txtSIDi.value;
+            ss.sidf = txtSIDf.value;
             $(eventHandler)
                 .trigger("manualLimitsChanged");
         });
 
        this.updateVis = function () {
-            txtTMi.value = formatFloat(TMi);
-            txtTMf.value = formatFloat(TMf);
-            txtSIDi.value = formatFloat(SIDi);
-            txtSIDf.value = formatFloat(SIDf);
+            txtTMi.value = formatFloat(ss.tmi);
+            txtTMf.value = formatFloat(ss.tmf);
+            txtSIDi.value = formatFloat(ss.sidi);
+            txtSIDf.value = formatFloat(ss.sidf);
         };
         d3.select("#downloadAllDataBtn").on("click", function () {
             $("#mlDataexport").html('Download options - all proteins');
-            d3.select("#numedges_adddisclaimer_label").classed("disabled",((TMi == TMf) && (SIDi == SIDf)));
+            d3.select("#numedges_adddisclaimer_label").classed("disabled",((ss.tmi == ss.tmf) && (ss.sidi == ss.sidf)));
         });
     };
 
@@ -1868,7 +1874,7 @@ function main () {
                     // GitHub uses 1-based pages with 30 results, by default
                     return {
                         q: term,
-                        species: species
+                        species: ss.species
                     };
                 },
                 processItem: function (item) {
@@ -1931,7 +1937,7 @@ function main () {
             var newDomains = check(domains);
             if (newDomains) {
                 var request = $.param({
-                    species: species,
+                    species: ss.species,
                     domains: newDomains
                 });
                 var jqxhr_data = $.ajax({
@@ -1969,7 +1975,7 @@ function main () {
                 chunk = cluster.domains.splice(0, 10);
 
                 var request = $.param({
-                    species: species,
+                    species: ss.species,
                     domains: chunk
                 });
                 var jqxhr_data = $.ajax({
@@ -2335,7 +2341,7 @@ function main () {
                 "media-heading").html(mediaHeading(oDomain
                 .domain, oDomain.function2));
 
-            if (species == 'yeast') {
+            if (ss.species == 'yeast') {
                 mediaBody.append("div").html("localization: " +
                     ((oDomain.localizations.length) ?
                         oDomain.localizations.reduce(
@@ -2679,19 +2685,19 @@ function main () {
                     });
                 $("#dataExport_nodes").val(JSON.stringify(selectedProteins));
             }
-            $("#dataExport_TMi").val(TMi);
-            $("#dataExport_TMf").val(TMf);
-            $("#dataExport_SIDi").val(SIDi);
-            $("#dataExport_SIDf").val(SIDf);
-            $("#dataExport_species").val(species);
+            $("#dataExport_TMi").val(ss.tmi);
+            $("#dataExport_TMf").val(ss.tmf);
+            $("#dataExport_SIDi").val(ss.sidi);
+            $("#dataExport_SIDf").val(ss.sidf);
+            $("#dataExport_species").val(ss.species);
             if ($(".more-options.active>input").val() !== '0') {
                 $("#exportEdges").submit(function () {
                     $("#dataExport_edges").val($(".more-options.active>input").val());
-                    $("#dataExport_edges_TMi").val(TMi);
-                    $("#dataExport_edges_TMf").val(TMf);
-                    $("#dataExport_edges_SIDi").val(SIDi);
-                    $("#dataExport_edges_SIDf").val(SIDf);
-                    $("#dataExport_edges_species").val(species);
+                    $("#dataExport_edges_TMi").val(ss.tmi);
+                    $("#dataExport_edges_TMf").val(ss.tmf);
+                    $("#dataExport_edges_SIDi").val(ss.sidi);
+                    $("#dataExport_edges_SIDf").val(ss.sidf);
+                    $("#dataExport_edges_species").val(ss.species);
                     return true;
                 });
                 setTimeout(function () { $("#exportEdges").submit(); }, 1000);
@@ -2702,11 +2708,11 @@ function main () {
         $("#mbSPLOMexport").submit(function () {
             $("#splomExport_correlations").val(JSON.stringify(data.correlations));
             $("#splomExport_column_order").val(JSON.stringify(data.columns));
-            $("#splomExport_TMi").val(TMi);
-            $("#splomExport_TMf").val(TMf);
-            $("#splomExport_SIDi").val(SIDi);
-            $("#splomExport_SIDf").val(SIDf);
-            $("#splomExport_species").val(species);
+            $("#splomExport_TMi").val(ss.tmi);
+            $("#splomExport_TMf").val(ss.tmf);
+            $("#splomExport_SIDi").val(ss.sidi);
+            $("#splomExport_SIDf").val(ss.sidf);
+            $("#splomExport_species").val(ss.species);
 
             return true;
 
@@ -2730,7 +2736,7 @@ function main () {
         }
 
         function formatRequest(source, target) {
-            return 'fetch_edge?species=' + species + '&source=' +
+            return 'fetch_edge?ss.species=' + ss.species + '&source=' +
                 source + "&target=" + target;
         }
 
