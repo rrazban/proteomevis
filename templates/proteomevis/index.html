@@ -1,0 +1,323 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <!-- Latest compiled and minified CSS -->
+    <link type='text/css' href="{% static 'css/bootstrap.min.css' %}" rel='stylesheet'>
+    <link type='text/css' href="{% static 'css/jquery-ui.min.css' %}" rel='stylesheet'>
+    <link type='text/css' href="{% static 'css/jquery-ui.structure.min.css' %}" rel='stylesheet'>
+    <link type='text/css' href="{% static 'css/bootstrap-select.min.css' %}" rel='stylesheet'>
+    <link type='text/css' href="{% static 'css/graph.css' %}" rel='stylesheet'>
+    <link type='text/css' href="{% static 'css/selectivity-full.min.css' %}" rel='stylesheet'>
+    <link type='text/css' href="{% static 'css/lightbox.css' %}" rel='stylesheet'>
+
+    <title>ProteomeVis: yeast</title>
+</head>
+
+
+<body>
+    <ul class='custom-menu' id='pcg-node'>
+        <li data-action="clusterInfo">Cluster info</li>
+        <li data-action="removeHighlight" id='liRemove'>Remove highlight</li>
+        <li data-action="node-focus">Focus</li>
+    </ul><!-- NAV BAR AT TOP -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="btn-group navbar-form navbar-left" id='speciesSelectorBtnGroup'>
+                <button class="btn btn-default active" name='speciesBtn' type="button" value='yeast'>yeast</button> <button class="btn btn-default" name='speciesBtn' type="button" value='ecoli'>E. coli</button>
+            </div>
+            <div class="navbar-form navbar-left" id='typeLimitsBtnGroup'>
+                <label>TM</label> <input class="typeLimitsInput form-control" id='TMi' placeholder='min' type="text"> to <input class="typeLimitsInput form-control" id='TMf' placeholder='max' type="text"> <label>SID</label> <input class="typeLimitsInput form-control" id='SIDi' placeholder='min' type="text"> to <input class="typeLimitsInput form-control" id='SIDf' placeholder='max' type="text">
+            </div>
+            <div class='navbar-form navbar-left' id='nodeColor'>
+            </div>
+            <div class="navbar-form navbar-left">
+                <button class="btn btn-default" data-target="#mDataexport" data-toggle="modal" id='downloadAllDataBtn' title='Save current data' type="button"><span class='glyphicon glyphicon-save'></span></button>
+            </div>
+            <div class="navbar-form navbar-right">
+                <button class="btn btn-default" data-target="#mTour" data-toggle="modal" id='tourBtn' title='Help' type="button"><span class='glyphicon glyphicon-question-sign'></span></button>
+            </div>
+        </div><!-- /.container-fluid -->
+    </nav>
+    <table>
+        <tr>
+            <td>
+                <div class='vis-panel' id='typeVis'>
+                    Edge filtering<span class='glyphicon glyphicon-question-sign pull-right'></span>
+                </div>
+                <div class='vis-panel' id='pcgVis'>
+                    PCG<span class='glyphicon glyphicon-question-sign pull-right'></span>
+                </div>
+                <div class="fixed-tooltip" id='tooltip'></div>
+                <!-- <ul class="media-list fixed-tooltip" id='link-tooltip' style='width:300px'>
+                    <li class="media media-link">
+                        <div class="media-left">
+                            <a href="#"><img alt="Generic placeholder image" class="media-object" id='link-img-source' src=''></a>
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading"><span id='link-text-source'></span> to <span id='link-text-target'></span></h4>
+                            <p>TM: <span id='link-text-tm'></span></p>
+                            <p>SID: <span id='link-text-sid'></span></p>
+                        </div>
+                        <div class="media-right">
+                            <a href="#"><img alt="Generic placeholder image" class="media-object" id='link-img-target' src=''></a>
+                        </div>
+                    </li>
+                </ul> -->
+            </td>
+            <td>
+                <div class='container vis-panel' id='view'>
+                    <ul class="nav nav-tabs" id='viewTabGroup'>
+                        <li class="tab active" id='nodeListTab' role="presentation">
+                            <a href="#">Individual</a>
+                        </li>
+                        <li class='tab' id='clusterListTab' role="presentation">
+                            <a href="#">Clusters</a>
+                        </li>
+                    </ul>
+                    <div id='nodeList'>
+                        <div style='display:block;'>
+                            <div class='selectivity-input' id='protein_search'></div><button class='btn btn-default' id='btnProteinSearch' role='button' type='button'><span class='glyphicon glyphicon-search'></span></button>
+                        </div>
+                        <ul class="media-list" id='individual_list'></ul>
+                    </div>
+                    <div id='clusterList'>
+                        <div id='clusterScatter'></div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class='vis-panel' id='splomVis'>
+                    Scatter Plot Matrix<span id='helpHover-splom' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Logarithmic values" data-content="Abundance, evolutionary rate, dN, and dS are all displayed as logarithms (base 10) of their values. 'Zero' values were obtained by approximating 0 as 10E-10."></span>
+
+                    <div id='splom-bar'></div>
+                    <div id='splom'></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="pleaseWaitDialogInitial" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1>Processing...</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" style="width:100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="mTour" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1>Need help?</h1>
+                </div>
+                <div class="modal-body">
+                    <button class='btn btn-primary' id='startTourBtn'>Take the tour!</button> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="errorMessage" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="color:maroon">
+                <div class="modal-header">
+                    <h1>Oops!</h1>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-error" data-dismiss="modal" type="button">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="editAttributes" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    <h4>Edit scatterplot matrix</h4>
+                </div>
+                <div class="modal-body container">
+                    <div class="sideBySide row">
+                        <div class="right col-xs-3">
+                            Order:
+                            <ul class="target connected" id='attributes-used'></ul>
+                        </div>
+                        <div class="left col-xs-3">
+                            Not included:
+                            <ul class="source connected" id='attributes-unused'>
+                                <!-- add stuff here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Close</button> <button class="btn btn-primary" id='btnSaveAttributes' type="button">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="pleaseWaitDialog" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1>Calculating...</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" style="width:100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- Modal -->
+    <div aria-labelledby="data-export" class="modal fade" id="mDataexport" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="mlDataexport">Download options</h4>
+                </div>
+                <div class='modal-body'>
+                    <ul class="nav nav-tabs" id="tabContent">
+                            <li id='mb-tab-nodes' class="active"><a href="#mbDataexport" data-toggle="tab">Nodes & Edges</a></li>
+                            <li id='mb-tab-corr'><a href="#mbSPLOMexport" data-toggle="tab">Correlations</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- main data download tab -->
+                       <form action="export_nodes/" class="tab-pane active" id='mbDataexport' method="post" name="mbDataexport">{% csrf_token %}
+                            <div data-toggle="buttons" id='main-options' class='modal-body-buttons'></div>
+                            <hr>
+                            <div class="input-group col-xs-2" id='delimiter'>
+                                <span class="input-group-addon" id="basic-addon1">Delimiter</span>
+                                <input aria-describedby="basic-addon1" class="form-control" name='delimiter' type="text" value=",">
+                            </div>
+                            <hr>
+                            <div class="modal-body-buttons" data-toggle="buttons" id='more-options'>
+                                <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="numedges" type="radio" value='0'> No edges <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                                <label class="more-options btn" id='numedges_adddisclaimer_label'>
+                                    <input autocomplete="off" name="numedges" type="radio" value='1' id='numedges_adddisclaimer_input'> Edges in current range <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                                <label class="more-options btn">
+                                    <input autocomplete="off" name="numedges" type="radio" value='2'> All edges <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                            </div>
+                            <hr>
+                            <input id='dataExport_nodes' name='nodes[]' type='hidden'> 
+                            <input id='dataExport_triggeredby' name='form_trigger' type='hidden'> 
+                            <input id='dataExport_TMi' name='TMi' type='hidden'> 
+                            <input id='dataExport_TMf' name='TMf' type='hidden'> 
+                            <input id='dataExport_SIDi' name='SIDi' type='hidden'> 
+                            <input id='dataExport_SIDf' name='SIDf' type='hidden'> 
+                            <input id='dataExport_species' name='species' type='hidden'>
+                            <div class="btn-group">
+                                <button class="btn btn-info btn-lg" id='btnSubmitDataExport' type="submit">Download data</button>
+                            </div>
+                        </form>
+
+                        <!-- SPLOM data download tab -->
+                        <form action="export_splom/" class="tab-pane" id='mbSPLOMexport' method="post" name="mbSPLOMexport">{% csrf_token %}
+                            <div data-toggle="buttons" id='correlation-main-options' class='modal-body-buttons'></div>
+                            <hr>
+                            <div class="modal-body-buttons" data-toggle="buttons" id='correlations-options'>
+                                <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='p_value'> p-value <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                                <label class="more-options btn active" id='numedges_adddisclaimer_label'>
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='r_value'> r<sup>2 </sup> value <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                                <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='slope'> slope <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                                <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='intercept'> intercept <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                                <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='std_err'> standard error <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                                <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='p_value_SP'> p-value (Spearman) <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                                <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='rho_SP'> rho (Spearman) <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                            </div>
+                            <hr>
+                            <input id='splomExport_column_order' name='column_order[]' type='hidden'> 
+                            <input id='splomExport_correlations' name='correlations[]' type='hidden'> 
+                            <input id='splomExport_TMi' name='TMi' type='hidden'> 
+                            <input id='splomExport_TMf' name='TMf' type='hidden'> 
+                            <input id='splomExport_SIDi' name='SIDi' type='hidden'> 
+                            <input id='splomExport_SIDf' name='SIDf' type='hidden'> 
+                            <input id='splomExport_species' name='species' type='hidden'>
+                            <div class="btn-group">
+                                <button class="btn btn-info btn-lg" id='btnSubmitSPLOMExport' type="submit">Download correlation data</button>
+                            </div>
+                        </form>
+
+                        <form style="display:none" action="export_edges/" method="post" id="exportEdges" name='exportEdges'>{% csrf_token %}
+                            <input id='dataExport_edges' name='edges'> 
+                            <input id='dataExport_edges_TMi' name='TMi'> 
+                            <input id='dataExport_edges_TMf' name='TMf'> 
+                            <input id='dataExport_edges_SIDi' name='SIDi'> 
+                            <input id='dataExport_edges_SIDf' name='SIDf'> 
+                            <input id='dataExport_edges_species' name='species'> 
+                        </form>
+
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id='lightbox-div'></div>
+
+    <script src="{% static "libs/jquery-1.11.2.min.js" %}"></script>
+    <script src="{% static "libs/jquery-ui.min.js" %}"></script>
+    <script src="{% static "libs/bootstrap.min.js" %}"></script>
+    <script src="{% static "libs/selectivity-full.min.js" %}"></script>
+    <script src="{% static "libs/d3.v3.min.js" %}"></script>
+    <script src="{% static "libs/move-to-front.js" %}"></script>
+    <script src="{% static "libs/colorbar.js" %}"></script>
+    <script src="{% static "libs/minisvg.js" %}"></script>
+    <script src="{% static "libs/remove.js" %}"></script>
+    <script src="{% static "libs/js.cookie.js" %}"></script>
+    <script src="{% static "libs/d3click.js" %}"></script>
+    <script src="{% static "libs/knockout-2.2.0.js" %}"></script>
+    <script src="{% static "libs/underscore.min.js" %}"></script>
+    <script src="{% static "libs/d3.tip.v0.6.3.js" %}"></script>
+    <script src="{% static "js/attributesmanager.js" %}"></script>
+    <script src="{% static "js/proteome.js" %}"></script>
+    <script src="{% static "js/right-click.js" %}"></script>
+    <script src="{% static "js/colorbar.js" %}"></script>
+    <script src="{% static "js/tmsid.js" %}"></script>
+    <script src="{% static "libs/tour.js" %}"></script>
+    <script src="{% static "libs/lightbox.js" %}"></script>
+    <script>
+      $(function () {
+        $(".source, .target").sortable({
+          connectWith: ".connected"
+        });
+      });
+      $('.glyphicon-asterisk').popover({placement: 'left'});
+      $('.glyphicon-asterisk').on('mouseover', function () { $(this).popover('show'); });
+      $('.glyphicon-asterisk').on('mouseout', function () { $(this).popover('hide'); });
+    </script>
+
+</body>
+
+</html>

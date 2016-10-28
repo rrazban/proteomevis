@@ -1,0 +1,3 @@
+{{  header|join:"," }}
+{% for row in data %}{{ row|join:","|addslashes }}
+{% endfor %}
