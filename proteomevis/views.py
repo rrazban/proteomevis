@@ -143,14 +143,19 @@ def fetch_edges(request):
         TMf = data['TMf']
         SIDi = data['SIDi']
         SIDf = data['SIDf']
-        mutants = bool(data['mutants'])
+        include_mutants = bool(data['mutants'])
+
 
         i2ID = dict()
         ID2i = dict()
         species = Species.objects.filter(name=species)[0].id
-        chains = Chain.objects.filter(species=species)
 
-        edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+        if include_mutants:
+            chains = Chain.objects.filter(species=species)
+            edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+        else: # don't include mutants, want chains and edges with mutant = 0
+            chains = Chain.objects.filter(species=species,mutant=0)
+            edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf,mutant=0)
         edges = [(edge.targetID,edge.sourceID,model_to_dict(edge)) for edge in edges]
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
 
@@ -160,7 +165,7 @@ def fetch_edges(request):
                 content_type="application/json"
             )
 
-        nodes = [node.node(mutants=mutants) for node in chains]
+        nodes = [node.node() for node in chains]
 
         for i,node in enumerate(nodes):
             i2ID[i] = node[0]
