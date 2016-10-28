@@ -28,9 +28,10 @@ class Chain(models.Model):
     def stat_attr(self):
         return ["length","abundance","abundance_unlogged","evorate","conden","dostox","dN","dS","weighted_degree",'degree','ppi_degree','ppi']
 
-    def node(self):
+    def node(self,mutants=True):
+        if mutants:
+            return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"abundance_unlogged":self.abundance_unlogged,"evorate":self.evorate,"conden":self.conden,"dostox":self.dostox,"dN":self.dN,"dS":self.dS,'ppi':self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0,"mutant":self.mutant})
         return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"abundance_unlogged":self.abundance_unlogged,"evorate":self.evorate,"conden":self.conden,"dostox":self.dostox,"dN":self.dN,"dS":self.dS,'ppi':self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0})
-
         # return dict(id=self.chain_id,species=self.species,pdb=self.pdb,domain=self.domain,chain=self.chain,length=self.length,abundance=self.abundance,evorate=self.evorate,conden=self.conden,dostox=self.dostox,dN=self.dN,dS=self.dS)
 
 class DomainLocalization(models.Model):
@@ -65,6 +66,7 @@ class Edge(models.Model):
     sid = models.FloatField(blank=True,null=True)
     tm = models.FloatField(blank=True,null=True)
     ppi = models.BooleanField(blank=True)
+    mutant = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.sourceID) + " to " + str(self.targetID)
@@ -73,10 +75,10 @@ class Edge(models.Model):
         return dict(sourceID=self.sourceID,targetID=self.targetID,sid=self.sid,tm=self.tm,ppi=self.ppi,species=self.species)
 
     def edgeCSV(self):
-        return [self.sourceID,self.targetID,self.sid,self.tm,self.ppi,self.species]
+        return [self.sourceID,self.targetID,self.sid,self.tm,self.ppi,self.species,self.mutant]
 
     def keys(self):
-        return ["sourceID","targetID","sid","tm","ppi","species"]
+        return ["sourceID","targetID","sid","tm","ppi","species","mutant"]
         # return dict(sourceID=self.sourceID,species=self.species,targetID=self.targetID,sid=self.sid,tm=self.tm,ppi=self.ppi)
 
 class Function(models.Model):

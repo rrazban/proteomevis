@@ -409,7 +409,8 @@ function main () {
             TMi: cutoffs[0],
             TMf: cutoffs[1],
             SIDi: cutoffs[2],
-            SIDf: cutoffs[3]
+            SIDf: cutoffs[3],
+            mutants: true
         });
         var jqxhr_data = $.ajax({
                 url: "fetch_edges/", // the endpoint
@@ -1948,9 +1949,7 @@ function main () {
                                 d);
                         if (_triggerDomainHighlighting) {
                             var dData = getChainIDs(_data);
-                            $(eventHandler)
-                                .trigger("highlightDomains",
-                                    dData);
+                            $(eventHandler).trigger("highlightDomains",dData);
                         }
                     });
                 proteinList = proteinList.concat(domains);

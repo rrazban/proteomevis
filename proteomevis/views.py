@@ -143,6 +143,7 @@ def fetch_edges(request):
         TMf = data['TMf']
         SIDi = data['SIDi']
         SIDf = data['SIDf']
+        mutants = bool(data['mutants'])
 
         i2ID = dict()
         ID2i = dict()
@@ -159,7 +160,7 @@ def fetch_edges(request):
                 content_type="application/json"
             )
 
-        nodes = [node.node() for node in chains]
+        nodes = [node.node(mutants=mutants) for node in chains]
 
         for i,node in enumerate(nodes):
             i2ID[i] = node[0]
