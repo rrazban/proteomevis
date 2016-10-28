@@ -12,6 +12,7 @@
     <link type='text/css' href="{% static 'css/graph.css' %}" rel='stylesheet'>
     <link type='text/css' href="{% static 'css/selectivity-full.min.css' %}" rel='stylesheet'>
     <link type='text/css' href="{% static 'css/lightbox.css' %}" rel='stylesheet'>
+    <link type='text/css' href="{% static 'css/bootstrap-toggle.min.css' %}" rel='stylesheet'>
 
     <title>ProteomeVis: yeast</title>
 </head>
@@ -27,11 +28,15 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="btn-group navbar-form navbar-left" id='speciesSelectorBtnGroup'>
-                <button class="btn btn-default active" name='speciesBtn' type="button" value='yeast'>yeast</button> <button class="btn btn-default" name='speciesBtn' type="button" value='ecoli'>E. coli</button>
+                <button class="btn btn-default active" name='speciesBtn' type="button" value='yeast'>yeast</button>
+                <button class="btn btn-default" name='speciesBtn' type="button" value='ecoli'>E. coli</button>
+            </div>
+            <div class="navbar-form navbar-left">
+                <input checked id='toggleMutant' type="checkbox" data-toggle="toggle" data-on="Mutants" data-off="No mutants">
             </div>
             <div class="navbar-form navbar-left" id='typeLimitsBtnGroup'>
                 <label>TM</label> <input class="typeLimitsInput form-control" id='TMi' placeholder='min' type="text"> to <input class="typeLimitsInput form-control" id='TMf' placeholder='max' type="text"> <label>SID</label> <input class="typeLimitsInput form-control" id='SIDi' placeholder='min' type="text"> to <input class="typeLimitsInput form-control" id='SIDf' placeholder='max' type="text">
-            </div>
+
             <div class='navbar-form navbar-left' id='nodeColor'>
             </div>
             <div class="navbar-form navbar-left">
@@ -52,21 +57,6 @@
                     PCG<span class='glyphicon glyphicon-question-sign pull-right'></span>
                 </div>
                 <div class="fixed-tooltip" id='tooltip'></div>
-                <!-- <ul class="media-list fixed-tooltip" id='link-tooltip' style='width:300px'>
-                    <li class="media media-link">
-                        <div class="media-left">
-                            <a href="#"><img alt="Generic placeholder image" class="media-object" id='link-img-source' src=''></a>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading"><span id='link-text-source'></span> to <span id='link-text-target'></span></h4>
-                            <p>TM: <span id='link-text-tm'></span></p>
-                            <p>SID: <span id='link-text-sid'></span></p>
-                        </div>
-                        <div class="media-right">
-                            <a href="#"><img alt="Generic placeholder image" class="media-object" id='link-img-target' src=''></a>
-                        </div>
-                    </li>
-                </ul> -->
             </td>
             <td>
                 <div class='container vis-panel' id='view'>
@@ -307,6 +297,7 @@
     <script src="{% static "js/tmsid.js" %}"></script>
     <script src="{% static "libs/tour.js" %}"></script>
     <script src="{% static "libs/lightbox.js" %}"></script>
+    <script src="{% static "libs/bootstrap-toggle.min.js" %}"></script>
     <script>
       $(function () {
         $(".source, .target").sortable({
@@ -316,6 +307,9 @@
       $('.glyphicon-asterisk').popover({placement: 'left'});
       $('.glyphicon-asterisk').on('mouseover', function () { $(this).popover('show'); });
       $('.glyphicon-asterisk').on('mouseout', function () { $(this).popover('hide'); });
+      $(function() {
+        $('#toggleMutant').bootstrapToggle();
+      });
     </script>
 
 </body>
