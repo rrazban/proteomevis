@@ -84,7 +84,6 @@ class Function(models.Model):
 
     def __str__(self):
         return self.function
-        # return dict(id=self.id,function=self.function)
 
 class Localization(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -92,7 +91,6 @@ class Localization(models.Model):
 
     def __str__(self):
         return self.localization
-        # return dict(id=self.id,localization=self.localization)
 
 class Species(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -101,6 +99,8 @@ class Species(models.Model):
     has_function = models.BooleanField()
     has_mutant_data = models.BooleanField(default=False)
 
+    def toDict(self):
+        return dict(id=self.id,name=self.name,has_localization=self.has_localization,has_function=self.has_function,has_mutant_data=self.has_mutant_data)
+
     def __str__(self):
         return self.name
-        # return dict(id=self.id,name=self.name,has_localization=self.has_localization,has_function=self.has_function)

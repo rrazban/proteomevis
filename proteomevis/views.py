@@ -21,7 +21,7 @@ def export_nodes(request):
         TMf = data['TMf']
         SIDi = data['SIDi']
         SIDf = data['SIDf']
-        species = data['species']
+        species = data['species'].toUpper()
 
         log_values = ['evorate','abundance','dN','dS']
         log_decimals = dict(evorate=3,abundance=0,dN=3,dS=3)
@@ -53,14 +53,13 @@ def export_edges(request):
     if request.method == 'POST':
         import os
         data = cleanRequest(request.POST)
-        print data
         TMi = data['TMi']
         TMf = data['TMf']
         SIDi = data['SIDi']
         SIDf = data['SIDf']
 
+        species = int(data['species'])
 
-        species = Species.objects.filter(name=data['species'])[0].id
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         if data['edges'] == '1':
@@ -138,7 +137,7 @@ def fetch_edges(request):
         data = cleanRequest(request.POST)
 
         columns = data['columns']
-        species = data['species']
+        species = int(data['species'])
         TMi = data['TMi']
         TMf = data['TMf']
         SIDi = data['SIDi']
@@ -147,9 +146,6 @@ def fetch_edges(request):
 
         i2ID = dict()
         ID2i = dict()
-        s = Species.objects.filter(name=species)[0]
-        species = s.id
-        shmd = s.has_mutant_data
 
         if include_mutants:
             chains = Chain.objects.filter(species=species)
@@ -157,7 +153,7 @@ def fetch_edges(request):
         else: # don't include mutants, want chains and edges with mutant = 0
             chains = Chain.objects.filter(species=species,mutant=0)
             edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf,mutant=0)
-        edges = [(edge.targetID,edge.sourceID,model_to_dict(edge)) for edge in edges]
+        edges = [(edge.targetID,edge.sourceID,edge.__dict__) for edge in edges]
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
 
         if len(list(edges)) > 15000:
@@ -205,7 +201,9 @@ def fetch_edges(request):
         nodes,clusters = addCluster(clusters,nodes,ID2i)
 
         correlations, limits, data = computeCorrelations(nodes, columns)
-        data = {'species_has_mutant_data':shmd,'zero':-5,'columns':columns,'correlations':correlations,'domains':limits,'nodes':[node[1] for node in nodes],'edges':links,'clusters':clusters,'cluster_frequencies':cluster_frequencies}
+        species = Species.objects.get(id=species).toDict()
+
+        data = {'species':species,'zero':-5,'columns':columns,'correlations':correlations,'domains':limits,'nodes':[node[1] for node in nodes],'edges':links,'clusters':clusters,'cluster_frequencies':cluster_frequencies}
         # print data
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),
@@ -229,7 +227,7 @@ def fetch_edge(request):
         edge = Edge.objects.filter(sourceID=source,targetID=target,species=species)[0]
 
         return HttpResponse(
-            json.dumps(edge.edge(),cls=SetEncoder),
+            json.dumps(edge.__dict__,cls=SetEncoder),
             content_type="application/json"
         )
     else:
@@ -309,7 +307,7 @@ def query(request):
         data = cleanRequest(request.GET)
         q = data['q']
 
-        species = Species.objects.filter(name=data['species'])
+        species = Species.objects.get(id=int(data['species']))
 
         query = "SELECT * FROM proteomevis_domain WHERE "
         query += "((uniprot LIKE '%"+q+"%') OR "
@@ -324,7 +322,7 @@ def query(request):
 
         data = []
         for d in list(tmp):
-            data.append(model_to_dict(d))
+            data.append(d.__dict__)
 
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),
