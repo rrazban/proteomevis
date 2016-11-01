@@ -154,6 +154,7 @@ def fetch_edges(request):
             chains = Chain.objects.filter(species=species,mutant=0)
             edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf,mutant=0)
         edges = [(edge.targetID,edge.sourceID,edge.__dict__) for edge in edges]
+        print edges
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
 
         if len(list(edges)) > 15000:
@@ -223,8 +224,8 @@ def fetch_edge(request):
         source = data['source']
         target = data['target']
 
-        species = Species.objects.filter(name=data['species'])[0]
-        edge = Edge.objects.filter(sourceID=source,targetID=target,species=species)[0]
+        species = int(data['species'])
+        edge = Edge.objects.get(sourceID=source,targetID=target,species=species)
 
         return HttpResponse(
             json.dumps(edge.__dict__,cls=SetEncoder),
@@ -245,7 +246,7 @@ def fetch_proteins(request):
         if not isinstance(domains,list):
             domains = [domains]
 
-        species = Species.objects.filter(name=data['species'])[0]
+        species = Species.objects.get(id=int(data['species']))
 
         data = {}
         
