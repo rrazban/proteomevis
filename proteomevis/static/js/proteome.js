@@ -984,8 +984,7 @@ function main () {
                     patternTransform:"rotate(55)"})
             .append("rect")
             .attr('width',3)
-            .attr("height",8)
-            .attr("fill",'lightgray');
+            .attr("height",8);
 
         var legend = svg.append('g')
             .attr('id', 'legend');
@@ -2388,7 +2387,7 @@ function main () {
                     return "label label-default label-chains p" + d.id + " c" + (cluster ? cluster : d.cluster);
                 })
                 .html(function (d) {
-                    return d.chain;
+                    return d.chain  + (d.mutant ? "<sup>M</sup>" : "");
                 })
                 .on('click', function (d) {
                     d3.select(this)
@@ -2420,11 +2419,12 @@ function main () {
         }
 
         function mediaHeading (sDomain, sFunction) {
+            console.log(sDomain);
             var tmp = "<h4>";
             tmp +=
                 "<a href='http://www.rcsb.org/pdb/explore/explore.do?structureId=";
             tmp += sDomain + "' target='_blank'>" + sDomain +
-                "</a> ";
+                "</a>  ";
             tmp += "<small>" + sFunction + "</small>";
             if (closeSpan) {
                 tmp +=
@@ -2499,7 +2499,7 @@ function main () {
 
         function generateChainDetailsTable (chainID) {
             var d = data.nodes[ID2i(chainID)];
-            var str = '<span class="lb-chainTitle">'+d.pdb+'</span><table class="lb-chainTable"><tbody>';
+            var str = '<span class="lb-chainTitle">'+d.pdb+' <span class="label label-default">' + (d.mutant ? "MUTANT" : "") + '</span></span><table class="lb-chainTable"><tbody>';
             attributes.all().forEach(function (attr) {
                 str += "<tr><td>"+attributes.prettyprint2(attr)+"</td><td class='detail-values'>"+formattedNum(d,attr)+"</td></tr>";
             });
