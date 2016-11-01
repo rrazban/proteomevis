@@ -177,20 +177,22 @@ function main () {
         tooltip.style("left", "10px").style("top", $('#forceLayoutDiv').position().top + "px");
         link_tooltip.style("left", "10px").style("top", $('#forceLayoutDiv').position().top + "px");
         $("#individual_list").height($("#view").height() - 90);
+        function updateVises () {
+            d3.select(".toggle.btn").style("display",data.species_has_mutant_data ? null : "none");
+            splomVis.updateVis();
+            forceVis.updateVis();
+            nodeColorVis.update();
+            if (viewTab.view == 'clusterListTab') {
+                clusterScatter.updateVis();
+            }
+            proteinmediaItem.clear("#cluster_list");
+            calculateState.hide();
+        }
 
         function waitDataLoadUpdate(_tries,_update) {
             if (loaded) {
                 if (data.edges) {
-                    function updateVises () {
-                        splomVis.updateVis();
-                        forceVis.updateVis();
-                        nodeColorVis.update();
-                        if (viewTab.view == 'clusterListTab') {
-                            clusterScatter.updateVis();
-                        }
-                        proteinmediaItem.clear("#cluster_list");
-                        calculateState.hide();
-                    }
+
                     if (_update) {
                         setIDdictionary(updateVises);
                     } else {
@@ -412,7 +414,7 @@ function main () {
             TMf: ss.tmf,
             SIDi: ss.sidi,
             SIDf: ss.sidf,
-            mutants: true
+            mutants: ss.mutants
         });
         var jqxhr_data = $.ajax({
                 url: "fetch_edges/", // the endpoint
