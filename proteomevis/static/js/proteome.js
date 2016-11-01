@@ -1,5 +1,7 @@
 var ss = {};
 var data,ID2i,attributes;
+var nodes, links;
+
 /***********************************
 ***********************************
 CONTROLLER
@@ -21,7 +23,12 @@ function main () {
     ss.tmf = 0;
     ss.sidi = 0;
     ss.sidf = 0;
-    ss.species = 'yeast';
+    ss.species = { id: 0,
+                 name: 'yeast',
+     has_localization: true,
+         has_function: true,
+      has_mutant_data: true
+    };
     ss.mutants = true;
 
     var cluster,
@@ -409,7 +416,7 @@ function main () {
         // and remember the jqxhr object for this request
         var request = $.param({
             columns: attributes.active(),
-            species: ss.species,
+            species: ss.species.id,
             TMi: ss.tmi,
             TMf: ss.tmf,
             SIDi: ss.sidi,
@@ -547,7 +554,7 @@ function main () {
                         .attr("height",height)
                         .attr("transform", "translate(" + (margin.left * 2) + "," + margin.top +")")
                         .attr("preserveAspectRatio", "none")
-                        .attr("xlink:href", "../static/img/" + ss.species + ".png");
+                        .attr("xlink:href", "../static/img/species." + ss.species.id + ".png");
             var graph = svg
                         .append("g")
                         .attr("transform", "translate(" +margin.left + "," + margin.top + ")");
@@ -610,7 +617,7 @@ function main () {
             };
 
             this.updateImage = function () {
-                background.attr("xlink:href", "../static/img/" + ss.species + ".png");
+                background.attr("xlink:href", "../static/img/species." + ss.species.id + ".png");
             };
 
             setHeight();
@@ -742,7 +749,7 @@ function main () {
 
             var vis = graph.append("g").attr("class", "vis");
 
-            var nodes, links;
+            // var nodes, links;
 
             // functions
             var proteinClass = function (a) {
@@ -795,6 +802,7 @@ function main () {
 
                 nodes
                     .attr("fill", nodeColor)
+                    .classed("mutant", function (d) { return d.mutant; })
                     .on("click", function (d) {
                         d3.select(this).classed("highlight", true);
                         $(eventHandler)
@@ -858,6 +866,7 @@ function main () {
                         return "pcg p" + d.id + " c" + d.cluster;
                     })
                     .attr("fill", nodeColor)
+                    .classed("mutant", function (d) { return d.mutant; })
                     .on("click", function (d) {
                         d3.select(this).classed("highlight", true);
                         $(eventHandler)
@@ -1060,8 +1069,8 @@ function main () {
             txtSIDf = document.getElementById("SIDf"),
             speciesBtn = d3.selectAll("[name=speciesBtn]");
         speciesBtn.on("click", function () {
-            if (this.value !== ss.species) {
-                ss.species = this.value;
+            if (int(this.value) !== ss.species.id) {
+                ss.species.id = int(this.value);
                 speciesBtn.classed("active", false);
                 d3.select(this).classed("active", true);
                 $(eventHandler).trigger("speciesChanged");
@@ -1876,7 +1885,7 @@ function main () {
                     // GitHub uses 1-based pages with 30 results, by default
                     return {
                         q: term,
-                        species: ss.species
+                        species: ss.species.id
                     };
                 },
                 processItem: function (item) {
@@ -1939,7 +1948,7 @@ function main () {
             var newDomains = check(domains);
             if (newDomains) {
                 var request = $.param({
-                    species: ss.species,
+                    species: ss.species.id,
                     domains: newDomains
                 });
                 var jqxhr_data = $.ajax({
@@ -1977,7 +1986,7 @@ function main () {
                 chunk = cluster.domains.splice(0, 10);
 
                 var request = $.param({
-                    species: ss.species,
+                    species: ss.species.id,
                     domains: chunk
                 });
                 var jqxhr_data = $.ajax({
@@ -2343,7 +2352,7 @@ function main () {
                 "media-heading").html(mediaHeading(oDomain
                 .domain, oDomain.function2));
 
-            if (ss.species == 'yeast') {
+            if (ss.species.has_localization) {
                 mediaBody.append("div").html("localization: " +
                     ((oDomain.localizations.length) ?
                         oDomain.localizations.reduce(
@@ -2691,7 +2700,7 @@ function main () {
             $("#dataExport_TMf").val(ss.tmf);
             $("#dataExport_SIDi").val(ss.sidi);
             $("#dataExport_SIDf").val(ss.sidf);
-            $("#dataExport_species").val(ss.species);
+            $("#dataExport_species").val(ss.species.id);
             if ($(".more-options.active>input").val() !== '0') {
                 $("#exportEdges").submit(function () {
                     $("#dataExport_edges").val($(".more-options.active>input").val());
@@ -2699,7 +2708,7 @@ function main () {
                     $("#dataExport_edges_TMf").val(ss.tmf);
                     $("#dataExport_edges_SIDi").val(ss.sidi);
                     $("#dataExport_edges_SIDf").val(ss.sidf);
-                    $("#dataExport_edges_species").val(ss.species);
+                    $("#dataExport_edges_species").val(ss.species.id);
                     return true;
                 });
                 setTimeout(function () { $("#exportEdges").submit(); }, 1000);
@@ -2714,7 +2723,7 @@ function main () {
             $("#splomExport_TMf").val(ss.tmf);
             $("#splomExport_SIDi").val(ss.sidi);
             $("#splomExport_SIDf").val(ss.sidf);
-            $("#splomExport_species").val(ss.species);
+            $("#splomExport_species").val(ss.species.id);
 
             return true;
 
@@ -2738,7 +2747,7 @@ function main () {
         }
 
         function formatRequest(source, target) {
-            return 'fetch_edge?ss.species=' + ss.species + '&source=' +
+            return 'fetch_edge?ss.species=' + ss.species.id + '&source=' +
                 source + "&target=" + target;
         }
 
