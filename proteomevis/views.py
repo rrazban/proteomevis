@@ -143,12 +143,13 @@ def fetch_edges(request):
         TMf = data['TMf']
         SIDi = data['SIDi']
         SIDf = data['SIDf']
-        include_mutants = bool(data['mutants'])
-
+        include_mutants = (data['mutants'] == 'true')
 
         i2ID = dict()
         ID2i = dict()
-        species = Species.objects.filter(name=species)[0].id
+        s = Species.objects.filter(name=species)[0]
+        species = s.id
+        shmd = s.has_mutant_data
 
         if include_mutants:
             chains = Chain.objects.filter(species=species)
@@ -204,7 +205,7 @@ def fetch_edges(request):
         nodes,clusters = addCluster(clusters,nodes,ID2i)
 
         correlations, limits, data = computeCorrelations(nodes, columns)
-        data = {'zero':-5,'columns':columns,'correlations':correlations,'domains':limits,'nodes':[node[1] for node in nodes],'edges':links,'clusters':clusters,'cluster_frequencies':cluster_frequencies}
+        data = {'species_has_mutant_data':shmd,'zero':-5,'columns':columns,'correlations':correlations,'domains':limits,'nodes':[node[1] for node in nodes],'edges':links,'clusters':clusters,'cluster_frequencies':cluster_frequencies}
         # print data
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),
