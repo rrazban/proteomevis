@@ -99,6 +99,7 @@ class Species(models.Model):
     name = models.CharField(max_length=30)
     has_localization = models.BooleanField()
     has_function = models.BooleanField()
+    has_mutant_data = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
