@@ -17,6 +17,55 @@ function main () {
         return d3.format('.3f')(n);
     }
 
+    function getPoints (plt) {
+        if (plt) {
+            var limX = data.domains[plt.x],
+                limY = data.domains[plt.y],
+                corr = data.correlations[plt.i][plt.j];
+
+            var x0 = limX[0],
+                x1 = limX[1],
+                y0 = corr.intercept + (x0 * corr.slope),
+                y1 = corr.intercept + (x1 * corr.slope);
+
+            // if y0 falls bellow the range of Y
+            if (y0 < limY[0]) {
+                y0 = limY[0];
+                x0 = (y0 - corr.intercept)/corr.slope;
+            }
+
+            // if y0 falls above the range of Y
+            if (y0 > limY[1]) {
+                y0 = limY[1];
+                x0 = (y0 - corr.intercept)/corr.slope;
+            }
+
+            // if y1 falls bellow the range of Y
+            if (y1 < limY[0]) {
+                y1 = limY[0];
+                x1 = (y1 - corr.intercept)/corr.slope;
+            }
+
+            // if y1 falls bellow the range of Y
+            if (y1 > limY[1]) {
+                y1 = limY[1];
+                x1 = (y1 - corr.intercept)/corr.slope;
+            }
+
+            return [{
+                x: x0,
+                y: y0
+            }, {
+                x: x1,
+                y: y1
+            }];            
+        } else {
+            return null;
+        }
+
+    }
+
+
     var force, tipLink, eventHandler = {}, node;
     $( window ).resize(function () { $(eventHandler).trigger("windowResize"); });
     ss.tmi = 0;
@@ -272,7 +321,7 @@ function main () {
                 makeRequest([ss.tmi, ss.tmf, ss.sidi, ss.sidf],
                     function () {
                         waitDataLoadUpdate(0);
-                        splomVis = new SplomVis("#splomVis");
+                        splomVis = new SplomVis("#splomVis",true);
                     });
             });
 
@@ -1204,7 +1253,7 @@ function main () {
     SplomFocusPlot = function (_parentElement, _dim, _pltsize) {
         var filter = null,
             that = this,
-            currentThisPlt, currentPlt, plotData, selectedIDs;
+            currentThisPlt, currentPlt, plotData, selectedIDs,points;
 
         var margin = {
                 top: 5,
@@ -1351,9 +1400,9 @@ function main () {
 
             currentThisPlt = thisplt ? thisplt : currentThisPlt;
             currentPlt = plt ? plt : currentPlt;
+            points = getPoints(currentPlt);
 
             if (currentPlt) {
-                console.log(d3.select(currentThisPlt).data());
                 x.domain(data.domains[currentPlt.x]);
                 y.domain(data.domains[currentPlt.y]);
 
@@ -1402,12 +1451,13 @@ function main () {
                 var line = d3.svg.line().interpolate('linear')
                     .x(function (d) {
                         return x(d.x);
-                    }).y(function (d) {
+                    })
+                    .y(function (d) {
                         return y(d.y);
                     });
 
                 correlationLine
-                    .datum(currentPlt.points)
+                    .datum(points)
                     .attr('d', line);
 
                 graph.select(".x.axis")
@@ -1523,6 +1573,7 @@ function main () {
                 brushended(d);
             });
 
+        console.log("Updating yo.");
         /******** HELPER FUNCTIONS *******/
         function cross (a, b) {
             var c = [],
@@ -1535,8 +1586,7 @@ function main () {
                         x: a[i],
                         i: i,
                         y: b[j],
-                        j: j,
-                        points: getPoints(a[i],i,b[j],j)
+                        j: j
                     });
                 }
             }
@@ -1544,6 +1594,7 @@ function main () {
         }
 
         function plot (plt, thisplt) {
+            console.log("UPDATING !");
             var that = this,
                 cell = d3.select(thisplt);
             cell.select("rect").attr("fill", function (d) {
@@ -1558,8 +1609,9 @@ function main () {
                         return x(d.x);
                     }).y(function (d) {
                         return y(d.y);
-                    });
-                var cleanedData = cleanData(plt);
+                    }),
+                    points = getPoints(plt),
+                    cleanedData = cleanData(plt);
                 cell.select("rect").style("fill",
                     function (d) {
                         var dCorrelation = data.correlations[plt.i][plt.j];
@@ -1591,7 +1643,7 @@ function main () {
                 circles.exit().remove();
 
                 cell.select('.correlation-line')
-                    .datum(plt.points)
+                    .datum(points)
                     .attr('d', line);
             }
         }
@@ -1606,7 +1658,7 @@ function main () {
                 if ((brushCell !== thisplt) || _update) {
                     x.domain(data.domains[plt.x]);
                     y.domain(data.domains[plt.y]);
-                    splomFocusPlot.plot(thisplt, plt);
+                    splomFocusPlot.plot(thisplt, plt, getPoints(plt));
                     brushCell = thisplt;
                     brushCellPlt = plt;
                     brushCellData = cleanData(plt);
@@ -1671,51 +1723,7 @@ function main () {
             return tmp;
         }
 
-        function getPoints (x, i, y, j) {
-            var limX = data.domains[x],
-                limY = data.domains[y],
-                corr = data.correlations[i][j];
-
-            var x0 = limX[0],
-                x1 = limX[1],
-                y0 = corr.intercept + (x0 * corr.slope),
-                y1 = corr.intercept + (x1 * corr.slope);
-
-            // if y0 falls bellow the range of Y
-            if (y0 < limY[0]) {
-                y0 = limY[0];
-                x0 = (y0 - corr.intercept)/corr.slope;
-            }
-
-            // if y0 falls above the range of Y
-            if (y0 > limY[1]) {
-                y0 = limY[1];
-                x0 = (y0 - corr.intercept)/corr.slope;
-            }
-
-            // if y1 falls bellow the range of Y
-            if (y1 < limY[0]) {
-                y1 = limY[0];
-                x1 = (y1 - corr.intercept)/corr.slope;
-            }
-
-            // if y1 falls bellow the range of Y
-            if (y1 > limY[1]) {
-                y1 = limY[1];
-                x1 = (y1 - corr.intercept)/corr.slope;
-            }
-
-
-            var points = [{
-                x: x0,
-                y: y0
-            }, {
-                x: x1,
-                y: y1
-            }];
-            return points;
-        }
-
+        
         var tip = d3.tip()
             .attr('class', 'd3-tip')
             .direction('w')
@@ -1776,10 +1784,9 @@ function main () {
 
         $(".unused").remove();
 
-        svg.selectAll(".cell").on("mouseover", function () {
-                var bound_cell_data = d3.select(this).data()[0];
-                var cell_data = data.correlations[bound_cell_data.i][bound_cell_data.j];
-                tip.show(cell_data);
+        svg.selectAll(".cell").on("mouseover", function (d) {
+                tip.show(data.correlations[d.i][d.j]);
+                console.log(d.points[0],d.points[1]);
             })
             .on("mouseout", tip.hide);
 
@@ -2387,7 +2394,7 @@ function main () {
                     return "label label-default label-chains p" + d.id + " c" + (cluster ? cluster : d.cluster);
                 })
                 .html(function (d) {
-                    return d.chain  + (d.mutant ? "<sup>M</sup>" : "");
+                    return d.chain +  + (d.mutant ? "<sup>M</sup>" : "");
                 })
                 .on('click', function (d) {
                     d3.select(this)
