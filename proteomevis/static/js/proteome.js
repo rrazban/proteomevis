@@ -1126,7 +1126,6 @@ function main () {
         });
         $("#toggleMutant").change(function () {
             ss.mutants = $(this).prop('checked');
-            console.log(ss.mutants);
             $(eventHandler).trigger("speciesChanged");
         });
         $(".typeLimitsInput").on("enterKey", function () {
@@ -1573,7 +1572,6 @@ function main () {
                 brushended(d);
             });
 
-        console.log("Updating yo.");
         /******** HELPER FUNCTIONS *******/
         function cross (a, b) {
             var c = [],
@@ -1594,7 +1592,6 @@ function main () {
         }
 
         function plot (plt, thisplt) {
-            console.log("UPDATING !");
             var that = this,
                 cell = d3.select(thisplt);
             cell.select("rect").attr("fill", function (d) {
@@ -1786,7 +1783,6 @@ function main () {
 
         svg.selectAll(".cell").on("mouseover", function (d) {
                 tip.show(data.correlations[d.i][d.j]);
-                console.log(d.points[0],d.points[1]);
             })
             .on("mouseout", tip.hide);
 
@@ -2255,7 +2251,6 @@ function main () {
                     $("#mlDataexport").html("Download options - selected cluster");
                     d3.select("#mb-tab-corr").attr("class","disabled");
                     $("#dataExport_triggeredby").val(_cluster.id);
-                    console.log('TO: add cluster detail to modal form header');
                 });
 
             // the collapse part
@@ -2426,7 +2421,6 @@ function main () {
         }
 
         function mediaHeading (sDomain, sFunction) {
-            console.log(sDomain);
             var tmp = "<h4>";
             tmp +=
                 "<a href='http://www.rcsb.org/pdb/explore/explore.do?structureId=";
