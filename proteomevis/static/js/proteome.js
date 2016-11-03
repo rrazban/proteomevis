@@ -479,6 +479,7 @@ function main () {
             })
             .done(function (_data) {
                 data = _data;
+                ss.species = _data.species;
                 _callback();
                 loaded = true;
             });
@@ -1117,8 +1118,8 @@ function main () {
             txtSIDf = document.getElementById("SIDf"),
             speciesBtn = d3.selectAll("[name=speciesBtn]");
         speciesBtn.on("click", function () {
-            if (int(this.value) !== ss.species.id) {
-                ss.species.id = int(this.value);
+            if (parseInt(this.value) !== ss.species.id) {
+                ss.species.id = parseInt(this.value);
                 speciesBtn.classed("active", false);
                 d3.select(this).classed("active", true);
                 $(eventHandler).trigger("speciesChanged");
@@ -1126,6 +1127,7 @@ function main () {
         });
         $("#toggleMutant").change(function () {
             ss.mutants = $(this).prop('checked');
+            console.log(ss.mutants);
             $(eventHandler).trigger("speciesChanged");
         });
         $(".typeLimitsInput").on("enterKey", function () {
@@ -2355,12 +2357,12 @@ function main () {
 
             if (ss.species.has_localization) {
                 mediaBody.append("div").html("localization: " +
-                    ((oDomain.localizations.length) ?
-                        oDomain.localizations.reduce(
+                    ((oDomain.localizations.length) ? oDomain.localizations.reduce(
                             function (a, b) {
                                 return a + ', ' + b;
                             }) : " - "));
-            }
+            };
+
             mediaBody.append("div").html(createGeneLinks(
                 oDomain.uniprot, oDomain.domain));
 
@@ -2389,7 +2391,7 @@ function main () {
                     return "label label-default label-chains p" + d.id + " c" + (cluster ? cluster : d.cluster);
                 })
                 .html(function (d) {
-                    return d.chain +  + (d.mutant ? "<sup>M</sup>" : "");
+                    return d.chain + (d.mutant ? "<sup>M</sup>" : "");
                 })
                 .on('click', function (d) {
                     d3.select(this)
@@ -2748,7 +2750,7 @@ function main () {
         }
 
         function formatRequest(source, target) {
-            return 'fetch_edge?ss.species=' + ss.species.id + '&source=' +
+            return 'fetch_edge?species=' + ss.species.id + '&source=' +
                 source + "&target=" + target;
         }
 
