@@ -76,7 +76,6 @@ def export_edges(request):
         else:
             filename = "proteomevis/static/data_download/ALL_EDGES."+str(species)+".csv"
             filepath = os.path.basename(filename)
-            print "CURRENT WORKING DIRECTORY", os.getcwd(), filepath
             chunk_size = 8192
             response = StreamingHttpResponse(FileWrapper(open(filename), chunk_size),content_type='text/csv')
             response['Content-Length'] = os.path.getsize(filename)    
@@ -154,7 +153,6 @@ def fetch_edges(request):
             chains = Chain.objects.filter(species=species,mutant=0)
             edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf,mutant=0)
         edges = [(edge.targetID,edge.sourceID,edge.__dict__) for edge in edges]
-        print edges
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
 
         if len(list(edges)) > 15000:
@@ -205,7 +203,6 @@ def fetch_edges(request):
         species = Species.objects.get(id=species).toDict()
 
         data = {'species':species,'zero':-5,'columns':columns,'correlations':correlations,'domains':limits,'nodes':[node[1] for node in nodes],'edges':links,'clusters':clusters,'cluster_frequencies':cluster_frequencies}
-        # print data
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),
             content_type="application/json"
