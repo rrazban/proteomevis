@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .FetchEdges import *
 from django.template import loader, Context
 from django.core.cache import cache
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from wsgiref.util import FileWrapper
 
 @csrf_exempt
@@ -21,7 +21,7 @@ def export_nodes(request):
         TMf = data['TMf']
         SIDi = data['SIDi']
         SIDf = data['SIDf']
-        species = data['species'].toUpper()
+        species = data['species'].upper()
 
         log_values = ['evorate','abundance','dN','dS']
         log_decimals = dict(evorate=3,abundance=0,dN=3,dS=3)
