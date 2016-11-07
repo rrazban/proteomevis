@@ -8,7 +8,6 @@ class Chain(models.Model):
     chain = models.CharField(max_length=2)
     length = models.IntegerField(blank=True,null=True)
     abundance = models.FloatField(blank=True,null=True)
-    abundance_unlogged = models.FloatField(blank=True,null=True)
     evorate = models.FloatField(blank=True,null=True)
     conden = models.FloatField(blank=True,null=True)
     dostox = models.FloatField(blank=True,null=True)
@@ -23,13 +22,13 @@ class Chain(models.Model):
         return self.pdb
 
     def keys(self):
-        return ["chain_id","ppi","species","pdb","domain","chain","length","abundance","abundance_unlogged","evorate","conden","dostox","dN","dS","mutant"]
+        return ["chain_id","ppi","species","pdb","domain","chain","length","abundance","evorate","conden","dostox","dN","dS","mutant"]
 
     def stat_attr(self):
-        return ["length","abundance","abundance_unlogged","evorate","conden","dostox","dN","dS","weighted_degree",'degree','ppi_degree',"mutant"]
+        return ["length","abundance","evorate","conden","dostox","dN","dS","weighted_degree",'degree','ppi_degree',"mutant"]
 
     def node(self):
-        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"abundance_unlogged":self.abundance_unlogged,"evorate":self.evorate,"conden":self.conden,"dostox":self.dostox,"dN":self.dN,"dS":self.dS,'ppi':self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0,"mutant":self.mutant})
+        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostox":self.dostox,"dN":self.dN,"dS":self.dS,'ppi':self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0,"mutant":self.mutant})
         # return dict(id=self.chain_id,species=self.species,pdb=self.pdb,domain=self.domain,chain=self.chain,length=self.length,abundance=self.abundance,evorate=self.evorate,conden=self.conden,dostox=self.dostox,dN=self.dN,dS=self.dS)
 
 class DomainLocalization(models.Model):
