@@ -76,12 +76,15 @@
             return attributes.map(function (d) { return d.name; })
         };
 
+        this.categorical = function (_isCat) {
+            return attributes.filter(function (d) { return d.cat == _isCat; }).map(function (d) { return d.name; })
+        };
+
         this.inactive = function () {
-            return attributes.filter(function (d) { return d.order == null; }).map(function (d) { return d.name; })
+            return attributes.filter(function (d) { return (d.order == null) && (!(d.cat)); }).map(function (d) { return d.name; })
         };
         this.active = function () {
-            var current_attributes = attributes.filter(function (d) { return d.order !== null; });
-
+            var current_attributes = attributes.filter(function (d) { return (d.order !== null) && (!(d.cat)); });
             var attrArr = d3.range(current_attributes.length);
 
             current_attributes.forEach(function (d) {
