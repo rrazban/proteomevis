@@ -234,7 +234,6 @@ function main () {
         link_tooltip.style("left", "10px").style("top", $('#forceLayoutDiv').position().top + "px");
         $("#individual_list").height($("#view").height() - 90);
         function updateVises () {
-            console.log(data.species.has_mutant_data);
             d3.select("#mutantToggleDiv").style("display",data.species.has_mutant_data ? null : "none");
             splomVis.updateVis();
             forceVis.updateVis();
@@ -454,6 +453,7 @@ function main () {
                 attribute.order = +attribute.order;
                 attribute.decimal = +attribute.decimal;
                 attribute.log = +attribute.log;
+                attribute.cat = (+attribute.cat == 1);
             });
             attributes = new AttributesManager(_attributes);
             makeRequest(function () { waitDataLoadInitial(0); });
@@ -1128,7 +1128,6 @@ function main () {
         });
         $("#toggleMutant").change(function () {
             ss.mutants = $(this).prop('checked');
-            console.log(ss.mutants);
             $(eventHandler).trigger("speciesChanged");
         });
         $(".typeLimitsInput").on("enterKey", function () {
