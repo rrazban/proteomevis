@@ -234,7 +234,8 @@ function main () {
         link_tooltip.style("left", "10px").style("top", $('#forceLayoutDiv').position().top + "px");
         $("#individual_list").height($("#view").height() - 90);
         function updateVises () {
-            d3.select(".toggle.btn").style("display",data.species_has_mutant_data ? null : "none");
+            console.log(data.species.has_mutant_data);
+            d3.select("#mutantToggleDiv").style("display",data.species.has_mutant_data ? null : "none");
             splomVis.updateVis();
             forceVis.updateVis();
             nodeColorVis.update();
