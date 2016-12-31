@@ -51,7 +51,6 @@ def computeCorrelations(nodes,selected_columns):
 	return resultsArray, limits, columnDict
 
 def updateDegrees(deg,ppideg,nodes,ID2i):
-	# query = []
 	for e in deg:
 		nodes[ID2i[e]][1]['degree'] = deg[e]
 		nodes[ID2i[e]][1]['ppi_degree'] = ppideg[e]

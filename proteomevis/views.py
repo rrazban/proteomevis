@@ -99,6 +99,7 @@ def export_splom(request):
         correlation_option = data['correlationoptions']
 
         columns = data['columns']
+        print columns
 
         column_indices = [column_order.index(col) for col in columns]
 

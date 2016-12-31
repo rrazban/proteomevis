@@ -1409,12 +1409,12 @@ function main () {
 
                 var c = data.correlations[currentPlt.i][currentPlt.j];
 
-                pvalue.text(c.p_value);
+                pvalue.text(c.p_value.toExponential(2));
                 rvalue.text(c.r_value);
                 regression.text(c.slope + "x + " + c.intercept);
                 std_err.text(c.std_err);
                 rho_SP.text(formatFloat(c.rho_SP,3));
-                pvalue_SP.text(formatFloat(c.p_value_SP,3));
+                pvalue_SP.text(c.p_value_SP.toExponential(2));
 
                 plotData = d3.select(currentThisPlt)
                     .selectAll("circle").data();
