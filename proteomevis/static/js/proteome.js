@@ -7,7 +7,7 @@ var nodes, links;
 CONTROLLER
 ***********************************
 **********************************/
-function main () {
+function start_vis (STATIC_URL) {
     // variables
     // our event handler. will be passed to every visualization on initilization
     function formatFloat (n, _d) {
@@ -172,7 +172,7 @@ function main () {
             return d.slice(0, -1) + d.slice(-1).toUpperCase();
         },
         chainImage = function (d) {
-            return "<img class='media-object' src ='../static/img/" + d[
+            return "<img class='media-object' src ='"+STATIC_URL+"img/" + d[
                     0] + '/' + d[1] + '/' + chainName(d) + ".png'>";
         },
         setPanelSizes = function () {
@@ -447,7 +447,7 @@ function main () {
     }
 
     function setAttributes () {
-        d3.csv("../static/attributes/attributes.csv", function (_attributes) {
+        d3.csv(STATIC_URL+"attributes/attributes.csv", function (_attributes) {
             _attributes.forEach(function (attribute) {
                 attribute.magnitude = +attribute.magnitude;
                 attribute.order = +attribute.order;
@@ -605,7 +605,7 @@ function main () {
                         .attr("height",height)
                         .attr("transform", "translate(" + (margin.left * 2) + "," + margin.top +")")
                         .attr("preserveAspectRatio", "none")
-                        .attr("xlink:href", "../static/img/species." + ss.species.id + ".png");
+                        .attr("xlink:href", STATIC_URL+"img/species." + ss.species.id + ".png");
             var graph = svg
                         .append("g")
                         .attr("transform", "translate(" +margin.left + "," + margin.top + ")");
@@ -668,7 +668,7 @@ function main () {
             };
 
             this.updateImage = function () {
-                background.attr("xlink:href", "../static/img/species." + ss.species.id + ".png");
+                background.attr("xlink:href", STATIC_URL+"img/species." + ss.species.id + ".png");
             };
 
             setHeight();
@@ -2439,9 +2439,9 @@ function main () {
 
             if (sChain) {
                 sDom = sDom.toLowerCase();
-                return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + sChain + ".png";
+                return STATIC_URL+"img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + sChain + ".png";
             }
-            return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + ".png";
+            return STATIC_URL+"/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + ".png";
         }
 
         this.clear = function (_list) {
@@ -2895,5 +2895,3 @@ function main () {
         }
     };
 }
-
-main();
