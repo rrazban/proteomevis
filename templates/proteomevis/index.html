@@ -280,7 +280,9 @@
     
     <script src="{% static "js/attributesmanager.js" %}"></script>
     <script src="{% static "js/proteome.js" %}"></script>
+    <script src="{% static "js/right-click.js" %}"></script>
     <script src="{% static "js/colorbar.js" %}"></script>
+    <script src="{% static "js/tmsid.js" %}"></script>
     <script>
       $(function () {
         $(".source, .target").sortable({
@@ -293,8 +295,6 @@
       $(function() {
         $('#toggleMutant').bootstrapToggle();
       });
-      start_vis("{% static "" %}");
-
     </script>
 
 </body>
