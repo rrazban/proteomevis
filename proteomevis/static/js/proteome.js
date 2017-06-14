@@ -1182,7 +1182,7 @@ function main () {
             .attr('class','text-subtitle')
             .style("fill", "white");
 
-        var editButton = splomBar.append("span")
+/*        var editButton = splomBar.append("span")
             .append("button")
             .attr("id", 'editAttributesButton')
             .attr("type", "button")
@@ -1192,7 +1192,7 @@ function main () {
             .on('click', function () {
                 $(eventHandler).trigger("openModal");
             })
-            .html("<span class='glyphicon glyphicon-edit'></span>");
+            .html("<span class='glyphicon glyphicon-edit'></span>");*/ //feature not implemented
     };
 
 
