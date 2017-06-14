@@ -1175,17 +1175,17 @@ function main () {
             .attr('height', height.bar + margin.top + margin.bottom + height.text)
             .append('g')
             .attr('transform', 'translate('+margin.left+','+margin.top+')');
-
-
-            splomBar.select("svg.colorbar")
+       	}
+	setHeight();
+	gColorbar.call(colorbar);
+     splomBar.select("svg.colorbar")
             .append('text')
             .attr("transform", "translate(" + (margin.left +5)+ "," + ((height.bar + margin.top)/2) + ")")
             .text("P-VALUE")
             .attr('class','text-subtitle')
             .style("fill", "white");
-	}
-	setHeight();
-	gColorbar.call(colorbar);
+
+
 	this.setHeight = function () {
                 setHeight();
 		gColorbar.call(colorbar);
