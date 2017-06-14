@@ -1069,7 +1069,8 @@ function main () {
         legendLabels.select("path.domain").style("display",'none');
 
         var suffix = parentElement.append('div')
-            .style("display","inline")
+            .style("float","right")
+			.style("font-size", "12px")
             .attr("id",'color-scale-suffix');
 
         /* triggered when the domain or the data selected changes */
