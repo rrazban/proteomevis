@@ -1564,21 +1564,21 @@ function main () {
             });
 
 
-		function setHeight_one () {
-  		    _height=$(_parentElement).height() - 40;
-            _width=$(_parentElement).width();
-            margin = {inside: 5, outside: 15};
-            dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
-            pltsize = (dim / (num_splot + 1)) - margin.inside;
+	function setHeight_one () {
+  	   _height=$(_parentElement).height() - 40;
+           _width=$(_parentElement).width();
+           margin = {inside: 5, outside: 15};
+	   dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
+	   pltsize = (dim / (num_splot + 1)) - margin.inside;
 
-			x.range([0, pltsize]);
-			y.range([pltsize, 0]);
+	   x.range([0, pltsize]);
+	   y.range([pltsize, 0]);
 
-			brush.x(x);
-			brush.y(y);
-		}
+	   brush.x(x);
+	   brush.y(y);
+	}
         
-		setHeight_one();
+	setHeight_one();
 
         /******** HELPER FUNCTIONS *******/
         function cross (a, b) {
@@ -1783,46 +1783,45 @@ function main () {
             .on("mouseout", tip.hide);
 
     
-		function setHeight_two () {
-  		    _height=$(_parentElement).height() - 40;
+	function setHeight_two () {
+  	    _height=$(_parentElement).height() - 40;
             _width=$(_parentElement).width();
             margin = {inside: 5, outside: 15};
             dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
             pltsize = (dim / (num_splot + 1)) - margin.inside;
 
-//			console.log(pltsize);
+	    scale=pltsize/old_pltsize
+			console.log(pltsize);
 
             svg.attr("width", _width)
-            .attr("height", _height)
-            .append("g").attr('transform', 'translate(' + margin.outside + ',' + margin.outside + ')');	
+               .attr("height", _height)
+               .append("g").attr('transform', 'translate(' + margin.outside + ',' + margin.outside + ')');	
 
-			cells.attr("transform", function (d) {
-                return "translate(" + (num_splot - d.i - 1) * (pltsize + margin.inside) + "," + d.j * (pltsize + margin.inside) + ")";
-            });
+	    cells.attr("transform", function (d) {
+                return "matrix(" +scale+','+0+','+0+','+scale+','+ (num_splot - d.i - 1) * (pltsize + margin.inside) + "," + d.j * (pltsize + margin.inside) + ")"});
 					//selecting class messes things up
-
-			cells.select(".splom-box").attr("height", pltsize).attr("width", pltsize)
-				 .attr("class", function (d) { return d.i > d.j ? "rect-subgraph" : "rect-diagonal"; });
-			cells.select(".splom-subgraph-text").attr("y", pltsize / 2);
-			cells.select(".splom-pvalue").attr("x", pltsize - 45);
-
-            };
-		setHeight_two();
+	    cells.select(".splom-box")
+		 .attr("height", pltsize)
+		 .attr("width", pltsize)
+	 	 .attr("class", function (d) { return d.i > d.j ? "rect-subgraph" : "rect-diagonal"; });	//only controls outside box
+	    cells.select(".splom-subgraph-text").attr("y", pltsize / 2);
+	    cells.select(".splom-pvalue").attr("x", pltsize - 45);
+	};
+	_height=$(_parentElement).height() - 40;
+        _width=$(_parentElement).width();
+        margin = {inside: 5, outside: 15};
+        dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
+        old_pltsize = (dim / (num_splot + 1)) - margin.inside;
+	setHeight_two();
 
 // the big version of the scatterplot
-//		console.log(dim);
         splomFocusPlot = new SplomFocusPlot("#splom", dim, pltsize);	//resizing big splom tricky if passing variables
         splomFocusPlot.displayCell(false);
 
-
-
-
         this.setHeight = function () {
             setHeight_one();	//maybe important once splom matrix change positions?
-			setHeight_two();
+	    setHeight_two();
         };
-
-
 
         var brushCellPlt;
         this.updateVis = function () {
@@ -1834,8 +1833,6 @@ function main () {
             }
             splomFocusPlot.plot();
         };
-
-
 
         var buttonGroup = parentElement.append("div")
             .attr('class', 'form-group pull-right');
