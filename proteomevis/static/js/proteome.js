@@ -1330,8 +1330,6 @@ function main () {
             .attr("y",text.size*6.75+constant_y)
             .text("best-fit");
 
-
-
         var pvalue = detail_values.append("text")
             .attr("x",text.position-50)
             .attr("y",text.size*5+constant_y)
@@ -1339,7 +1337,6 @@ function main () {
         var pvalue_SP = detail_values.append("text")
             .attr("x",text.position + 20)
             .attr("y",text.size*5+constant_y)
-
 
         var rvalue = detail_values.append("text")
             .attr("x",text.position-50)
@@ -1460,7 +1457,11 @@ function main () {
                     .attr('d', line);
 
                 graph.select(".x.axis")
-                    .call(xAxis);
+                    .call(xAxis)
+					.selectAll("text")
+					.attr("transform", "rotate(-45)")
+					.attr("dx", "-15px")
+					.attr("dy", "0px");
                 graph.select(".y.axis")
                     .call(yAxis);
             }
