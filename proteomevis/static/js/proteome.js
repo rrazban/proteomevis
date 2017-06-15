@@ -1157,7 +1157,7 @@ function main () {
     SplomBar = function (_parentElement) {
         var splomBar = d3.select(_parentElement).select("#splom-bar"), 
 	         colorbar = new Colorbar();
-	var gColorbar = splomBar.append("svg");
+		var gColorbar = splomBar.append("svg");
 
         var  _button = 40;
         var margin = { left: 10, right: 20, top: 7.5, bottom: 7.5};
@@ -1165,30 +1165,29 @@ function main () {
 
         function setHeight () {
             _width = $(_parentElement).width();
-	    width = { bar: _width - _button - margin.left - margin.right, button: _button },
-
-	    colorbar.scale(splom_color)
+		    width = { bar: _width - _button - margin.left - margin.right, 
+					button: _button };
+		    colorbar.scale(splom_color)
                     .thickness(height.bar)
                     .barlength(width.bar)
                     .orient("horizontal");
-	    gColorbar.attr('width', width.bar + margin.left + margin.right)
-            .attr('height', height.bar + margin.top + margin.bottom + height.text)
-            .append('g')
-            .attr('transform', 'translate('+margin.left+','+margin.top+')');
+		    gColorbar.attr('width', width.bar + margin.left + margin.right)
+        		     .attr('height', height.bar + margin.top + margin.bottom + height.text)
+ 		             .append('g')
+      		         .attr('transform', 'translate('+margin.left+','+margin.top+')');
+			gColorbar.call(colorbar);
        	}
-	setHeight();
-	gColorbar.call(colorbar);
-     splomBar.select("svg.colorbar")
-            .append('text')
-            .attr("transform", "translate(" + (margin.left +5)+ "," + ((height.bar + margin.top)/2) + ")")
-            .text("P-VALUE")
-            .attr('class','text-subtitle')
-            .style("fill", "white");
+		setHeight();
+    	splomBar.select("svg.colorbar")
+        	    .append('text')
+           		.attr("transform", "translate(" + (margin.left +5)+ "," + ((height.bar + margin.top)/2) + ")")
+         	    .text("P-VALUE")
+      	        .attr('class','text-subtitle')
+        	    .style("fill", "white");
 
-
-	this.setHeight = function () {
+		this.setHeight = function () {
                 setHeight();
-		gColorbar.call(colorbar);
+				gColorbar.call(colorbar);	//calling twice ensures cbar aligns properly
             };
 
 /*        var editButton = splomBar.append("span")
