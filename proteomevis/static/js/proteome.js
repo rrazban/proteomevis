@@ -1302,72 +1302,60 @@ function main () {
         var detail_labels = details.append("g").attr('class',"detail-labels");
         var detail_values = details.append("g").attr('class',"detail-values");
 
+		var constant_y = 10;
         detail_labels.append("text")
-            .attr("x",text.position*1.5)
+            .attr("x",text.position)
+            .attr("y",text.size*2.5+constant_y)
             .attr("class","text-subtitle")
-            .text("LINREGRESS");
+            .text("PEARSON");
 
         detail_labels.append("text")
-            .attr("x",text.position)
-            .attr("y",text.size*1.25)
-            .text("p-value");
-
-        detail_labels.append("text")
-            .attr("x",text.position)
-            .attr("y",text.size*2.5)
-            .text("r-value");
-
-        detail_labels.append("text")
-            .attr("x",text.position)
-            .attr("y",text.size*3.75)
-            .text("regression");
-
-        detail_labels.append("text")
-            .attr("x",text.position)
-            .attr("y",text.size*5)
-            .text("standard error");
-
-        detail_labels.append("text")
-            .attr("x",text.position*1.5)
-            .attr("y",text.size*6.25)
+            .attr("x",text.position+75)
+            .attr("y",text.size*2.5+constant_y)
             .attr("class","text-subtitle")
             .text("SPEARMAN");
 
         detail_labels.append("text")
-            .attr("x",text.position)
-            .attr("y",text.size*7.5)
+            .attr("x",text.position-60)
+            .attr("y",text.size*5+constant_y)
             .text("p-value");
 
         detail_labels.append("text")
-            .attr("x",text.position)
-            .attr("y",text.size*8.75)
-            .text("rho");
+            .attr("x",text.position-60)
+            .attr("y",text.size*3.75+constant_y)
+            .text("cor coef");
+
+        detail_labels.append("text")
+            .attr("x",text.position-60)
+            .attr("y",text.size*6.75+constant_y)
+            .text("best-fit");
+
+
 
         var pvalue = detail_values.append("text")
-            .attr("x",text.position + 10)
-            .attr("y",text.size*1.25);
-
-        var rvalue = detail_values.append("text")
-            .attr("x",text.position + 10)
-            .attr("y",text.size*2.5);
-
-
-        var regression = detail_values.append("text")
-            .attr("x",text.position + 10)
-            .attr("y",text.size*3.75);
-
-
-        var std_err = detail_values.append("text")
-            .attr("x",text.position + 10)
-            .attr("y",text.size*5);
+            .attr("x",text.position-50)
+            .attr("y",text.size*5+constant_y)
 
         var pvalue_SP = detail_values.append("text")
-            .attr("x",text.position + 10)
-            .attr("y",text.size*7.5);
+            .attr("x",text.position + 20)
+            .attr("y",text.size*5+constant_y)
+
+
+        var rvalue = detail_values.append("text")
+            .attr("x",text.position-50)
+            .attr("y",text.size*3.75+constant_y)
 
         var rho_SP = detail_values.append("text")
+            .attr("x",text.position+20)
+            .attr("y",text.size*3.75+constant_y)
+
+        var regression = detail_values.append("text")
+            .attr("x",text.position-50)
+            .attr("y",text.size*6.75+constant_y)
+
+/*        var std_err = detail_values.append("text")
             .attr("x",text.position + 10)
-            .attr("y",text.size*8.75);
+            .attr("y",text.size*5);*/
 
         var graph = d3.select(_parentElement).select("svg")
             .append('g')
@@ -1422,7 +1410,7 @@ function main () {
                 pvalue.text(c.p_value.toExponential(2));
                 rvalue.text(c.r_value);
                 regression.text(c.slope + "x + " + c.intercept);
-                std_err.text(c.std_err);
+             //   std_err.text(c.std_err);
                 rho_SP.text(formatFloat(c.rho_SP,3));
                 pvalue_SP.text(c.p_value_SP.toExponential(2));
 

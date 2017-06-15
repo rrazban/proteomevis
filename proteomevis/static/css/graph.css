@@ -106,7 +106,7 @@ a:focus, a:hover {
   text-align: right;
 }
 .detail-values, .detail-values > text{
-  font-family: "Andale Mono", AndaleMono, monospace;
+/*  font-family: "Andale Mono", AndaleMono, monospace;*/
 }
 .averageline {
   stroke: red;
