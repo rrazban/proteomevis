@@ -177,7 +177,7 @@ function main () {
         },
         setPanelSizes = function () {
             // column 1
-            doc.height = window.innerHeight - toolbarPadding - padding;
+            doc.height = window.innerHeight - toolbarPadding - padding-5;	//added 5 adhoc
             doc.width = window.innerWidth - 2 * padding;
             var col1 = 0.3 * doc.width,
                 col2 = 0.4 * doc.width,
