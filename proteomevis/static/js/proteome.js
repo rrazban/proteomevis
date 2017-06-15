@@ -444,6 +444,7 @@ function main () {
             typeVis.setHeight();
             forceVis.setHeight();
             splomBar.setHeight();
+			splomVis.setHeight();
         });
     }
 
@@ -1302,8 +1303,8 @@ function main () {
         var detail_values = details.append("g").attr('class',"detail-values");
 
 		var constant_y = 10;
-        detail_labels.append("text")
-            .attr("x",text.position)
+        detail_labels.append("text")	//maybe align based on bottom margin, no problems with sploms expanding into
+            .attr("x",text.position)	//need to transform either way
             .attr("y",text.size*2.5+constant_y)
             .attr("class","text-subtitle")
             .text("PEARSON");
@@ -1536,32 +1537,22 @@ function main () {
     SPLOM
     ***********************************
     **********************************/
-    SplomVis = function (_parentElement, _newData) {
+    SplomVis = function (_parentElement, _newData) {	
 
         var parentElement = d3.select(_parentElement).select("#splom"),
-            _height=$(_parentElement).height() - 40,
-            _width=$(_parentElement).width(),
             filter = null,
             that = this,
-            margin = {
-                inside: 5,
-                outside: 15
-            },
-            dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
             brushCell = null,
-            num_splot = attributes.active().length,
-            pltsize = (dim / (num_splot + 1)) - margin.inside;
+            num_splot = attributes.active().length;
 
         parentElement.html('');
 
-        var x = d3.scale.linear().range([0, pltsize]).domain([0, 1]),
-            y = d3.scale.linear().range([pltsize, 0]).domain([0, 1]);
+        var x = d3.scale.linear().domain([0, 1]),
+            y = d3.scale.linear().domain([0, 1]);
 
       // setting up the brush that can be called on any of the scatterplots
         // keeps track of what scatter plot it is/was on
         var brush = d3.svg.brush()
-            .x(x)
-            .y(y)
             .on("brushstart", function (d) {
                 brushstarted(d, this, false);
             })
@@ -1571,6 +1562,23 @@ function main () {
             .on("brushend", function (d) {
                 brushended(d);
             });
+
+
+		function setHeight_one () {
+  		    _height=$(_parentElement).height() - 40;
+            _width=$(_parentElement).width();
+            margin = {inside: 5, outside: 15};
+            dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
+            pltsize = (dim / (num_splot + 1)) - margin.inside;
+
+			x.range([0, pltsize]);
+			y.range([pltsize, 0]);
+
+			brush.x(x);
+			brush.y(y);
+		}
+        
+		setHeight_one();
 
         /******** HELPER FUNCTIONS *******/
         function cross (a, b) {
@@ -1594,9 +1602,9 @@ function main () {
         function plot (plt, thisplt) {
             var that = this,
                 cell = d3.select(thisplt);
-            cell.select("rect").attr("fill", function (d) {
-                return (d.i == d.j) ? "none" : "white";
-            });
+	            cell.select("rect").attr("fill", function (d) {
+	                return (d.i == d.j) ? "none" : "white";
+	            });
 
             if (plt.i > plt.j) {
                 x.domain(data.domains[plt.x]);
@@ -1725,7 +1733,7 @@ function main () {
             .attr('class', 'd3-tip')
             .direction('w')
             .offset([0,-10])
-            .html(function (corr) {
+            .html(function (corr) {	//change to splom focus table format
                 return "<table><tr><td class='detail-labels'>p-value </td><td class='detail-values'>" + corr.p_value + "</td></tr>" +
                        "<tr><td class='detail-labels'>r-value </td><td class='detail-values'>" + corr.r_value + "</td></tr>" +
                        "<tr><td class='detail-labels'>regression </td><td class='detail-values'>" + corr.slope + "x + " + corr.intercept + "</td></tr>" +
@@ -1735,16 +1743,11 @@ function main () {
                        "<tr><td class='detail-labels'>rho </td><td class='detail-values'>" + formatFloat(corr.rho_SP,3) + "</td></tr></table>";
             });
 
-        var svg = parentElement.append("svg")
-            .attr("width", _width)
-            .attr("height", _height)
-            .append("g").attr('transform', 'translate(' + margin.outside + ',' + margin.outside + ')');
+        var svg = parentElement.append("svg");
 
         var cells = svg.selectAll(".cell")
             .data(cross(data.columns, data.columns))
-            .enter()
-            .append("g")
-            .attr("class", function (d) {
+            .enter().append("g").attr("class", function (d) {
                 if (d.i == d.j) {
                     return "cell-diagonal";
                 }
@@ -1752,24 +1755,17 @@ function main () {
                     return "cell unused";
                 }
                 return "cell";
-            })
-            .attr("transform", function (d) {
-                return "translate(" + (num_splot - d.i - 1) * (pltsize + margin.inside) + "," + d.j * (pltsize + margin.inside) + ")";
             });
 
-        cells.append('rect').attr("height", pltsize)
-            .attr("width", pltsize)
-            .attr("class", function (d) { return d.i > d.j ? "rect-subgraph" : "rect-diagonal"; });
-
+        cells.append('rect').attr('class', 'splom-box');
+            
         cells.append("text")
             .attr("x", 10)
-            .attr("y", pltsize / 2)
             .attr('class', 'splom-subgraph-text')
             .text(function (d) {
                 return d.i == d.j ? attributes.prettyprint1(data.columns[d.i]) : '';
             });
         cells.append("text")
-            .attr("x", pltsize - 45)
             .attr("y", 14)
             .attr('class', 'splom-pvalue');
         cells.append('path')
@@ -1786,9 +1782,48 @@ function main () {
             })
             .on("mouseout", tip.hide);
 
-        // the big version of the scatterplot
-        splomFocusPlot = new SplomFocusPlot("#splom", dim, pltsize);
+    
+		function setHeight_two () {
+  		    _height=$(_parentElement).height() - 40;
+            _width=$(_parentElement).width();
+            margin = {inside: 5, outside: 15};
+            dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
+            pltsize = (dim / (num_splot + 1)) - margin.inside;
+
+//			console.log(pltsize);
+
+            svg.attr("width", _width)
+            .attr("height", _height)
+            .append("g").attr('transform', 'translate(' + margin.outside + ',' + margin.outside + ')');	
+
+			cells.attr("transform", function (d) {
+                return "translate(" + (num_splot - d.i - 1) * (pltsize + margin.inside) + "," + d.j * (pltsize + margin.inside) + ")";
+            });
+					//selecting class messes things up
+
+			cells.select(".splom-box").attr("height", pltsize).attr("width", pltsize)
+				 .attr("class", function (d) { return d.i > d.j ? "rect-subgraph" : "rect-diagonal"; });
+			cells.select(".splom-subgraph-text").attr("y", pltsize / 2);
+			cells.select(".splom-pvalue").attr("x", pltsize - 45);
+
+            };
+		setHeight_two();
+
+// the big version of the scatterplot
+//		console.log(dim);
+        splomFocusPlot = new SplomFocusPlot("#splom", dim, pltsize);	//resizing big splom tricky if passing variables
         splomFocusPlot.displayCell(false);
+
+
+
+
+        this.setHeight = function () {
+            setHeight_one();	//maybe important once splom matrix change positions?
+			setHeight_two();
+        };
+
+
+
         var brushCellPlt;
         this.updateVis = function () {
             cells.each(function (d) {
