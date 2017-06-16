@@ -1732,15 +1732,11 @@ function main () {
         var tip = d3.tip()
             .attr('class', 'd3-tip')
             .direction('w')
-            .offset([0,-10])
+            .offset([0,-10])	
             .html(function (corr) {	//change to splom focus table format
-                return "<table><tr><td class='detail-labels'>p-value </td><td class='detail-values'>" + corr.p_value + "</td></tr>" +
-                       "<tr><td class='detail-labels'>r-value </td><td class='detail-values'>" + corr.r_value + "</td></tr>" +
-                       "<tr><td class='detail-labels'>regression </td><td class='detail-values'>" + corr.slope + "x + " + corr.intercept + "</td></tr>" +
-                       "<tr><td class='detail-labels'>standard error </td><td class='detail-values'>" + corr.std_err + "</td></tr>" +
-                       "<tr><td colspan=2 class='text-subtitle'>SPEARMAN </td></tr>" +
-                       "<tr><td class='detail-labels'>p-value </td><td class='detail-values'>" + formatFloat(corr.p_value_SP,3) + "</td></tr>" +
-                       "<tr><td class='detail-labels'>rho </td><td class='detail-values'>" + formatFloat(corr.rho_SP,3) + "</td></tr></table>";
+                return "<table style='text-align: center'><tr><td></td><td class='text-subtitle'> PEARSON</td><td class='text-subtitle'>SPEARMAN</tr>" +
+                       "<tr><td class='detail-labels'>cor coef</td><td class='detail-values'>" + formatFloat(corr.r_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.rho_SP,3)+"</td></tr>"+
+                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_SP,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>regression </td><td class='detail-values'>" + corr.slope + "x + " + corr.intercept + "</td></tr></table>";
             });
 
         var svg = parentElement.append("svg");
@@ -1791,7 +1787,6 @@ function main () {
             pltsize = (dim / (num_splot + 1)) - margin.inside;
 
 	    scale=pltsize/old_pltsize
-			console.log(pltsize);
 
             svg.attr("width", _width)
                .attr("height", _height)
