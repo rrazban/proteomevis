@@ -1297,58 +1297,58 @@ function main () {
         var details = d3.select(_parentElement).select("svg")
             .append('g')
             .attr("id",'splomfocusplot-details')
-            .attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize) + ")");
+            .attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize+10) + ")");	//align here
+
 
         var detail_labels = details.append("g").attr('class',"detail-labels");
         var detail_values = details.append("g").attr('class',"detail-values");
 
-		var constant_y = 10;
-        detail_labels.append("text")	//maybe align based on bottom margin, no problems with sploms expanding into
-            .attr("x",text.position)	//need to transform either way
-            .attr("y",text.size*2.5+constant_y)
+        detail_labels.append("text")
+            .attr("x",text.position)
+            .attr("y",text.size*2.5)
             .attr("class","text-subtitle")
             .text("PEARSON");
 
         detail_labels.append("text")
             .attr("x",text.position+75)
-            .attr("y",text.size*2.5+constant_y)
+            .attr("y",text.size*2.5)
             .attr("class","text-subtitle")
             .text("SPEARMAN");
 
         detail_labels.append("text")
             .attr("x",text.position-60)
-            .attr("y",text.size*5+constant_y)
+            .attr("y",text.size*5)
             .text("p-value");
 
         detail_labels.append("text")
             .attr("x",text.position-60)
-            .attr("y",text.size*3.75+constant_y)
+            .attr("y",text.size*3.75)
             .text("cor coef");
 
         detail_labels.append("text")
             .attr("x",text.position-60)
-            .attr("y",text.size*6.75+constant_y)
+            .attr("y",text.size*6.75)
             .text("best-fit");
 
         var pvalue = detail_values.append("text")
             .attr("x",text.position-50)
-            .attr("y",text.size*5+constant_y)
+            .attr("y",text.size*5)
 
         var pvalue_SP = detail_values.append("text")
             .attr("x",text.position + 20)
-            .attr("y",text.size*5+constant_y)
+            .attr("y",text.size*5)
 
         var rvalue = detail_values.append("text")
             .attr("x",text.position-50)
-            .attr("y",text.size*3.75+constant_y)
+            .attr("y",text.size*3.75)
 
         var rho_SP = detail_values.append("text")
             .attr("x",text.position+20)
-            .attr("y",text.size*3.75+constant_y)
+            .attr("y",text.size*3.75)
 
         var regression = detail_values.append("text")
             .attr("x",text.position-50)
-            .attr("y",text.size*6.75+constant_y)
+            .attr("y",text.size*6.75)
 
 /*        var std_err = detail_values.append("text")
             .attr("x",text.position + 10)
@@ -1404,6 +1404,7 @@ function main () {
 
                 var c = data.correlations[currentPlt.i][currentPlt.j];
 
+ 
                 pvalue.text(c.p_value.toExponential(2));
                 rvalue.text(c.r_value);
                 regression.text(c.slope + "x + " + c.intercept);
@@ -1470,6 +1471,10 @@ function main () {
         this.displayCell = function (_bool) {
             graph.attr("display", (_bool ? null : "none"));
         };
+	
+		this.setHeight = function () {
+			details.attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize+10) + ")");
+		};
 
         // this.changeScale = function (_type, _scale) {
         //     var tmpScale;
@@ -1736,7 +1741,7 @@ function main () {
             .html(function (corr) {	//change to splom focus table format
                 return "<table style='text-align: center'><tr><td></td><td class='text-subtitle'> PEARSON</td><td class='text-subtitle'>SPEARMAN</tr>" +
                        "<tr><td class='detail-labels'>cor coef</td><td class='detail-values'>" + formatFloat(corr.r_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.rho_SP,3)+"</td></tr>"+
-                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_SP,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>regression </td><td class='detail-values'>" + corr.slope + "x + " + corr.intercept + "</td></tr></table>";
+                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_SP,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>best-fit </td><td class='detail-values'>" + corr.slope + "x + " + corr.intercept + "</td></tr></table>";
             });
 
         var svg = parentElement.append("svg");
@@ -1781,10 +1786,10 @@ function main () {
     
 	function setHeight_two () {
   	    _height=$(_parentElement).height() - 40;
-            _width=$(_parentElement).width();
-            margin = {inside: 5, outside: 15};
-            dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
-            pltsize = (dim / (num_splot + 1)) - margin.inside;
+        _width=$(_parentElement).width();
+        margin = {inside: 5, outside: 15};
+        dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
+        pltsize = (dim / (num_splot + 1)) - margin.inside;
 
 	    scale=pltsize/old_pltsize
 
@@ -1802,21 +1807,23 @@ function main () {
 	    cells.select(".splom-subgraph-text").attr("y", pltsize / 2);
 	    cells.select(".splom-pvalue").attr("x", pltsize - 45);
 	};
+
 	_height=$(_parentElement).height() - 40;
-        _width=$(_parentElement).width();
-        margin = {inside: 5, outside: 15};
-        dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
-        old_pltsize = (dim / (num_splot + 1)) - margin.inside;
+    _width=$(_parentElement).width();
+    margin = {inside: 5, outside: 15};
+    dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
+    old_pltsize = (dim / (num_splot + 1)) - margin.inside;
 	setHeight_two();
 
 // the big version of the scatterplot
-        splomFocusPlot = new SplomFocusPlot("#splom", dim, pltsize);	//resizing big splom tricky if passing variables
-        splomFocusPlot.displayCell(false);
+    splomFocusPlot = new SplomFocusPlot("#splom", dim, pltsize);	//resizing big splom tricky if passing variables
+	splomFocusPlot.displayCell(false);
 
-        this.setHeight = function () {
-            setHeight_one();	//maybe important once splom matrix change positions?
-	    setHeight_two();
-        };
+	this.setHeight = function () {
+		setHeight_one();	//maybe important once splom matrix change positions?
+		setHeight_two();
+		splomFocusPlot.setHeight();
+	};
 
         var brushCellPlt;
         this.updateVis = function () {
