@@ -441,6 +441,7 @@ function main () {
 
         $(eventHandler).bind("windowResize", function (event) {
             setPanelSizes();
+            $("#individual_list").height($("#view").height() - 90);
             typeVis.setHeight();
             forceVis.setHeight();
             splomBar.setHeight();
