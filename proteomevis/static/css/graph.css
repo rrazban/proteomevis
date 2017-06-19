@@ -222,7 +222,7 @@ circle.big-graph.splom {
 /* ANYTHING TO DO WITH MEDIA ITEMS & PROTEIN SEARCH */
 #individual_list {
   margin-top:5px;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 #cluster_list {
   overflow: scroll;
