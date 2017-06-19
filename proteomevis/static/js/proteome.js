@@ -1490,6 +1490,7 @@ function main () {
 		graph.select(".x.axis").call(xAxis);
 		graph.select(".y.axis").call(yAxis);
 
+            graph.attr("transform","translate(" + pos+ "," + pos + ")");	//necessary for big window resize
         xText.attr("x", width/2);
         yText.attr("x", -height/2);
 		};
@@ -1822,7 +1823,7 @@ function main () {
 		 .attr("height", pltsize)
 		 .attr("width", pltsize)
 	 	 .attr("class", function (d) { return d.i > d.j ? "rect-subgraph" : "rect-diagonal"; });	//only controls outside box
-	    cells.select(".splom-subgraph-text").attr("y", pltsize / 2);
+	    cells.select(".splom-subgraph-text").attr("y", pltsize / (2*scale));
 	    cells.select(".splom-subgraph-text").style("font-size", 100/scale+"%");	//size changes upon resize
 	    cells.select(".splom-pvalue").attr("x", pltsize - 45);
 	};
