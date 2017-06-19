@@ -321,7 +321,11 @@ def query(request):
 
         data = []
         for d in list(tmp):
-            data.append(d.__dict__)
+           R= d.__dict__
+           R['_state']=0        #_state makes sure keys are unique. its value messes up calling in httpresponse
+           if R['invis']==True:
+                data.append(R)
+
 
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),
