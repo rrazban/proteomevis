@@ -1357,6 +1357,7 @@ function main () {
         var graph = d3.select(_parentElement).select("svg")
             .append('g')
             .attr("id",'splomfocusplot')
+            .attr("class",'splomfocusplot')
             .attr("transform","translate(" + pos+ "," + pos + ")");
 
         graph.append("rect")
@@ -1365,11 +1366,12 @@ function main () {
             .attr("x", 0)
             .attr('y', 0)
             .attr("height", height)
-            .attr("width", width);
+            .attr("width", width)
+			.attr("class","splomfocus-rect");
 
         graph.append("g")
-            .attr("class", "x axis")
-            .attr("transform","translate(0," + height + ")");
+            .attr("class", "x axis");
+    //        .attr("transform","translate(0," + height + ")");
 
         graph.append("g")
             .attr("class", "y axis");
@@ -1380,17 +1382,20 @@ function main () {
         var xText = graph
             .append("text")
             .attr("class", "x label")
-            .attr("text-anchor", "end")
-            .attr("x", width)
-            .attr("y",height - 6);
+            .attr("text-anchor", "middle")
+            .attr("x", width/2)
+            .attr("y", -30);
 
         graph.call(brush);
 
         var yText = graph.append("text")
             .attr("class", "y label")
-            .attr("y", margin.top)
-            .attr("x", margin.left)
-            .attr("dy", ".75em");
+            .attr("text-anchor", "middle")
+            .attr("x", -height/2)
+            .attr("y", -40)
+			.attr("transform", "rotate(-90)");
+          //  .attr("x", -margin.left);
+//            .attr("dy", ".75em");
 
         this.plot = function (thisplt, plt) {
 
@@ -1439,7 +1444,7 @@ function main () {
 
                 xAxis = d3.svg.axis()
                     .scale(x)
-                    .orient("bottom");
+                    .orient("top");
 
                 yAxis = d3.svg.axis()
                     .scale(y)
@@ -1461,8 +1466,8 @@ function main () {
                     .call(xAxis)
 					.selectAll("text")
 					.attr("transform", "rotate(-45)")
-					.attr("dx", "-15px")
-					.attr("dy", "0px");
+					.attr("dx", "10px");
+	//				.attr("dy", "-15px");
                 graph.select(".y.axis")
                     .call(yAxis);
             }
@@ -1474,6 +1479,19 @@ function main () {
 	
 		this.setHeight = function (_dim, _pltsize) {
        		details.attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize+10) + ")");	//margin from above not SplomVis var
+
+            pos = d3.max([((_dim + 2*_pltsize)/2),250]),
+            parent = { height: $("#splom").height(), width: $("#splom").width() },
+            height = parent.height - pos - margin.top - margin.bottom,
+            width = parent.width - pos - margin.left - margin.right,
+        x.range([0, width]);
+        y.range([height, 0]);
+
+		graph.select(".x.axis").call(xAxis);
+		graph.select(".y.axis").call(yAxis);
+
+        xText.attr("x", width/2);
+        yText.attr("x", -height/2);
 		};
 
         // this.changeScale = function (_type, _scale) {
@@ -1825,14 +1843,14 @@ function main () {
 		setHeight_one();	//maybe important once splom matrix change positions?
 		setHeight_two();
 
-	  	    _height=$(_parentElement).height() - 40;
-   	   		  _width=$(_parentElement).width();
-   		     margin = {inside: 5, outside: 15};
-	        dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
-	        pltsize = (dim / (num_splot + 1)) - margin.inside;
-
+ 	    _height=$(_parentElement).height() - 40;
+		_width=$(_parentElement).width();
+		margin = {inside: 5, outside: 15};
+	    dim = d3.min([_height - 40, _width]) - 2 * margin.outside;
+	    pltsize = (dim / (num_splot + 1)) - margin.inside;
 
 		splomFocusPlot.setHeight(dim, pltsize);
+		splomFocusPlot.plot();
 	};
 
         var brushCellPlt;
