@@ -486,9 +486,19 @@ function main () {
                 ss.species = _data.species;
                 _callback();
                 loaded = true;
+            })
+            .fail(function(_data){      //RMRx
+               var errorMessage = new ErrorMessage();
+                if (_data['status']==400){
+                        errorMessage.show("You've selected too many edges. Try selecting a smaller area.");
+                }
+                else {
+                        errorMessage.show("The website timed out. Please refresh and try again.");
+                }
             });
 
         setTimeout(function () { jqxhr_data.abort(); }, 6000);
+
     }
 
     function setIDdictionary (_callback) {
