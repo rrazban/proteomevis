@@ -1805,6 +1805,7 @@ function main () {
 		 .attr("width", pltsize)
 	 	 .attr("class", function (d) { return d.i > d.j ? "rect-subgraph" : "rect-diagonal"; });	//only controls outside box
 	    cells.select(".splom-subgraph-text").attr("y", pltsize / 2);
+	    cells.select(".splom-subgraph-text").style("font-size", 100/scale+"%");	//size changes upon resize
 	    cells.select(".splom-pvalue").attr("x", pltsize - 45);
 	};
 
