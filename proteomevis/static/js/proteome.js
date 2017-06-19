@@ -1472,8 +1472,8 @@ function main () {
             graph.attr("display", (_bool ? null : "none"));
         };
 	
-		this.setHeight = function () {
-			details.attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize+10) + ")");
+		this.setHeight = function (_dim, _pltsize) {
+       		details.attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize+10) + ")");	//margin from above not SplomVis var
 		};
 
         // this.changeScale = function (_type, _scale) {
@@ -1820,9 +1820,18 @@ function main () {
 	splomFocusPlot.displayCell(false);
 
 	this.setHeight = function () {
+		//unable to define univerals position variables here and pass them without problems
 		setHeight_one();	//maybe important once splom matrix change positions?
 		setHeight_two();
-		splomFocusPlot.setHeight();
+
+	  	    _height=$(_parentElement).height() - 40;
+   	   		  _width=$(_parentElement).width();
+   		     margin = {inside: 5, outside: 15};
+	        dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
+	        pltsize = (dim / (num_splot + 1)) - margin.inside;
+
+
+		splomFocusPlot.setHeight(dim, pltsize);
 	};
 
         var brushCellPlt;
