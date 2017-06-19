@@ -276,6 +276,7 @@ circle.big-graph.splom {
 }
 .media-body {
   padding-left:10px;
+  min-width:209px;
 }
 .media-list {
   padding-left: 5px;
