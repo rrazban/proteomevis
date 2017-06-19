@@ -14,8 +14,10 @@ from wsgiref.util import FileWrapper
 def export_nodes(request):
     if request.method == 'POST':
         data = cleanRequest(request.POST)
-
-        columns = ['id'] + data['columns']
+	try:
+	        columns = ['id'] + data['columns']
+	except:
+	        columns = ['id'] + [data['columns']]	#handles len(data)==1 case
         node_data = json.loads(data['nodes'])
         TMi = data['TMi']
         TMf = data['TMf']
