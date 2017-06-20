@@ -242,6 +242,7 @@ function main () {
                 clusterScatter.updateVis();
             }
             proteinmediaItem.clear("#cluster_list");
+			index_list_cluster.length=0;		
             calculateState.hide();
         }
 
@@ -376,7 +377,7 @@ function main () {
                 highlighter.removeHoverHighlight();
             });
 
-		index_list_cluster =[];		
+		var index_list_cluster =[];	//edit here	
         $(eventHandler)
             .bind("clusterClicked", function (event, _cluster, _index) {
                 if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {
