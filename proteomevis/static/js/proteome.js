@@ -376,11 +376,15 @@ function main () {
                 highlighter.removeHoverHighlight();
             });
 
+		index_list_cluster =[];		
         $(eventHandler)
             .bind("clusterClicked", function (event, _cluster, _index) {
                 if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {
                     highlighter.highlight(null, _index);
-                    clusterList.addContent(_cluster);
+					if (index_list_cluster.indexOf(_index)==-1){
+						index_list_cluster.push(_index);
+       		             clusterList.addContent(_cluster);
+					}
                 }
             });
 
