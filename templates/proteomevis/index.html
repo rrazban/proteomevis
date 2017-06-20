@@ -51,15 +51,17 @@
         <tr>
             <td>
                 <div class='vis-panel' id='typeVis' style="min-width:303.13px;min-height:158.19px">
-                    Edge filtering<span class='glyphicon glyphicon-question-sign pull-right'></span>
+                    Edge Filtering<span id='helpHover-ef' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Edge Filtering" data-content="Scatter plot of the structure similarity (TM) and sequence identity (SID) for all protein chain pairs for the chosen organism in the Control Strip. Points do NOT represent an individual protein, rather, each point represents the TM and SID of each PAIR of proteins in the data set. TM and SID range for edge formation in the Protein Chain Graph can be set by brushing over points in the graph."></span>
                 </div>
                 <div class='vis-panel' id='pcgVis' style="min-width:303.13px;min-height:281.8px">
-                    PCG<span class='glyphicon glyphicon-question-sign pull-right'></span>
+                    Protein Chain Graph<span id='helpHover-pcg' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="PCG" data-content="Each node is a protein chain with mutant chains colored in red. Green edges denote physical protein-protein interactions. The bar below indicates the number of nodes visualized in black and the number of orphan nodes not visualized in grey. The color fill of each node reflects the property selected in the Control Strip. Clicking on a node will provide addition information about the protein chain in the Protein Inspection panel and will be highlighted in the Scatter Plot Matrix panel."></span>
                 </div>
                 <div class="fixed-tooltip" id='tooltip'></div>
             </td>
             <td>
                 <div class='container vis-panel' id='view' style="min-width:303.13px;min-height:443px">
+                    Protein Inspection<span id='helpHover-pi' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Protein Inspection" data-content="Selected nodes from the Protein Chain Graph can be futher studied in the Individual tab. All clusters and their sizes in the Protein Chain Graph are tabulated in the Clusters tab."></span>
+
                     <ul class="nav nav-tabs" id='viewTabGroup'>
                         <li class="tab active" id='nodeListTab' role="presentation">
                             <a href="#">Individual</a>
@@ -81,8 +83,7 @@
             </td>
             <td>
                 <div class='vis-panel' id='splomVis' style="min-width:399.59px;min-height:443px">
-                    Scatter Plot Matrix<span id='helpHover-splom' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Logarithmic values" data-content="Abundance, evolutionary rate, dN, and dS are all displayed as logarithms (base 10) of their values. 'Zero' values were obtained by approximating 0 as 10E-10."></span>
-
+                    Scatter Plot Matrix<span id='helpHover-splom' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="SPloM" data-content="Plots correspond to pairs of properties for protein chains. Proteins selected in the Inspection Panel are highlighted in color. Clicking on a plot will show it magnified below. Abundance, evolutionary rate, dN, and dS are all displayed as logarithms (base 10) of their values. 'Zero' values were obtained by approximating 0 as 10E-5."></span>
                     <div id='splom-bar'></div>
                     <div id='splom'></div>
                 </div>
