@@ -442,6 +442,9 @@ function main () {
         $(eventHandler).bind("windowResize", function (event) {
             setPanelSizes();
             $("#individual_list").height($("#view").height() - 90);
+//        	var clusterScatter = new ClusterScatter(d3.select("#clusterScatter"), 300, $("#clusterList").width());
+			clusterScatter.setHeight();
+			clusterScatter.updateVis();
             typeVis.setHeight();
             forceVis.setHeight();
             splomBar.setHeight();
@@ -2152,11 +2155,11 @@ function main () {
         var yAxis = d3.svg.axis().scale(y)
             .orient("left");
 
-        var svg = parentElement.append("svg")
+        var svg = parentElement.append("svg").attr("class","cluster_size")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom);
 
-        var graph = svg.append("g").attr("transform", "translate(" +
+        var graph = svg.append("g").attr("class","cluster_placement").attr("transform", "translate(" +
             margin.left + "," + margin.top + ")");
 
         graph.append("g").attr("class", "y axis").attr("transform",
@@ -2164,13 +2167,49 @@ function main () {
 
         graph.append("text")
             .attr("class", "y label")
-            .attr("y", margin.top)
-            .attr("x", margin.left + 10)
-            .attr("transform", 'rotate(90)')
+            .attr("x", -(height+margin.top+margin.bottom)/2)
+      //      .attr("x", margin.left + 10)
+            .attr("transform", 'rotate(-90)')
             .text("cluster size");
+		
+        function setHeight () {
+			_height = 300;
+			_width = $("#clusterList").width();
+            baseHeight = $("#view").height() - $("#viewTabGroup").height() -
+            5;
+	            width = _width - margin.left - margin.right,
+            height = (_height - margin.top - margin.bottom -
+                titlePadding),
+            scrunchHeight = (_height / 4 - margin.top - margin.bottom -
+                titlePadding);
+    		x.rangeRoundBands([margin.left, width]);
+            y.rangeRoundBands([margin.top, height]);
+
+            var scrunchScale = d3.scale.ordinal().rangeRoundBands([margin.top, height / 4]),
+            xMap = function (d) {
+                return x(d.i) + ((x.rangeBand() - r) / 2);
+            },
+            yMap = function (d) {
+                return y(d.size) + ((y.rangeBand() - r) / 2);
+            },
+            scrunchMap = function (d) {
+                return scrunchScale(d.size);
+            };
+			yAxis.scale(y);
+   			
+			svg.attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+			graph.select(".y axis").attr("transform",
+            "translate(" + margin.left + ",0)").call(yAxis);
+
+		}
+	
+		this.setHeight = function () {
+                setHeight();
+            };
+
 
         this.updateVis = function () {
-
             that.data = data.clusters.filter(function (d) {
                 return d.size > 2;
             });
