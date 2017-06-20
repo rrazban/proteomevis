@@ -2297,7 +2297,7 @@ function main () {
                 }
                 scrunched = _forceScrunch ? !(_forceScrunch) :
                     _scrunch;
-                $("#cluster_list").height(_height);
+                $("#cluster_list").height(_height-titlePadding-5);
             }
         };
 
@@ -2340,7 +2340,7 @@ function main () {
 
         this.clear = function () {
             cluster_list.selectAll("div").remove();
-        };
+        };	//make one that clears one cluster	
 
         this.addContent = function (_cluster) {
             // the overall rows
