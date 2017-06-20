@@ -232,7 +232,7 @@ function main () {
         loadState.hide();
         tooltip.style("left", "10px").style("top", $('#forceLayoutDiv').position().top + "px");
         link_tooltip.style("left", "10px").style("top", $('#forceLayoutDiv').position().top + "px");
-        $("#individual_list").height($("#view").height() - 90);
+        $("#individual_list").height($("#view").height() - 110);
         function updateVises () {
             d3.select("#mutantToggleDiv").style("display",data.species.has_mutant_data ? null : "none");
             splomVis.updateVis();
@@ -446,7 +446,7 @@ function main () {
 
         $(eventHandler).bind("windowResize", function (event) {
             setPanelSizes();
-            $("#individual_list").height($("#view").height() - 90);
+            $("#individual_list").height($("#view").height() - 110);
 //        	var clusterScatter = new ClusterScatter(d3.select("#clusterScatter"), 300, $("#clusterList").width());
 			clusterScatter.setHeight();
 			clusterScatter.updateVis();

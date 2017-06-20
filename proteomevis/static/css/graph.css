@@ -225,7 +225,8 @@ circle.big-graph.splom {
   overflow-y: scroll;
 }
 #cluster_list {
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 #btnProteinSearch {
     vertical-align: top !important;
@@ -257,7 +258,7 @@ circle.big-graph.splom {
 }
 #protein_search_list {
   font-size:12px;
-  overflow:scroll;
+  overflow-y:scroll;
 }
 .function-well {
   padding: 6px !important;
@@ -290,7 +291,7 @@ circle.big-graph.splom {
   fill:grey;
 }
 #clusterVis {
-  overflow:scroll;
+  overflow-y:scroll;
 }
 .clusterview {
   width:100%;
