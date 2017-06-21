@@ -1031,7 +1031,7 @@ function main () {
             .attr("class","form-control")
             .attr("id","nodeColorSelect")
             .selectAll("option")
-            .data(attributes.all())
+            .data(attributes.all().splice(0,10))
             .enter()
             .append("option").attr('value', function (d) { return d; })
             .html(function (d) { return attributes.prettyprint1(d); });
