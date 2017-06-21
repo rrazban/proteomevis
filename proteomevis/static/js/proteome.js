@@ -1043,12 +1043,10 @@ function main () {
         /* initialize the legend */
         var svg = parentElement.append("svg")
                 .attr("id","legendSVG")
-//                .attr("width", width + margin.left + margin.right)
-                .attr("width", width + margin.left/2 + margin.right)
+                .attr("width", width + margin.left/2 + margin.right + 5)
                 .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left/2 + "," + margin.top + ")");
-//                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                .attr("transform", "translate(" + (margin.left/2)+ "," + margin.top + ")");		
 
         svg.append("pattern")
             .attr({id:"striped",
@@ -1081,13 +1079,14 @@ function main () {
             .scale(legendScale)
             .orient('bottom')
             .tickSize(2)
-            .ticks(3)
+          //  .ticks(5)
             .tickFormat(d3.format('.1f'));
 
         var legendLabels = svg.append('g')
             .attr('transform', 'translate(0,'+height+')')
             .attr('class', 'x axis')
             .call(legendAxis);
+
 
         legendLabels.select("path.domain").style("display",'none');
 
@@ -1099,19 +1098,24 @@ function main () {
         /* triggered when the domain or the data selected changes */
         updateVis = function () {
             var magnitude = attributes.magnitude(dom),
-                domain = checkDomain(data.domains[dom]),
+                domain = checkDomain(data.domains[dom]);
                 adjustDomain = adjustDomainMagnitude(magnitude);
-
             if ((domain) && (ss.tmi !== ss.tmf) && (ss.sidi !== ss.sidf)) { // the domain exists, so we should
                 // 1) change the legend scale appropriately
                 // 2) color the nodes appropriately
                 nodeColorScale.domain(domain);
                 legendScale.domain(adjustDomain(domain));
                 legend.selectAll(".color-block").classed("striped",false);
+				newdomain = adjustDomain(domain);
+				legendAxis.tickValues(d3.range(newdomain[0], newdomain[1]+0.01,(newdomain[1]-newdomain[0])/5));
                 legendLabels.style('display',null).call(legendAxis);
                 $(eventHandler).trigger("nodeColorChanged");
+				if (dom=="length"){
                 suffix.style("display","inline").html(" &times; 10<sup>"+magnitude+"</sup>");
-
+            //    suffix.style("display","inline").html(" &times; 10<sup>"+magnitude+"</sup>");
+				}
+				else{	
+                suffix.style("display","none").html(" &times; 10<sup>"+magnitude+"</sup>");}
             } else { // the domain was null, meaning there was no range
                 // we should make the color bar striped in this case
                 legendLabels.style('display',"none");
