@@ -1043,10 +1043,12 @@ function main () {
         /* initialize the legend */
         var svg = parentElement.append("svg")
                 .attr("id","legendSVG")
-                .attr("width", width + margin.left + margin.right)
+//                .attr("width", width + margin.left + margin.right)
+                .attr("width", width + margin.left/2 + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                .attr("transform", "translate(" + margin.left/2 + "," + margin.top + ")");
+//                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         svg.append("pattern")
             .attr({id:"striped",
@@ -1090,7 +1092,7 @@ function main () {
         legendLabels.select("path.domain").style("display",'none');
 
         var suffix = parentElement.append('div')
-            .style("float","right")
+//            .style("float","right")
 			.style("font-size", "12px")
             .attr("id",'color-scale-suffix');
 
