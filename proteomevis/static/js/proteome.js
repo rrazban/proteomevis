@@ -86,7 +86,8 @@ function main () {
         tooltip = d3.select("#tooltip"),
         link_tooltip = d3.select("#link-tooltip"),
         colorschemes = {
-            discrete: ['white','lightgrey','darkgrey','grey','black'],
+//            discrete: ['white','lightgrey','darkgrey','grey','black'],
+            discrete: ['black','grey','darkgrey','lightgrey','white'],
             continuous: ['white','black']
         },
         nodeColorScale = d3.scale.linear().range(colorschemes.continuous),
@@ -1043,10 +1044,10 @@ function main () {
         /* initialize the legend */
         var svg = parentElement.append("svg")
                 .attr("id","legendSVG")
-                .attr("width", width + margin.left/2 + margin.right + 5)
+                .attr("width", width + margin.left/2 + margin.right + 10)
                 .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + (margin.left/2)+ "," + margin.top + ")");		
+                .attr("transform", "translate(" + (margin.left/2 + 5)+ "," + margin.top + ")");		
 
         svg.append("pattern")
             .attr({id:"striped",
@@ -1110,12 +1111,12 @@ function main () {
 				legendAxis.tickValues(d3.range(newdomain[0], newdomain[1]+0.01,(newdomain[1]-newdomain[0])/5));
                 legendLabels.style('display',null).call(legendAxis);
                 $(eventHandler).trigger("nodeColorChanged");
-				if (dom=="length"){
-                suffix.style("display","inline").html(" &times; 10<sup>"+magnitude+"</sup>");
+	//			if (dom=="length"){		all data have magnitude 0!
+      //          suffix.style("display","inline").html(" &times; 10<sup>"+magnitude+"</sup>");
             //    suffix.style("display","inline").html(" &times; 10<sup>"+magnitude+"</sup>");
-				}
-				else{	
-                suffix.style("display","none").html(" &times; 10<sup>"+magnitude+"</sup>");}
+		//		}
+//				else{	
+  //              suffix.style("display","none").html(" &times; 10<sup>"+magnitude+"</sup>");}
             } else { // the domain was null, meaning there was no range
                 // we should make the color bar striped in this case
                 legendLabels.style('display',"none");
@@ -1417,7 +1418,7 @@ function main () {
             .attr("class", "y label")
             .attr("text-anchor", "middle")
             .attr("x", -height/2)
-            .attr("y", -40)
+            .attr("y", -30)
 			.attr("transform", "rotate(-90)");
           //  .attr("x", -margin.left);
 //            .attr("dy", ".75em");
@@ -1803,7 +1804,7 @@ function main () {
             });
 
         cells.append('rect').attr('class', 'splom-box');
-            
+   
         cells.append("text")
             .attr("x", 10)
             .attr('class', 'splom-subgraph-text')

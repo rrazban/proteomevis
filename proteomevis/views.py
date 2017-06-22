@@ -25,8 +25,8 @@ def export_nodes(request):
         SIDf = data['SIDf']
         species = data['species'].upper()
 
-        log_values = ['evorate','abundance','dN','dS']
-        log_decimals = dict(evorate=3,abundance=0,dN=3,dS=3)
+        log_values = ['length','evorate','abundance','dN','dS']
+        log_decimals = dict(length=0, evorate=3,abundance=0,dN=3,dS=3)
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         # Create the HttpResponse object with the appropriate CSV header.
@@ -101,7 +101,6 @@ def export_splom(request):
         correlation_option = data['correlationoptions']
 
         columns = data['columns']
-        print columns
 
         column_indices = [column_order.index(col) for col in columns]
 
@@ -139,6 +138,7 @@ def fetch_edges(request):
         data = cleanRequest(request.POST)
 
         columns = data['columns']
+        print columns
         species = int(data['species'])
         TMi = data['TMi']
         TMf = data['TMf']

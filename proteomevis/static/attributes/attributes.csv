@@ -2,7 +2,7 @@ name,prettyprint1,prettyprint2,order,magnitude,decimal,log,cat
 degree,degree,degree,0,0,0,0,0
 weighted_degree,weighted degree,weighted degree,1,0,0,0,0
 ppi_degree,PPI degree,PPI degree,2,0,0,0,0
-length,chain length,chain length,3,2,0,0,0
+length,log(chain length),chain length,3,0,0,1,0
 dostol,dosage tolerance,dosage tolerance,4,0,0,0,0
 abundance,log(abundance),cellular abundance,5,0,0,1,0
 conden,contact density,contact density,6,0,3,0,0

@@ -8,7 +8,7 @@ class Chain(models.Model):
     other_id = models.CharField(max_length=15,null=True)
     domain = models.CharField(max_length=10)
     chain = models.CharField(max_length=2)
-    length = models.IntegerField(blank=True,null=True)
+    length = models.FloatField(blank=True,null=True)
     abundance = models.FloatField(blank=True,null=True)
     evorate = models.FloatField(blank=True,null=True)
     conden = models.FloatField(blank=True,null=True)
