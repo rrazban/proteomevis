@@ -138,7 +138,6 @@ def fetch_edges(request):
         data = cleanRequest(request.POST)
 
         columns = data['columns']
-        print columns
         species = int(data['species'])
         TMi = data['TMi']
         TMf = data['TMf']

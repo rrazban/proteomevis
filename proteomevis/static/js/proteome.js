@@ -1395,10 +1395,10 @@ function main () {
             .attr("width", width)
 			.attr("class","splomfocus-rect");
 
-        graph.append("g")		//edit here
+        graph.append("g")		
             .attr("class", "x axis");
 
-        graph.append("g")		//edit here
+        graph.append("g")	
             .attr("class", "x axis two")
             .attr("transform","translate(0," + height + ")");
 
@@ -1526,7 +1526,7 @@ function main () {
         x.range([0, width]);
         y.range([height, 0]);
 
-			graph.select(".x.axis.two")		//edit here
+			graph.select(".x.axis.two")	
             .attr("transform","translate(0," + height + ")");
 
 //		graph.select(".y.axis").call(yAxis);
