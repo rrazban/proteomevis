@@ -378,7 +378,7 @@ function main () {
                 highlighter.removeHoverHighlight();
             });
 
-		var index_list_cluster =[];	//edit here	
+		var index_list_cluster =[];	
         $(eventHandler)
             .bind("clusterClicked", function (event, _cluster, _index) {
                 if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {
@@ -1395,12 +1395,21 @@ function main () {
             .attr("width", width)
 			.attr("class","splomfocus-rect");
 
-        graph.append("g")
+        graph.append("g")		//edit here
             .attr("class", "x axis");
-    //        .attr("transform","translate(0," + height + ")");
+
+        graph.append("g")		//edit here
+            .attr("class", "x axis two")
+            .attr("transform","translate(0," + height + ")");
+
 
         graph.append("g")
             .attr("class", "y axis");
+
+        graph.append("g")
+            .attr("class", "y axis two")
+            .attr("transform","translate(" + (width) + ", 0)");
+
 
         var correlationLine = graph.append("path")
             .attr("class", "correlation-line");
@@ -1494,8 +1503,12 @@ function main () {
 					.attr("transform", "rotate(-45)")
 					.attr("dx", "10px");
 	//				.attr("dy", "-15px");
+				graph.select(".x.axis.two")
+					.call(xAxis.orient('bottom').tickFormat(function (d) { return ''; }));
                 graph.select(".y.axis")
                     .call(yAxis);
+                graph.select(".y.axis.two")
+                    .call(yAxis.orient('right').tickFormat(function (d) { return ''; }));
             }
         };
 
@@ -1513,8 +1526,12 @@ function main () {
         x.range([0, width]);
         y.range([height, 0]);
 
-		graph.select(".x.axis").call(xAxis);
-		graph.select(".y.axis").call(yAxis);
+			graph.select(".x.axis.two")		//edit here
+            .attr("transform","translate(0," + height + ")");
+
+//		graph.select(".y.axis").call(yAxis);
+
+            graph.select(".y.axis.two").attr("transform","translate(" + (width) + ", 0)");
 
             graph.attr("transform","translate(" + pos+ "," + pos + ")");	//necessary for big window resize
         xText.attr("x", width/2);
