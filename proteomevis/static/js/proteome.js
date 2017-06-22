@@ -236,6 +236,7 @@ function main () {
         $("#individual_list").height($("#view").height() - 110);
         function updateVises () {
             d3.select("#mutantToggleDiv").style("display",data.species.has_mutant_data ? null : "none");
+         splomVis = new SplomVis("#splomVis", true);
             splomVis.updateVis();
             forceVis.updateVis();
             nodeColorVis.update();
