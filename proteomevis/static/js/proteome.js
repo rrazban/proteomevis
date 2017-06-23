@@ -935,7 +935,7 @@ function main () {
                     .start();
 
                 // Enter any new nodes.
-                nodes.enter().append("circle");
+                nodes.enter().append("circle").attr('r', 10);	//edit here
                 nodes.attr('class', function (d) {
                         return "pcg p" + d.id + " c" + d.cluster;
                     })
@@ -1471,7 +1471,8 @@ function main () {
                     })
                     .attr("cy", function (d) {
                         return y(d[1]);
-                    });
+                    })
+					.attr("r", 1.5);
 
                 circles.exit().remove();
 
@@ -1711,7 +1712,8 @@ function main () {
                     })
                     .attr("cy", function (d) {
                         return y(d[1]);
-                    });
+                    })
+					.attr("r", 1);
 
                 circles.exit().remove();
 
