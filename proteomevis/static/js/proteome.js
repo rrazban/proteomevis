@@ -892,9 +892,9 @@ function main () {
                         linkTip.hide();
                         // nodeMousedOut(d);
                     });
-                $('circle.pcg').bind("contextmenu", function (event) {
-                    rightclick(event, "pcg-node", this);
-                });
+//                $('circle.pcg').bind("contextmenu", function (event) {
+//                    rightclick(event, "pcg-node", this);
+//                });
                 nodes.exit().remove();
 
                 links = vis.selectAll(".link").data(edgeData, function (d) {
@@ -948,10 +948,10 @@ function main () {
                     })
                     .on("mouseover", nodeMousedOver)
                     .on("mouseout", nodeMousedOut);
-                $('circle.pcg').bind("contextmenu", function (
-                    event) {
-                    rightclick(event, "pcg-node", this);
-                });
+//                $('circle.pcg').bind("contextmenu", function (
+  //                  event) {
+    //                rightclick(event, "pcg-node", this);
+      //          });
                 nodes.exit().remove();
 
                 links = vis.selectAll(".link").data(data.edges,
