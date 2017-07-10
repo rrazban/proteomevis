@@ -166,7 +166,6 @@ def fetch_edges(request):
             return response             #message called in proteome.js file
 
         nodes = [node.node() for node in chains]
-
         for i,node in enumerate(nodes):
             i2ID[i] = node[0]
             ID2i[node[0]] = i

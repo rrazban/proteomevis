@@ -16,6 +16,7 @@ class Chain(models.Model):
     dN = models.FloatField(blank=True,null=True)
     dS = models.FloatField(blank=True,null=True)
     mutant = models.IntegerField(default=0)
+    ppi = models.FloatField(blank=True,null=True)
 
     unique_together = ("chain_id", "species")
 
@@ -23,13 +24,13 @@ class Chain(models.Model):
         return self.pdb
 
     def keys(self):
-        return ["chain_id","species","pdb","domain","chain","uniprot","other_id","length","abundance","evorate","conden","dostox","dN","dS","mutant"]
+        return ["chain_id","ppi","species","pdb","domain","chain","uniprot","other_id","length","abundance","evorate","conden","dostox","dN","dS","mutant"]
 
     def stat_attr(self):
         return ["length","abundance","evorate","conden","dostox","dN","dS","weighted_degree",'degree','ppi_degree',"mutant"]
 
     def node(self):
-        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostol":self.dostox,"dN":self.dN,"dS":self.dS,"degree":0,"weighted_degree":0,"ppi_degree":0,"mutant":self.mutant})
+        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostol":self.dostox,"dN":self.dN,"dS":self.dS,"ppi":self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0,"mutant":self.mutant})
         # return dict(id=self.chain_id,species=self.species,pdb=self.pdb,domain=self.domain,chain=self.chain,length=self.length,abundance=self.abundance,evorate=self.evorate,conden=self.conden,dostox=self.dostox,dN=self.dN,dS=self.dS)
 
 class DomainLocalization(models.Model):
