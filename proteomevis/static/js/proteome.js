@@ -86,8 +86,9 @@ function main () {
         tooltip = d3.select("#tooltip"),
         link_tooltip = d3.select("#link-tooltip"),
         colorschemes = {
-            discrete: ['black','grey','darkgrey','lightgrey','white'],
-            continuous: ['black','white']
+//            discrete: ['black','grey','darkgrey','lightgrey','white'],
+            discrete: ['white','lightgrey','darkgrey','grey','black'],
+            continuous: ['white','black']
         },
         nodeColorScale = d3.scale.linear().range(colorschemes.continuous),
         /* previously nodeDomColor, returns color that node
