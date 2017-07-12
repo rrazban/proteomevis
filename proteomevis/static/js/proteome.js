@@ -86,7 +86,6 @@ function main () {
         tooltip = d3.select("#tooltip"),
         link_tooltip = d3.select("#link-tooltip"),
         colorschemes = {
-//            discrete: ['black','grey','darkgrey','lightgrey','white'],
             discrete: ['white','lightgrey','darkgrey','grey','black'],
             continuous: ['white','black']
         },
@@ -365,7 +364,7 @@ function main () {
         $(eventHandler)
             .bind("removeHighlight", function (event, _oDomain) {
                 var chainIDs = _oDomain ? _oDomain.chains.map(function (chain) { return chain.id; }) : [node.id];
-                highlighter.removeHighlight(chainIDs);
+                highlighter.removeHighlight(chainIDs);	//here
                 proteinsearch.removeProtein(_oDomain.domain);
             });
 
@@ -878,7 +877,7 @@ function main () {
                     .attr("fill", nodeColor)
                     .classed("mutant", function (d) { return d.mutant; })
                     .on("click", function (d) {
-                        d3.select(this).classed("highlight", true);
+                        d3.select(this).classed("highlight", true); 
                         $(eventHandler)
                             .trigger("nodeClicked", d);
                         force.start();
@@ -935,7 +934,7 @@ function main () {
                     .start();
 
                 // Enter any new nodes.
-                nodes.enter().append("circle").attr('r', 10);	//edit here
+                nodes.enter().append("circle").attr('r', 10);	
                 nodes.attr('class', function (d) {
                         return "pcg p" + d.id + " c" + d.cluster;
                     })
@@ -2691,15 +2690,15 @@ function main () {
         var singleHighlight = function (protein) {
             return "<style id='style-p" + protein +
                 "' class='style-highlight'> " +
-                "circle.p" + protein + "{ fill: " + color(i) +
+                "circle.p" + protein + "{ fill: " + color(i) +	
                 " !important;}" +
                 ".pcg.p" + protein + "{r:15;}" +
                 ".pcg.highlight-center.p" + protein + "{r:35;}" +
                 ".splom.p" + protein +
                 " {r:3 !important; stroke:" + color(i) +
-                " !important ;}" +
+                " !important ;}" +	
                 ".label-chains.p" + protein +
-                " { background-color:" + color(i) +
+                " { background-color:" + color(i) +	
                 ";}</style>";
         };
 
@@ -2746,7 +2745,7 @@ function main () {
             i += 1;
         };
 
-        this.removeHighlight = function (proteins, _index) {
+        this.removeHighlight = function (proteins, _index) {	
             /* if they provide a valid protein */
             if (proteins) {
                 if (!(Array.isArray(proteins))) {
@@ -2754,7 +2753,11 @@ function main () {
                 }
                 proteins.forEach(function (protein) {
                     arrProteins.remove(protein);
-                    $("#style-p" + protein).remove();
+                    tries_to_delete = 1+i-proteins.length;	//best we can do without knowing how many times color changed for a given protein
+            	    while (tries_to_delete > 0) {
+                        $("#style-p" + protein).remove();		//this be trippin when change initial color //needs the same number of times color was changed
+			tries_to_delete -= 1;
+		    }
                     d3.selectAll(".highlight.p" + protein).classed("highlight", false);
                     data.nodes[ID2i(protein)].highlight = false;
                 });
