@@ -307,6 +307,7 @@ def query(request):
         # // TO DO //
         data = cleanRequest(request.GET)
         q = data['q']
+	species_chosen = int(data['species'])
 
         species = Species.objects.get(id=int(data['species']))
 
@@ -325,9 +326,8 @@ def query(request):
         for d in list(tmp):
            R= d.__dict__
            R['_state']=0        #_state makes sure keys are unique. its value messes up calling in httpresponse
-           if R['invis']==True:
+           if R['invis']==True and R['species']==species_chosen:
                 data.append(R)
-
 
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),
