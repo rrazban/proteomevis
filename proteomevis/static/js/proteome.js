@@ -384,6 +384,7 @@ function main () {
                 if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {	
 //                    highlighter.highlight(null, _index);	//includes too many protein chains
                     highlighter.highlight(_cluster.cluster, _index);
+//                    highlighter.highlight(_cluster.cluster, null);
 					if (index_list_cluster.indexOf(_index)==-1){
 						index_list_cluster.push(_index);
        		             clusterList.addContent(_cluster);
@@ -392,15 +393,9 @@ function main () {
             });
         $(eventHandler)
             .bind("removeClusterHighlightfixed", function (event, _cluster) {
-				console.log('here');
-				console.log(_cluster.id);
-				clusterList.removeContent();
-                highlighter.removeHighlight(null, _cluster.id);	//edit here. does nothing so far
-				console.log(index_list_cluster);
+                highlighter.removeHighlight(_cluster.cluster, _cluster.id);	
 				remove_index = index_list_cluster.indexOf(_cluster.id);
 				index_list_cluster.splice(remove_index, 1);
-				console.log(index_list_cluster);
-//            proteinmediaItem.clear("#cluster_list");	//clears everything
             });
 
 
@@ -2388,7 +2383,7 @@ function main () {
         this.addContent = function (_cluster) {
             // the overall rows
             var panel = cluster_list.append("div")
-                .attr('class', 'panel panel-default');
+                .attr('class', 'panel panel-default'+_cluster.id);	//is this really necessary? yes very necessary. for somewhere reason default color changes when +_cluster.id
             // each of the visible row headers
             var panelHeader = panel.append("div")
                 .attr('class', 'panel-heading')
@@ -2456,6 +2451,7 @@ function main () {
   //                  .on("mouseout", nodeMousedOut)
 				.on("click", function () {	
                 $(eventHandler).trigger("removeClusterHighlightfixed", _cluster);
+				$('.panel.panel-default'+_cluster.id).remove();
             	});
         };
 //				panelHeader.html('');	//removes everything but a sliver
@@ -2465,15 +2461,6 @@ function main () {
 //				$('panel-heading').remove();	//doesnt do anythin
 //				panelHeader=null;
 //				delete panelHeader;
-
-		this.removeContent = function (){	//edit here
-				console.log('here')		
-				$('#list0.media-list').remove();
-				$('#row0.panel-heading').remove();
-				$('#row0.panel-heading.loaded').remove();
-				$('#panel panel-default').remove();
-//				$('panel-heading').remove();	//doesnt do anythin
-		}
 
         function exportData (d) {
             var columns = ['name'].concat(attribute.all());
@@ -2576,7 +2563,7 @@ function main () {
                     $(eventHandler).trigger("badgeClicked", d.id);
                 });
 
-            mediaBody.select(".remove").on("click", function () {	//edit here example
+            mediaBody.select(".remove").on("click", function () {	
                 media.remove();
                 $(eventHandler).trigger("removeHighlight", oDomain);
             });
@@ -2623,7 +2610,6 @@ function main () {
 
         this.clear = function (_list) {
             if (_list) {
-				console.log(_list);
                 d3.select(_list)
                   .selectAll((_list == '#individual_list' ?  "li" : ".panel.panel-default")).remove();
             } else {
@@ -2770,7 +2756,7 @@ function main () {
                         .classed("highlight", true);
                     arrProteins.push(protein);
                 }
-				if (_index){
+				if ((_index) || (_index==0)){
                 styleString = clusterHighlight(_index);	
                 d3.select("head").insert("style",
                         ".style-highlight")
@@ -2778,7 +2764,7 @@ function main () {
                     .attr("class", "style-highlight-cluster")
                     .html(styleString);
             	}
-            } else {
+            } else {	//no longer needed
                 styleString = clusterHighlight(_index);	
                 d3.select("head").insert("style",
                         ".style-highlight")
@@ -2790,10 +2776,23 @@ function main () {
         };
 
         this.removeHighlight = function (proteins, _index) {	
+
+		if ((_index) || (_index==0)) {
+                tries_to_delete = i;	//easy way to get number of clusters clicked?	
+				
+            	while (tries_to_delete > 0) {
+					$("#style-c" + _index).remove();
+					proteins.forEach(function (protein) {
+						$("#style-p" + protein).remove();	
+                    	d3.selectAll(".highlight.p" + protein).classed("highlight", false);
+                    	data.nodes[ID2i(protein)].highlight = false;
+					});
+					tries_to_delete -= 1;
+				}
+            } 
+
             /* if they provide a valid protein */
-		console.log("here");    
-        if (proteins) {
-		console.log("here");    
+        else if (proteins) {
                 if (!(Array.isArray(proteins))) {
                     proteins = [proteins];
                 }
@@ -2807,8 +2806,6 @@ function main () {
                     d3.selectAll(".highlight.p" + protein).classed("highlight", false);
                     data.nodes[ID2i(protein)].highlight = false;
                 });
-            } else if (_index) {
-                $("#style-c" + _index).remove();
             } else {
                 $(".style-highlight").remove();
                 $(".style-highlight-cluster").remove();
