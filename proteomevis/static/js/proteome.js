@@ -364,7 +364,7 @@ function main () {
         $(eventHandler)
             .bind("removeHighlight", function (event, _oDomain) {
                 var chainIDs = _oDomain ? _oDomain.chains.map(function (chain) { return chain.id; }) : [node.id];
-                highlighter.removeHighlight(chainIDs);	//here
+                highlighter.removeHighlight(chainIDs);	
                 proteinsearch.removeProtein(_oDomain.domain);
             });
 
@@ -377,19 +377,26 @@ function main () {
             .bind("removeClusterHighlight", function (event) {
                 highlighter.removeHoverHighlight();
             });
-	//add here
+
 		var index_list_cluster =[];	
         $(eventHandler)
             .bind("clusterClicked", function (event, _cluster, _index) {
                 if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {	
 //                    highlighter.highlight(null, _index);	//includes too many protein chains
-                    highlighter.highlight(_cluster.cluster, null);
+                    highlighter.highlight(_cluster.cluster, _index);
 					if (index_list_cluster.indexOf(_index)==-1){
 						index_list_cluster.push(_index);
        		             clusterList.addContent(_cluster);
 					}
                 }
             });
+        $(eventHandler)
+            .bind("removeClusterHighlightfixed", function (event, _cluster) {
+				console.log('here');
+				console.log(_cluster.id);
+                highlighter.removeHighlight(null, _cluster.id);	//edit here
+            });
+
 
         $(eventHandler)
             .bind("updateClusterScatter", function (event) {
@@ -2437,7 +2444,11 @@ function main () {
                     }
                     $(eventHandler)
                         .trigger("scrunch");
-                });
+                })
+				.select(".remove").on("click", function () {		//edit here
+                $(eventHandler).trigger("removeClusterHighlightfixed", _cluster);
+            });
+		console.log(_cluster);
         };
 
         function exportData (d) {
@@ -2687,7 +2698,7 @@ function main () {
             return arrProteins;
         };
 
-        var singleHighlight = function (protein) {
+        var singleHighlight = function (protein, index) {
             return "<style id='style-p" + protein +
                 "' class='style-highlight'> " +
                 "circle.p" + protein + "{ fill: " + color(i) +	
@@ -2705,14 +2716,14 @@ function main () {
         var clusterHighlight = function (index) {
             return "circle.c" + index + "{ fill: " + color(i) +
                 ";}" +
-                ".pcg.c" + index + "{r:15;}" +
-                ".splom.c" + index +
-                " {r:3 !important; stroke:" + color(i) +
-                " !important ; fill:" + color(i) +
-                " !important ;}" +
-                ".label-chains.c" + index +
-                " { background-color:" + color(i) + ";}" +	//does the highlighting in PI
-                ".cluster.c" + index + "{fill:" + color(i) +	//not sure what this colors
+            //    ".pcg.c" + index + "{r:15;}" +
+            //    ".splom.c" + index +
+           //     " {r:3 !important; stroke:" + color(i) +
+          //      " !important ; fill:" + color(i) +
+        //        " !important ;}" +
+      //          ".label-chains.c" + index +
+    //            " { background-color:" + color(i) + ";}" +	//does the highlighting in PI
+                ".cluster.c" + index + "{fill:" + color(i) +	//colors the little box!
                 "!important;}";
 
         };
@@ -2734,6 +2745,14 @@ function main () {
                         .classed("highlight", true);
                     arrProteins.push(protein);
                 }
+				if (_index){
+                styleString = clusterHighlight(_index);	
+                d3.select("head").insert("style",
+                        ".style-highlight")
+                    .attr("id", "style-c" + _index)
+                    .attr("class", "style-highlight-cluster")
+                    .html(styleString);
+            	}
             } else {
                 styleString = clusterHighlight(_index);	
                 d3.select("head").insert("style",
@@ -2747,7 +2766,9 @@ function main () {
 
         this.removeHighlight = function (proteins, _index) {	
             /* if they provide a valid protein */
-            if (proteins) {
+		console.log("here");    
+        if (proteins) {
+		console.log("here");    
                 if (!(Array.isArray(proteins))) {
                     proteins = [proteins];
                 }
