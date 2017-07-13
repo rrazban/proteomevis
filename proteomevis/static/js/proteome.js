@@ -463,7 +463,8 @@ function main () {
             typeVis.setHeight();
             forceVis.setHeight();
             splomBar.setHeight();
-			splomVis.setHeight();
+	    splomVis.setHeight();
+//            splomVis.updateVis();	//doesnt work
         });
     }
 
@@ -1505,7 +1506,7 @@ function main () {
 
                 correlationLine
                     .datum(points)
-                    .attr('d', line);
+                    .attr('d', line);	//edit here? no only affects line of focus plot
 
                 graph.select(".x.axis")
                     .call(xAxis)
@@ -1721,13 +1722,14 @@ function main () {
                     .attr("cy", function (d) {
                         return y(d[1]);
                     })
-					.attr("r", 1);
+		    .attr("r", 1);	//necessary for firefox. chrome and others automatically do (.style("r", 1))
 
                 circles.exit().remove();
 
                 cell.select('.correlation-line')
                     .datum(points)
-                    .attr('d', line);
+                    .attr('d', line)		//edit here upon resize
+		    .style('stroke-width', 2);
             }
         }
 
@@ -1843,7 +1845,7 @@ function main () {
             .attr("y", 14)
             .attr('class', 'splom-pvalue');
         cells.append('path')
-            .attr('class', 'correlation-line');
+            .attr('class', 'correlation-line');//accidentally replicated label from above?
 
         svg.selectAll(".cell")
             .call(brush)
@@ -1859,10 +1861,10 @@ function main () {
     
 	function setHeight_two () {
   	    _height=$(_parentElement).height() - 40;
-        _width=$(_parentElement).width();
-        margin = {inside: 5, outside: 15};
-        dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
-        pltsize = (dim / (num_splot + 1)) - margin.inside;
+            _width=$(_parentElement).width();
+            margin = {inside: 5, outside: 15};
+            dim = d3.min([_height - 40, _width]) - 2 * margin.outside,
+            pltsize = (dim / (num_splot + 1)) - margin.inside;
 
 	    scale=pltsize/old_pltsize
 
@@ -1880,6 +1882,9 @@ function main () {
 	    cells.select(".splom-subgraph-text").attr("y", pltsize / (2*scale));
 	    cells.select(".splom-subgraph-text").style("font-size", 100/scale+"%");	//size changes upon resize
 	    cells.select(".splom-pvalue").attr("x", pltsize - 45);
+            cells.select(".correlation-line").style('stroke-width',2/scale);
+            d3.selectAll("circle").attr("r", 1/scale);	//for firefox		//1 is the initial radius
+            d3.selectAll("circle").style("r", 1/scale);	//for others...
 	};
 
 	_height=$(_parentElement).height() - 40;
