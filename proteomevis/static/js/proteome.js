@@ -394,7 +394,13 @@ function main () {
             .bind("removeClusterHighlightfixed", function (event, _cluster) {
 				console.log('here');
 				console.log(_cluster.id);
-                highlighter.removeHighlight(null, _cluster.id);	//edit here
+				clusterList.removeContent();
+                highlighter.removeHighlight(null, _cluster.id);	//edit here. does nothing so far
+				console.log(index_list_cluster);
+				remove_index = index_list_cluster.indexOf(_cluster.id);
+				index_list_cluster.splice(remove_index, 1);
+				console.log(index_list_cluster);
+//            proteinmediaItem.clear("#cluster_list");	//clears everything
             });
 
 
@@ -2393,9 +2399,9 @@ function main () {
                 .attr('aria-controls', "col" + _cluster.id)
                 .attr('data-parent', "#cluster_list")
                 .html('<span class="badge">' + _cluster.size +
-                    "</span><span class='remove' style='float:right'>&times;</span></a>"+
+                    "</span><span class='remove' style='float:right;cursor: pointer'>&times;</span></a>"+
                     '</span><span data-target="#mDataexport" data-toggle="modal" class="glyphicon glyphicon-save pull-left download" id="download-' +
-                    _cluster.id + '"></span>');	//edit here
+                    _cluster.id + '"></span>');	
 
             panelHeader.select(".download").on("click",
                 function () {
@@ -2445,11 +2451,29 @@ function main () {
                     $(eventHandler)
                         .trigger("scrunch");
                 })
-				.select(".remove").on("click", function () {		//edit here
+				.select(".remove")
+//                    .on("mouseover", nodeMousedOver)
+  //                  .on("mouseout", nodeMousedOut)
+				.on("click", function () {	
                 $(eventHandler).trigger("removeClusterHighlightfixed", _cluster);
-            });
-		console.log(_cluster);
+            	});
         };
+//				panelHeader.html('');	//removes everything but a sliver
+//				$("media-list").remove();
+//                d3.select("#panel-heading").selectAll("li").remove();
+//                d3.select("#panel-heading").html('');//nada
+//				$('panel-heading').remove();	//doesnt do anythin
+//				panelHeader=null;
+//				delete panelHeader;
+
+		this.removeContent = function (){	//edit here
+				console.log('here')		
+				$('#list0.media-list').remove();
+				$('#row0.panel-heading').remove();
+				$('#row0.panel-heading.loaded').remove();
+				$('#panel panel-default').remove();
+//				$('panel-heading').remove();	//doesnt do anythin
+		}
 
         function exportData (d) {
             var columns = ['name'].concat(attribute.all());
@@ -2552,7 +2576,7 @@ function main () {
                     $(eventHandler).trigger("badgeClicked", d.id);
                 });
 
-            mediaBody.select(".remove").on("click", function () {
+            mediaBody.select(".remove").on("click", function () {	//edit here example
                 media.remove();
                 $(eventHandler).trigger("removeHighlight", oDomain);
             });
@@ -2599,6 +2623,7 @@ function main () {
 
         this.clear = function (_list) {
             if (_list) {
+				console.log(_list);
                 d3.select(_list)
                   .selectAll((_list == '#individual_list' ?  "li" : ".panel.panel-default")).remove();
             } else {
