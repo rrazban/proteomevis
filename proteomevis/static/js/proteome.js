@@ -413,7 +413,7 @@ function main () {
         $(eventHandler)
             .bind("add-to-cluster-list", function (event, _data) {
                 var clusterListItem = '#list' + _data.cluster.id;
-                proteinmediaItem.addDomainsToList(_data.domainData,
+                proteinmediaItem.addDomainsToList(_data.domainData,	//gives type error when delete cluster when not expanded
                     d3.select(clusterListItem), _data.cluster.id
                 );
             });
@@ -1981,9 +1981,9 @@ function main () {
     ProteinSearch = function (_parentElement) {
         var mediaList = _parentElement.select(".media-list"),
             proteinList = [],
-            that = this,
-            triggerDestinationIndividual = 'add-to-individual-list',
-            triggerDestinationCluster = 'add-to-cluster-list';
+            that = this;
+            triggerDestinationIndividual = 'add-to-individual-list',	//upon adding full functionality of delete button in cluster, any error shows up in the console related to this. since it has to do with domains i can safely silence for now 
+            triggerDestinationCluster = 'add-to-cluster-list';	//same as above
 
             cluster = {
                 cluster: null,
