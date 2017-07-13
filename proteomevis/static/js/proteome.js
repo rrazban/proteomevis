@@ -377,7 +377,7 @@ function main () {
             .bind("removeClusterHighlight", function (event) {
                 highlighter.removeHoverHighlight();
             });
-
+	//add here
 		var index_list_cluster =[];	
         $(eventHandler)
             .bind("clusterClicked", function (event, _cluster, _index) {
@@ -2386,8 +2386,9 @@ function main () {
                 .attr('aria-controls', "col" + _cluster.id)
                 .attr('data-parent', "#cluster_list")
                 .html('<span class="badge">' + _cluster.size +
-                    '</span><span data-target="#mDataexport" data-toggle="modal" class="glyphicon glyphicon-save pull-right download" id="download-' +
-                    _cluster.id + '"></span>');
+                    "</span><span class='remove' style='float:right'>&times;</span></a>"+
+                    '</span><span data-target="#mDataexport" data-toggle="modal" class="glyphicon glyphicon-save pull-left download" id="download-' +
+                    _cluster.id + '"></span>');	//edit here
 
             panelHeader.select(".download").on("click",
                 function () {
