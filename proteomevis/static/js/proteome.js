@@ -371,7 +371,7 @@ function main () {
         $(eventHandler)
             .bind("clusterHighlight", function (event, _cluster, _center) {
                 highlighter.hoverHighlight(_cluster, _center);
-            });
+            });	//responsible for pink color color when hover over
 
         $(eventHandler)
             .bind("removeClusterHighlight", function (event) {
@@ -381,8 +381,9 @@ function main () {
 		var index_list_cluster =[];	
         $(eventHandler)
             .bind("clusterClicked", function (event, _cluster, _index) {
-                if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {
-                    highlighter.highlight(null, _index);
+                if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {	
+//                    highlighter.highlight(null, _index);	//includes too many protein chains
+                    highlighter.highlight(_cluster.cluster, null);
 					if (index_list_cluster.indexOf(_index)==-1){
 						index_list_cluster.push(_index);
        		             clusterList.addContent(_cluster);
@@ -2244,7 +2245,6 @@ function main () {
             that.data = data.clusters.filter(function (d) {
                 return d.size > 2;
             });
-
             var yDomain = data.cluster_frequencies.map(function (
                 d) {
                 return d.size;
@@ -2260,7 +2260,6 @@ function main () {
 
             var clusters = graph.selectAll(".cluster").data(
                 that.data);
-
             clusters.enter().append("rect")
                 .attr('height', r)
                 .attr('width', r);
@@ -2268,7 +2267,7 @@ function main () {
                 .attr("x", xMap)
                 .attr("y", yMap)
                 .attr("class", function (d, i) {
-                    return "cluster c" + i;
+                    return "cluster c" + i;	
                 })
                 .style("fill", nodeColor)
                 .on("mouseover", function (d) {
@@ -2711,8 +2710,8 @@ function main () {
                 " !important ; fill:" + color(i) +
                 " !important ;}" +
                 ".label-chains.c" + index +
-                " { background-color:" + color(i) + ";}" +
-                ".cluster.c" + index + "{fill:" + color(i) +
+                " { background-color:" + color(i) + ";}" +	//does the highlighting in PI
+                ".cluster.c" + index + "{fill:" + color(i) +	//not sure what this colors
                 "!important;}";
 
         };
@@ -2735,7 +2734,7 @@ function main () {
                     arrProteins.push(protein);
                 }
             } else {
-                styleString = clusterHighlight(_index);
+                styleString = clusterHighlight(_index);	
                 d3.select("head").insert("style",
                         ".style-highlight")
                     .attr("id", "style-c" + _index)
