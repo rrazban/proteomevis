@@ -25,8 +25,8 @@ def export_nodes(request):
         SIDf = data['SIDf']
         species = data['species'].upper()
 
-        log_values = ['length','evorate','abundance','dN','dS']
-        log_decimals = dict(length=0, evorate=3,abundance=0,dN=3,dS=3)
+        log_values = ['ppi', 'length','evorate','abundance','dN','dS']
+        log_decimals = dict(ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         # Create the HttpResponse object with the appropriate CSV header.
