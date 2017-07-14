@@ -1886,6 +1886,7 @@ function main () {
             cells.select(".correlation-line").style('stroke-width',2/scale);
             cells.selectAll("circle").attr("r", 1/scale);	//for firefox		//1 is the initial radius
             cells.selectAll("circle").style("r", 1/scale);	//for others...
+//        proteins = highlighter.highlightedProteins();	//edit here
 	};
 
 	_height=$(_parentElement).height() - 40;
@@ -2792,6 +2793,7 @@ function main () {
             	while (tries_to_delete > 0) {
 					$("#style-c" + _index).remove();
 					proteins.forEach(function (protein) {
+            			d3.selectAll(".splom.p" +protein).attr('r',1);	//for firefox
 						$("#style-p" + protein).remove();	
                     	d3.selectAll(".highlight.p" + protein).classed("highlight", false);
                     	data.nodes[ID2i(protein)].highlight = false;
