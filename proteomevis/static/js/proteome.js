@@ -945,7 +945,7 @@ function main () {
                     .start();
 
                 // Enter any new nodes.
-                nodes.enter().append("circle").attr('r', 10);	
+                nodes.enter().append("circle").attr('r', 8);	//already defined in graph.css for chrome and others	
                 nodes.attr('class', function (d) {
                         return "pcg p" + d.id + " c" + d.cluster;
                     })
@@ -2718,6 +2718,7 @@ function main () {
         };
 
         var singleHighlight = function (protein, index) {
+            d3.selectAll(".splom.p" +protein).attr('r',3);	//for firefox
             return "<style id='style-p" + protein +
                 "' class='style-highlight'> " +
                 "circle.p" + protein + "{ fill: " + color(i) +	
@@ -2725,7 +2726,7 @@ function main () {
                 ".pcg.p" + protein + "{r:15;}" +
                 ".pcg.highlight-center.p" + protein + "{r:35;}" +
                 ".splom.p" + protein +
-                " {r:3 !important; stroke:" + color(i) +
+                " {r:3 !important; stroke:" + color(i) +	
                 " !important ;}" +	
                 ".label-chains.p" + protein +
                 " { background-color:" + color(i) +	
@@ -2806,11 +2807,12 @@ function main () {
                 }
                 proteins.forEach(function (protein) {
                     arrProteins.remove(protein);
-                    tries_to_delete = 1+i-proteins.length;	//best we can do without knowing how many times color changed for a given protein
+                    tries_to_delete = 1+i;	//best we can do without knowing how many times color changed for a given protein. no protein.length cuz what if multiple chains?
             	    while (tries_to_delete > 0) {
                         $("#style-p" + protein).remove();		//this be trippin when change initial color //needs the same number of times color was changed
 			tries_to_delete -= 1;
 		    }
+            		d3.selectAll(".splom.p" +protein).attr('r',1);	//for firefox
                     d3.selectAll(".highlight.p" + protein).classed("highlight", false);
                     data.nodes[ID2i(protein)].highlight = false;
                 });
