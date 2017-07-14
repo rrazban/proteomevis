@@ -512,7 +512,9 @@ function main () {
                         errorMessage.show("You've selected too many edges. Try selecting a smaller area.");
                 }
                 else {
-                        errorMessage.show("The website timed out. Please refresh and try again.");
+            			calculateState.hide();
+						$("#errorMessagetwo").modal();
+//                        errorMessage.show("The website timed out. Please refresh and try again.");
                 }
             });
 
