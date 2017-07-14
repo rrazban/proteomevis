@@ -384,7 +384,6 @@ function main () {
                 if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {	
 //                    highlighter.highlight(null, _index);	//includes too many protein chains
                     highlighter.highlight(_cluster.cluster, _index);
-//                    highlighter.highlight(_cluster.cluster, null);
 					if (index_list_cluster.indexOf(_index)==-1){
 						index_list_cluster.push(_index);
        		             clusterList.addContent(_cluster);
@@ -1508,7 +1507,7 @@ function main () {
 
                 correlationLine
                     .datum(points)
-                    .attr('d', line);	//edit here? no only affects line of focus plot
+                    .attr('d', line);	
 
                 graph.select(".x.axis")
                     .call(xAxis)
@@ -1730,7 +1729,7 @@ function main () {
 
                 cell.select('.correlation-line')
                     .datum(points)
-                    .attr('d', line)		//edit here upon resize
+                    .attr('d', line)	
 		    .style('stroke-width', 2);
             }
         }
@@ -2683,7 +2682,7 @@ function main () {
 
         function formattedNum (d,attr) {
             var v = d[attr];
-            if (attributes.log(attr)) {
+            if (attributes.log(attr) && v!=null) {
                 v = Math.pow(10,v);
             }
             return v ? formatFloat(v,attributes.decimalplaces(attr)) : '';
