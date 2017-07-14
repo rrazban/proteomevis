@@ -46,8 +46,11 @@ def computeCorrelations(nodes,selected_columns):
 				column1_data,column2_data = map(list,zip(*data_filtered))
 				# linear regressions
 				results = correlationJSON(column1,column1_data,column2,column2_data)
+				if results['p_value_SP']==None:
+					results['p_value_SP']=1
 				# save it
 				resultsArray[i].append(results)
+	print resultsArray
 	return resultsArray, limits, columnDict
 
 def updateDegrees(deg,ppideg,nodes,ID2i):
