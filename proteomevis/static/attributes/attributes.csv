@@ -9,3 +9,4 @@ conden,contact density,contact density,6,0,3,0,0
 evorate,log(dN/dS),evolutionary rate (dN/dS),7,0,3,1,0
 dN,log(dN),dN,8,0,3,1,0
 dS,log(dS),dS,9,0,3,1,0
+mutant,mutant,mutant,-,-,-,-,1

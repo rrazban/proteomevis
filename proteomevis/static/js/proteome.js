@@ -2674,7 +2674,9 @@ function main () {
             var d = data.nodes[ID2i(chainID)];
             var str = '<span class="lb-chainTitle">'+d.pdb+' <span class="label label-default">' + (d.mutant ? "MUTANT" : "") + '</span></span><table class="lb-chainTable"><tbody>';
             attributes.all().forEach(function (attr) {
+		if (attr!='mutant') {
                 str += "<tr><td>"+attributes.prettyprint2(attr)+"</td><td class='detail-values'>"+formattedNum(d,attr)+"</td></tr>";
+		}
             });
             str += "</tbody></table>";
             return str;
