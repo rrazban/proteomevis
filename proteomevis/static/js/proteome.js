@@ -1884,8 +1884,8 @@ function main () {
 	    cells.select(".splom-subgraph-text").style("font-size", 100/scale+"%");	//size changes upon resize
 	    cells.select(".splom-pvalue").attr("x", pltsize - 45);
             cells.select(".correlation-line").style('stroke-width',2/scale);
-            d3.selectAll("circle").attr("r", 1/scale);	//for firefox		//1 is the initial radius
-            d3.selectAll("circle").style("r", 1/scale);	//for others...
+            cells.selectAll("circle").attr("r", 1/scale);	//for firefox		//1 is the initial radius
+            cells.selectAll("circle").style("r", 1/scale);	//for others...
 	};
 
 	_height=$(_parentElement).height() - 40;
