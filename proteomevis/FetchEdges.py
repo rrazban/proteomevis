@@ -50,7 +50,6 @@ def computeCorrelations(nodes,selected_columns):
 					results['p_value_SP']=1
 				# save it
 				resultsArray[i].append(results)
-	print resultsArray
 	return resultsArray, limits, columnDict
 
 def updateDegrees(deg,ppideg,nodes,ID2i):
