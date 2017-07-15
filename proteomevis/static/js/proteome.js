@@ -1474,16 +1474,29 @@ function main () {
 
                 circles
                     .attr("class", function (d) {
-                        return 'splom graph big-graph p' + d[2] + ' c' + d[3];
+	                      return 'splom graph big-graph p' + d[2] + ' c' + d[3];
                     })
                     .attr("cx", function (d) {
                         return x(d[0]);
                     })
                     .attr("cy", function (d) {
                         return y(d[1]);
-                    })
-					.attr("r", 1.5);
-
+                    });
+//					.attr("r", 1.5);	//for firefox
+				circles.attr("r", function (d) {	//solution to allow highlighted points to remain colored for firefox 
+				var color = $(".splom.p" +d[2]).css('fill');
+				color = color.substring(
+                          color.indexOf('(') + 1,
+                          color.lastIndexOf(color[3] == 'a' ? ',' : ')')
+                        );
+				if (color == '0, 0, 0') {
+					return 1.5;
+				}
+				else{
+					return 3;
+				}
+				});
+	
                 circles.exit().remove();
 
                 xText.html(attributes.prettyprint1(currentPlt.x));
@@ -1886,7 +1899,6 @@ function main () {
             cells.select(".correlation-line").style('stroke-width',2/scale);
             cells.selectAll("circle").attr("r", 1/scale);	//for firefox		//1 is the initial radius
             cells.selectAll("circle").style("r", 1/scale);	//for others...
-//        proteins = highlighter.highlightedProteins();	//edit here
 	};
 
 	_height=$(_parentElement).height() - 40;
