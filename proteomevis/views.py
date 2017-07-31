@@ -101,7 +101,7 @@ def export_splom(request):
         correlation_option = data['correlationoptions']
 
         columns = data['columns']
-
+        columns.remove('mutant')
         column_indices = [column_order.index(col) for col in columns]
 
         wb = xlwt.Workbook(encoding='utf-8')
