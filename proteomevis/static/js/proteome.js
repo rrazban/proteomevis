@@ -1483,7 +1483,7 @@ function main () {
                         return y(d[1]);
                     });
 //					.attr("r", 1.5);	//for firefox
-				circles.attr("r", function (d) {	//solution to allow highlighted points to remain colored for firefox 
+				circles.attr("r", function (d) {	//solution to allow highlighted points to remain colored for firefox. really slow, consider different solution that passes which points highlighed, tried before but hard  
 				var color = $(".splom.p" +d[2]).css('fill');
 				color = color.substring(
                           color.indexOf('(') + 1,
@@ -2227,7 +2227,7 @@ function main () {
         graph.append("text")
             .attr("class", "y label")
             .attr("x", -(height+margin.top+margin.bottom)/2)
-      //      .attr("x", margin.left + 10)
+            .attr("y", -5)	//edit here
             .attr("transform", 'rotate(-90)')
             .text("cluster size");
 		
