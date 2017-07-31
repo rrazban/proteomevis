@@ -601,10 +601,10 @@ function main () {
                 x.range([margin.left, width]);
                 y.range([height, margin.top]);
 
-                svg.attr("width", width + margin.left + margin.right)
+                svg.attr("width", width + margin.left+margin.right)		//edit here
                    .attr("height", height + margin.top + margin.bottom);
 
-                background.attr("width",width).attr("height", height);
+                background.attr("width",width-margin.left).attr("height", height-margin.top);
 
                 graph.select(".x.axis").attr("transform","translate(0," + height + ")");
                 graph.select(".x.label").attr("x", width).attr("y", height - 6);
@@ -629,16 +629,16 @@ function main () {
 
             var svg = parentElement
                         .append("svg")
-                        .attr("width", width + margin.left + margin.right)
+                        .attr("width", width + margin.left + margin.right)	//doesnt matter
                            .attr("height", height + margin.top + margin.bottom);
 
             var background = svg
                         .append("svg:image")
-                        .attr("width",width)
+                        .attr("width",width)	//doesnt matter
                         .attr("height",height)
-                        .attr("transform", "translate(" + (margin.left * 2) + "," + margin.top +")")
+                        .attr("transform", "translate(" + (margin.left * 2) + "," + (margin.top*2) +")")
                         .attr("preserveAspectRatio", "none")
-                        .attr("xlink:href", "../static/img/species." + ss.species.id + ".png");
+                        .attr("xlink:href", "../static/img/species." + ss.species.id + ".png");	//edit here
             var graph = svg
                         .append("g")
                         .attr("transform", "translate(" +margin.left + "," + margin.top + ")");
@@ -2227,7 +2227,7 @@ function main () {
         graph.append("text")
             .attr("class", "y label")
             .attr("x", -(height+margin.top+margin.bottom)/2)
-            .attr("y", -5)	//edit here
+            .attr("y", -5)
             .attr("transform", 'rotate(-90)')
             .text("cluster size");
 		
