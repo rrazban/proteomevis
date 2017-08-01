@@ -1,12 +1,12 @@
 name,prettyprint1,prettyprint2,order,magnitude,decimal,log,cat
-degree,degree,degree,0,0,0,1,0
-weighted_degree,weighted degree,weighted degree,1,0,0,1,0
-ppi,log(PPI degree),PPI degree,2,0,0,1,0
-length,log(chain length),chain length,3,0,0,1,0
-dostol,log(dosage tolerance),dosage tolerance,4,0,1,1,0
-abundance,log(abundance),cellular abundance,5,0,0,1,0
-conden,log(contact density),contact density,6,0,3,1,0
-evorate,log(dN/dS),dN/dS,7,0,3,1,0
-dN,log(dN),dN,8,0,3,1,0
-dS,log(dS),dS,9,0,3,1,0
+degree_log,degree,degree,0,0,0,1,0
+weighted_degree_log,weighted degree,weighted degree,1,0,0,1,0
+ppi,PPI degree,PPI degree,2,0,0,1,0
+length,chain length,chain length,3,0,0,1,0
+dostol,dosage tolerance,dosage tolerance,4,0,1,1,0
+abundance,abundance,cellular abundance,5,0,0,1,0
+conden,contact density,contact density,6,0,3,1,0
+evorate,dN/dS,dN/dS,7,0,3,1,0
+dN,dN,dN,8,0,3,1,0
+dS,dS,dS,9,0,3,1,0
 mutant,mutant,mutant,-,-,-,-,1

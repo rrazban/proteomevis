@@ -82,7 +82,8 @@ function main () {
 
     var cluster,
         loaded,
-        dom = 'degree',
+//        dom = 'degree',
+        dom = 'degree_log',	//edit here
         tooltip = d3.select("#tooltip"),
         link_tooltip = d3.select("#link-tooltip"),
         colorschemes = {
@@ -601,7 +602,7 @@ function main () {
                 x.range([margin.left, width]);
                 y.range([height, margin.top]);
 
-                svg.attr("width", width + margin.left+margin.right)		//edit here
+                svg.attr("width", width + margin.left+margin.right)		
                    .attr("height", height + margin.top + margin.bottom);
 
                 background.attr("width",width-margin.left).attr("height", height-margin.top);
@@ -638,7 +639,7 @@ function main () {
                         .attr("height",height)
                         .attr("transform", "translate(" + (margin.left * 2) + "," + (margin.top*2) +")")
                         .attr("preserveAspectRatio", "none")
-                        .attr("xlink:href", "../static/img/species." + ss.species.id + ".png");	//edit here
+                        .attr("xlink:href", "../static/img/species." + ss.species.id + ".png");	
             var graph = svg
                         .append("g")
                         .attr("transform", "translate(" +margin.left + "," + margin.top + ")");
@@ -1109,7 +1110,8 @@ function main () {
 
         /* triggered when the domain or the data selected changes */
         updateVis = function () {
-            var magnitude = attributes.magnitude(dom),
+//          var magnitude = attributes.magnitude(dom),			//edit here
+          var magnitude = attributes.magnitude(dom),
                 domain = checkDomain(data.domains[dom]);
                 adjustDomain = adjustDomainMagnitude(magnitude);
             if ((domain) && (ss.tmi !== ss.tmf) && (ss.sidi !== ss.sidf)) { // the domain exists, so we should

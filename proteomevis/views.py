@@ -25,8 +25,8 @@ def export_nodes(request):
         SIDf = data['SIDf']
         species = data['species'].upper()
 
-        log_values = ['conden','dostol','ppi', 'length','evorate','abundance','dN','dS']
-        log_decimals = dict(conden=3, dostol=0, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
+        log_values = ['degree_log','weighted_degree_log', 'conden','dostol','ppi', 'length','evorate','abundance','dN','dS']
+        log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=0, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         # Create the HttpResponse object with the appropriate CSV header.
@@ -201,7 +201,8 @@ def fetch_edges(request):
         clusters, cluster_frequencies = getClusters(clusters,nodes,ID2i)
 
         nodes,clusters = addCluster(clusters,nodes,ID2i)
-
+		
+        nodes = updateDegrees_log(SG.degree(),nodes,ID2i)
         correlations, limits, data = computeCorrelations(nodes, columns)
         species = Species.objects.get(id=species).toDict()
 
