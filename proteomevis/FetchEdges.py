@@ -68,8 +68,9 @@ def updateDegrees_log(deg,nodes,ID2i):
 
 		if nodes[ID2i[e]][1]['weighted_degree']==0:
 			nodes[ID2i[e]][1]['weighted_degree_log'] = 0 
-		else:	
-			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])
+		else:
+			print nodes[ID2i[e]][1]['weighted_degree']	
+			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])	#I am taking the log twice!
 	return nodes
 
 
