@@ -1440,7 +1440,7 @@ function main () {
             .attr("text-anchor", "middle")
             .attr("x", -height/2)
             .attr("y", -35)
-			.attr("transform", "rotate(-90)");	//edit here
+			.attr("transform", "rotate(-90)");	
           //  .attr("x", -margin.left);
 //            .attr("dy", ".75em");
 
@@ -2297,7 +2297,7 @@ function main () {
                 .attr("class", function (d, i) {
                     return "cluster c" + i;	
                 })
-                .style("fill", nodeColor)
+                .style("fill", nodeColor)	//doesnt control color
                 .on("mouseover", function (d) {
                     $(eventHandler)
                         .trigger("clusterHighlight", d);
@@ -2317,7 +2317,7 @@ function main () {
 
         this.updateColor = function () {
             graph.selectAll(".cluster").style("fill",
-                nodeColor);
+                nodeColor);	//this is responsible for colorfill
         };
 
         this.scrunch = function (_forceScrunch) {

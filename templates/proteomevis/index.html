@@ -60,14 +60,14 @@
             </td>
             <td>
                 <div class='container vis-panel' id='view' style="min-width:303.13px;min-height:443px">
-                    Protein Inspection<span id='helpHover-pi' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Protein Inspection" data-content="Selected nodes from the Protein Chain Graph can be futher studied in the Individual tab. All clusters and their sizes in the Protein Chain Graph are tabulated in the Clusters tab."></span>
+                    Protein Inspection<span id='helpHover-pi' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Protein Inspection" data-content="Proteins searched in the search bar below or selected nodes from the Protein Chain Graph can be futher studied in the Individual tab. All clusters and their sizes in the Protein Chain Graph are tabulated in the Cluster tab."></span>
 
                     <ul class="nav nav-tabs" id='viewTabGroup'>
                         <li class="tab active" id='nodeListTab' role="presentation">
                             <a href="#">Individual</a>
                         </li>
                         <li class='tab' id='clusterListTab' role="presentation">
-                            <a href="#">Clusters</a>
+                            <a href="#">Cluster</a>
                         </li>
                     </ul>
                     <div id='nodeList'>
@@ -83,7 +83,7 @@
             </td>
             <td>
                 <div class='vis-panel' id='splomVis' style="min-width:399.59px;min-height:443px">
-                    Scatter Plot Matrix<span id='helpHover-splom' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="SPloM" data-content="Log-log (base 10) plots for protein chain properties. Clicking a plot will show it magnified in the bottom right of the panel. Proteins selected in the Inspection panel are highlighted in color. 'Zero' values for a property are approximated as one order of magnitude lower than its smallest value."></span>
+                    Scatter Plot Matrix<span id='helpHover-splom' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="SPloM" data-content="Log-log (base 10) plots for protein chain properties. Color-fill of each plot follows the Spearman correlation p-value scale below when the Spearman correlation is greater than 0.15. Clicking a plot will show it magnified in the bottom right of the panel. Individual proteins or clusters selected in the Protein Inspection panel are highlighted in color. 'Zero' values for a property are approximated as one order of magnitude lower than its smallest value."></span>
                     <div id='splom-bar'></div>
                     <div id='splom'></div>
                 </div>

@@ -69,14 +69,16 @@ def updateDegrees(deg,ppideg,nodes,ID2i):
 def updateDegrees_log(deg,nodes,ID2i):
 	for e in deg:
 		if deg[e]==0:	
-			nodes[ID2i[e]][1]['degree_log'] = None
+#			nodes[ID2i[e]][1]['degree_log'] = None
+			nodes[ID2i[e]][1]['degree_log'] = -1
 		else:	
 			nodes[ID2i[e]][1]['degree_log'] = np.log10(nodes[ID2i[e]][1]['degree'])
 
 		if nodes[ID2i[e]][1]['weighted_degree']==0:
-			nodes[ID2i[e]][1]['weighted_degree_log'] = None 
+#			nodes[ID2i[e]][1]['weighted_degree_log'] = None 
+			nodes[ID2i[e]][1]['weighted_degree_log'] = 0
 		else:
-			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])	#I am taking the log twice!
+			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])
 	return nodes
 
 

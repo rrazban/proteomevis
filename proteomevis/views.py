@@ -196,13 +196,13 @@ def fetch_edges(request):
 
         # update the data base
         nodes = updateDegrees(SG.degree(),SG_ppi.degree(),nodes,ID2i)
+        nodes = updateDegrees_log(SG.degree(),nodes,ID2i)
         # and format the clusters to pass to the client
         clusters = filter(lambda x: len(x) > 1, list(nx.connected_components(SG)))
         clusters, cluster_frequencies = getClusters(clusters,nodes,ID2i)
 
         nodes,clusters = addCluster(clusters,nodes,ID2i)
-		
-        nodes = updateDegrees_log(SG.degree(),nodes,ID2i)
+
         correlations, limits, data = computeCorrelations(nodes, columns)
         species = Species.objects.get(id=species).toDict()
 
