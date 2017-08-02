@@ -83,7 +83,7 @@ function main () {
     var cluster,
         loaded,
 //        dom = 'degree',
-        dom = 'degree_log',	//edit here
+        dom = 'degree_log',	
         tooltip = d3.select("#tooltip"),
         link_tooltip = d3.select("#link-tooltip"),
         colorschemes = {
@@ -1110,7 +1110,6 @@ function main () {
 
         /* triggered when the domain or the data selected changes */
         updateVis = function () {
-//          var magnitude = attributes.magnitude(dom),			//edit here
           var magnitude = attributes.magnitude(dom),
                 domain = checkDomain(data.domains[dom]);
                 adjustDomain = adjustDomainMagnitude(magnitude);
@@ -1440,8 +1439,8 @@ function main () {
             .attr("class", "y label")
             .attr("text-anchor", "middle")
             .attr("x", -height/2)
-            .attr("y", -30)
-			.attr("transform", "rotate(-90)");
+            .attr("y", -35)
+			.attr("transform", "rotate(-90)");	//edit here
           //  .attr("x", -margin.left);
 //            .attr("dy", ".75em");
 
