@@ -26,8 +26,12 @@ def computeCorrelations(nodes,selected_columns):
 	resultsArray = []
 	for column in selected_columns:
 		columnDict[column] = [val[1][column] for val in nodes]
-		minBound = minNone(columnDict[column])
-		maxBound = maxNone(columnDict[column])
+		try:
+			minBound = minNone(columnDict[column])
+			maxBound = maxNone(columnDict[column])
+		except:
+			minBound = 0 
+			maxBound = 0 
 		limits[column] = [minBound,maxBound]
 	# c.execute("SELECT name FROM proteins")
 	# rows = c.fetchall()
@@ -48,6 +52,7 @@ def computeCorrelations(nodes,selected_columns):
 				results = correlationJSON(column1,column1_data,column2,column2_data)
 				if results['p_value_SP']==None:
 					results['p_value_SP']=1
+					results['p_value']=1
 				# save it
 				resultsArray[i].append(results)
 	return resultsArray, limits, columnDict
@@ -59,18 +64,27 @@ def updateDegrees(deg,ppideg,nodes,ID2i):
 	return nodes
 
 def updateDegrees_log(deg,nodes,ID2i):
+	i=0
+	j=0
 	for e in deg:
 		if deg[e]==0:	
-			nodes[ID2i[e]][1]['degree_log'] = -1
+#			nodes[ID2i[e]][1]['degree_log'] = -1
+			nodes[ID2i[e]][1]['degree_log'] = None
 		else:	
-	#		nodes[ID2i[e]][1]['degree_log'] = np.log10(deg[e])
 			nodes[ID2i[e]][1]['degree_log'] = np.log10(nodes[ID2i[e]][1]['degree'])
+			i+=1
 
 		if nodes[ID2i[e]][1]['weighted_degree']==0:
-			nodes[ID2i[e]][1]['weighted_degree_log'] = 0 
+			nodes[ID2i[e]][1]['weighted_degree_log'] = None 
 		else:
-			print nodes[ID2i[e]][1]['weighted_degree']	
 			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])	#I am taking the log twice!
+			j+=1
+	if i==0:
+		nodes[0][1]['degree_log']=0
+		nodes[1][1]['degree_log']=0
+	if j==0:
+		nodes[0][1]['weighted_degree_log']=0
+		nodes[1][1]['weighted_degree_log']=0
 	return nodes
 
 

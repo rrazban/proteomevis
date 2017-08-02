@@ -186,7 +186,7 @@ def fetch_edges(request):
 
         for source, target, edge_dict in edges:
             try:
-                nodes[ID2i[source]][1]['weighted_degree'] += 10**nodes[ID2i[target]][1]['abundance']		#this is logged!
+                nodes[ID2i[source]][1]['weighted_degree'] += 10**nodes[ID2i[target]][1]['abundance']		#this is logged!	#maybe only include values that have abundance
             except:
                 pass
             try:
