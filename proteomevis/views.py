@@ -46,8 +46,16 @@ def export_nodes(request):
                     csv_row.append(row[column])
             csv_data.append(csv_row)
 
+        better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted_degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"dN/dS"}
+        pretty_columns = []
+        for col in columns:
+			try:
+				pretty_columns.append(better_labels[col])
+			except:
+				pretty_columns.append(col)
+	
         t = loader.get_template('proteomevis/data.csv')
-        response.write(t.render({'data': csv_data,'header': columns}))
+        response.write(t.render({'data': csv_data,'header': pretty_columns}))
         return response
 
 @csrf_exempt
@@ -66,7 +74,7 @@ def export_edges(request):
         
         if data['edges'] == '1':
             edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
-            csv_data = [edge.edgeCSV() for edge in edges]
+            csv_dat = [edge.edgeCSV() for edge in edges]
             columns = edges[0].keys()
 
             response = HttpResponse(content_type='text/csv')
@@ -92,6 +100,8 @@ def export_splom(request):
 
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
 
+        better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted_degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"dN/dS"}
+
         TMi = data['TMi']
         TMf = data['TMf']
         SIDi = data['SIDi']
@@ -112,11 +122,11 @@ def export_splom(request):
             corr = unicode(corr, "utf-8")
             ws = wb.add_sheet(corr)
             for i,column_index in enumerate(column_indices):
-                ws.write(0,i+1,label=column_order[column_index])
+                ws.write(0,i+1,label=better_labels[column_order[column_index]])
             for r, ci1 in enumerate(column_indices):
                 ws.write(r+1,0,label=column_order[ci1])
                 for c, ci2 in enumerate(column_indices):
-                    ws.write(r+1,c+1,label=correlations[ci1][ci2][corr])
+                    ws.write(r+1,c+1,label=better_labels[correlations[ci1][ci2][corr]])
 
         wb.save(response)
 
