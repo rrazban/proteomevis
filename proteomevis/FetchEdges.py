@@ -47,9 +47,12 @@ def computeCorrelations(nodes,selected_columns):
 				# eliminate any pairs that have a None value
 				data_filtered = filter(lambda x: x[0] != None and x[1] != None, data_tupled)
 				# unzip the tuples
-				column1_data,column2_data = map(list,zip(*data_filtered))
+				try:
+					column1_data,column2_data = map(list,zip(*data_filtered))
 				# linear regressions
-				results = correlationJSON(column1,column1_data,column2,column2_data)
+					results = correlationJSON(column1,column1_data,column2,column2_data)
+				except:
+					results = {'slope':0.0, 'intercept':-1, 'r_value':0.0, 'p_value':1.0, 'std_err':0.0, 'rho_SP':0, 'p_value_SP':1}
 				if results['p_value_SP']==None:
 					results['p_value_SP']=1
 					results['p_value']=1
@@ -64,27 +67,16 @@ def updateDegrees(deg,ppideg,nodes,ID2i):
 	return nodes
 
 def updateDegrees_log(deg,nodes,ID2i):
-	i=0
-	j=0
 	for e in deg:
 		if deg[e]==0:	
-#			nodes[ID2i[e]][1]['degree_log'] = -1
 			nodes[ID2i[e]][1]['degree_log'] = None
 		else:	
 			nodes[ID2i[e]][1]['degree_log'] = np.log10(nodes[ID2i[e]][1]['degree'])
-			i+=1
 
 		if nodes[ID2i[e]][1]['weighted_degree']==0:
 			nodes[ID2i[e]][1]['weighted_degree_log'] = None 
 		else:
 			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])	#I am taking the log twice!
-			j+=1
-	if i==0:
-		nodes[0][1]['degree_log']=0
-		nodes[1][1]['degree_log']=0
-	if j==0:
-		nodes[0][1]['weighted_degree_log']=0
-		nodes[1][1]['weighted_degree_log']=0
 	return nodes
 
 
