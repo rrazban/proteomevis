@@ -168,10 +168,11 @@ def fetch_edges(request):
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
 
         if len(list(edges)) > 15000:
-            response = HttpResponse(
+            response = StreamingHttpResponse(
             json.dumps(data,cls=SetEncoder),
             content_type="application/json"
-            )
+            )	#StreamingHttpResponse more robust for large transfers
+
             response.status_code=400    #choose 400 not 404 cuz 404 automatically says file is not found (not what's goin on here)
             return response             #message called in proteome.js file
 
