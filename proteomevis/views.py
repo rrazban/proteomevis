@@ -72,25 +72,28 @@ def export_edges(request):
 
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
-        if data['edges'] == '1':
-            edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
-            csv_data = [edge.edgeCSV() for edge in edges]
-            columns = edges[0].keys()
+        if data['edges'] != '1':
+			TMi=SIDi='0'
+			TMf=SIDf='1'
 
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="EDGES_'+data['species']+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
+        edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+        csv_data = [edge.edgeCSV() for edge in edges]
+        columns = edges[0].keys()
 
-            t = loader.get_template('proteomevis/data.csv')
-            response.write(t.render({'data': csv_data,'header': columns}))
-            return response
-        else:
-            filename = "proteomevis/static/data_download/ALL_EDGES."+str(species)+".csv"
-            filepath = os.path.basename(filename)
-            chunk_size = 8192
-            response = StreamingHttpResponse(FileWrapper(open(filename), chunk_size),content_type='text/csv')
-            response['Content-Length'] = os.path.getsize(filename)    
-            response['Content-Disposition'] = "attachment; filename=%s" % filepath
-            return response
+        response = HttpResponse(content_type='text/csv')	#if want to use StreamingHttpResponse need to change syntax
+        response['Content-Disposition'] = 'attachment; filename="EDGES_'+data['species']+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
+
+        t = loader.get_template('proteomevis/data.csv')	
+        response.write(t.render({'data': csv_data,'header': columns}))
+        return response
+#        else:
+ #           filename = "proteomevis/static/data_download/ALL_EDGES."+str(species)+".csv"
+  #          filepath = os.path.basename(filename)
+   #         chunk_size = 8192
+    #        response = StreamingHttpResponse(File	Wrapper(open(filename), chunk_size),content_type='text/csv')	#have sqlite file opened here	#put need to parse by species	#just find first instance and the take all rows up until then or after that?
+     #       response['Content-Length'] = os.path.getsize(filename)    
+      #      response['Content-Disposition'] = "attachment; filename=%s" % filepath
+       #     return response
 
 @csrf_exempt
 def export_splom(request):
