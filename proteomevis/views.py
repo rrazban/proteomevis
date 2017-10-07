@@ -74,7 +74,7 @@ def export_edges(request):
         
         if data['edges'] == '1':
             edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
-            csv_dat = [edge.edgeCSV() for edge in edges]
+            csv_data = [edge.edgeCSV() for edge in edges]
             columns = edges[0].keys()
 
             response = HttpResponse(content_type='text/csv')
