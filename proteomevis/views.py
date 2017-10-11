@@ -73,28 +73,27 @@ def export_edges(request):
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         if data['edges'] != '1':
-		TMi=SIDi='0'
-		TMf=SIDf='1'	#maybe its the filtering step that is slow?
-       		edges = Edge.objects.filter(species=species)
-	else:
-       		edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
-        csv_data = [edge.edgeCSV() for edge in edges]	
+			TMi=SIDi='0'
+			TMf=SIDf='1'
+
+        edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+        csv_data = [edge.edgeCSV() for edge in edges]
         columns = edges[0].keys()
 
-        response = HttpResponse(content_type='text/csv')
+        response = HttpResponse(content_type='text/csv')	#if want to use StreamingHttpResponse need to change syntax
         response['Content-Disposition'] = 'attachment; filename="EDGES_'+data['species']+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
 
-        t = loader.get_template('proteomevis/data.csv')
+        t = loader.get_template('proteomevis/data.csv')	
         response.write(t.render({'data': csv_data,'header': columns}))
-           # return response
+        return response
 #        else:
  #           filename = "proteomevis/static/data_download/ALL_EDGES."+str(species)+".csv"
   #          filepath = os.path.basename(filename)
-   #         chunk_size = 8192		#does this help?
-#            response = StreamingHttpResponse(FileWrapper(open(filename), chunk_size),content_type='text/csv')
- #           response['Content-Length'] = os.path.getsize(filename)    
-  #          response['Content-Disposition'] = "attachment; filename=%s" % filepath
-        return response
+   #         chunk_size = 8192
+    #        response = StreamingHttpResponse(File	Wrapper(open(filename), chunk_size),content_type='text/csv')	#have sqlite file opened here	#put need to parse by species	#just find first instance and the take all rows up until then or after that?
+     #       response['Content-Length'] = os.path.getsize(filename)    
+      #      response['Content-Disposition'] = "attachment; filename=%s" % filepath
+       #     return response
 
 @csrf_exempt
 def export_splom(request):
@@ -171,10 +170,11 @@ def fetch_edges(request):
         edges = [(edge.targetID,edge.sourceID,edge.__dict__) for edge in edges]
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
         if len(list(edges)) > 15000:
-            response = HttpResponse(
+            response = StreamingHttpResponse(
             json.dumps(data,cls=SetEncoder),
             content_type="application/json"
-            )
+            )	#StreamingHttpResponse more robust for large transfers
+
             response.status_code=400    #choose 400 not 404 cuz 404 automatically says file is not found (not what's goin on here)
             return response             #message called in proteome.js file
 
