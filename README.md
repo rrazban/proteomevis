@@ -6,4 +6,4 @@ Run `./install.sh`, making sure any dependencies are installed.
 
 Run `python manage.py runserver`
 
-In Google Chrome, go to [http://localhost:8000/proteomevis/](http://localhost:8000/proteomevis/ "Go to localhost")
+In any web browser, go to [http://localhost:8000/proteomevis/](http://localhost:8000/proteomevis/ "Go to localhost")
