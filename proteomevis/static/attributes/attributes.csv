@@ -5,8 +5,5 @@ length,chain length,chain length,2,0,0,1,0
 conden,contact density,contact density,3,0,3,1,0
 abundance,abundance,cellular abundance,4,0,0,1,0
 ppi,PPI degree,PPI degree,5,0,0,1,0
-dostol,dosage tolerance,dosage tolerance,6,0,1,1,0
-dN,dN,dN,7,0,3,1,0
-dS,dS,dS,8,0,3,1,0
-evorate,dN/dS,dN/dS,9,0,3,1,0
-mutant,mutant,mutant,-,-,-,-,1
+dostol,dosage tolerance,dosage tolerance,6,0,3,0,0
+evorate,evorate,evolutionary rate,7,0,3,1,0

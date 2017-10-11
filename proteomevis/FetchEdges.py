@@ -76,7 +76,7 @@ def updateDegrees_log(deg,nodes,ID2i):
 
 		if nodes[ID2i[e]][1]['weighted_degree']==0:
 #			nodes[ID2i[e]][1]['weighted_degree_log'] = None 
-			nodes[ID2i[e]][1]['weighted_degree_log'] = 0
+			nodes[ID2i[e]][1]['weighted_degree_log'] = -1
 		else:
 			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])
 	return nodes
@@ -151,7 +151,10 @@ def getClusterStats(_cluster,nodes,attr,ID2i):
 	return tmp
 
 def average(_list):
-	a = 0 if len(_list) == 0 else float(sum(_list))/len(_list)
+	try:
+		a = 0 if len(_list) == 0 else float(sum(_list))/len(_list)
+	except:
+		a=0
 	return a
 
 def emptyClusters(unique_sizes,attr):

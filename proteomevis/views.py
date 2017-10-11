@@ -25,8 +25,9 @@ def export_nodes(request):
         SIDf = data['SIDf']
         species = data['species'].upper()
 
-        log_values = ['degree_log','weighted_degree_log', 'conden','dostol','ppi', 'length','evorate','abundance','dN','dS']
-        log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=0, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
+        log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS']
+#have this read in from attributes file
+        log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         # Create the HttpResponse object with the appropriate CSV header.
@@ -46,7 +47,7 @@ def export_nodes(request):
                     csv_row.append(row[column])
             csv_data.append(csv_row)
 
-        better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted_degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"dN/dS"}
+        better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted_degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evorate"}
         pretty_columns = []
         for col in columns:
 			try:
@@ -67,30 +68,33 @@ def export_edges(request):
         TMf = data['TMf']
         SIDi = data['SIDi']
         SIDf = data['SIDf']
-
         species = int(data['species'])
 
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
-        if data['edges'] == '1':
-            edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
-            csv_dat = [edge.edgeCSV() for edge in edges]
-            columns = edges[0].keys()
+        if data['edges'] != '1':
+		TMi=SIDi='0'
+		TMf=SIDf='1'	#maybe its the filtering step that is slow?
+       		edges = Edge.objects.filter(species=species)
+	else:
+       		edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+        csv_data = [edge.edgeCSV() for edge in edges]	
+        columns = edges[0].keys()
 
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="EDGES_'+data['species']+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="EDGES_'+data['species']+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
 
-            t = loader.get_template('proteomevis/data.csv')
-            response.write(t.render({'data': csv_data,'header': columns}))
-            return response
-        else:
-            filename = "proteomevis/static/data_download/ALL_EDGES."+str(species)+".csv"
-            filepath = os.path.basename(filename)
-            chunk_size = 8192
-            response = StreamingHttpResponse(FileWrapper(open(filename), chunk_size),content_type='text/csv')
-            response['Content-Length'] = os.path.getsize(filename)    
-            response['Content-Disposition'] = "attachment; filename=%s" % filepath
-            return response
+        t = loader.get_template('proteomevis/data.csv')
+        response.write(t.render({'data': csv_data,'header': columns}))
+           # return response
+#        else:
+ #           filename = "proteomevis/static/data_download/ALL_EDGES."+str(species)+".csv"
+  #          filepath = os.path.basename(filename)
+   #         chunk_size = 8192		#does this help?
+#            response = StreamingHttpResponse(FileWrapper(open(filename), chunk_size),content_type='text/csv')
+ #           response['Content-Length'] = os.path.getsize(filename)    
+  #          response['Content-Disposition'] = "attachment; filename=%s" % filepath
+        return response
 
 @csrf_exempt
 def export_splom(request):
@@ -166,7 +170,6 @@ def fetch_edges(request):
             edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf,mutant=0)
         edges = [(edge.targetID,edge.sourceID,edge.__dict__) for edge in edges]
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
-
         if len(list(edges)) > 15000:
             response = HttpResponse(
             json.dumps(data,cls=SetEncoder),
@@ -212,7 +215,6 @@ def fetch_edges(request):
         # and format the clusters to pass to the client
         clusters = filter(lambda x: len(x) > 1, list(nx.connected_components(SG)))
         clusters, cluster_frequencies = getClusters(clusters,nodes,ID2i)
-
         nodes,clusters = addCluster(clusters,nodes,ID2i)
 
         correlations, limits, data = computeCorrelations(nodes, columns)

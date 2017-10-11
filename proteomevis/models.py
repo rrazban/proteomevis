@@ -9,14 +9,16 @@ class Chain(models.Model):
     domain = models.CharField(max_length=10)
     chain = models.CharField(max_length=2)
     length = models.FloatField(blank=True,null=True)
-    abundance = models.FloatField(blank=True,null=True)
+    abundance = models.FloatField(null=True,blank=True)
+  #  abundance = models.FloatField(blank=True,null=True)	#flipping order of blank and null make no diff
     evorate = models.FloatField(blank=True,null=True)
     conden = models.FloatField(blank=True,null=True)
     dostox = models.FloatField(blank=True,null=True)
     dN = models.FloatField(blank=True,null=True)
     dS = models.FloatField(blank=True,null=True)
     mutant = models.IntegerField(default=0)
-    ppi = models.FloatField(blank=True,null=True)
+    ppi = models.FloatField(null=True, blank=True)
+#    hii = models.FloatField(null=True, blank=True)	#for database updating purposes
 
     unique_together = ("chain_id", "species")
 
@@ -53,6 +55,8 @@ class Domain(models.Model):
     obsolete = models.CharField(max_length=30,blank=True,null=True)
     species = models.IntegerField(default=0,blank=True,null=True)
 
+#    hii = models.FloatField(null=True, blank=True)#for database updating purposes
+
     def __str__(self):
         return self.domain
         # return dict(id=self.id,domain=self.domain,uniprot=self.uniprot,genes=self.genes,details=self.details,function1=self.function1,function2=self.function2,invis=self.invis,obsolete=self.obsolete,species=self.species)
@@ -65,6 +69,9 @@ class Edge(models.Model):
     tm = models.FloatField(blank=True,null=True)
     ppi = models.BooleanField(blank=True)
     mutant = models.IntegerField(default=0)
+
+#    hii = models.FloatField(null=True, blank=True)#for database updating purposes
+
 
     def __str__(self):
         return str(self.sourceID) + " to " + str(self.targetID)

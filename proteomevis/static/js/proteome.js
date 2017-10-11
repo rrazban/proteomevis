@@ -633,10 +633,10 @@ function main () {
                         .attr("width", width + margin.left + margin.right)	//doesnt matter
                            .attr("height", height + margin.top + margin.bottom);
 
-            var background = svg
+            var background = svg	
                         .append("svg:image")
-                        .attr("width",width)	//doesnt matter
-                        .attr("height",height)
+                       // .attr("width",width)	
+                       // .attr("height",height)	//makes it look worse. default behaviour with % looks best
                         .attr("transform", "translate(" + (margin.left * 2) + "," + (margin.top*2) +")")
                         .attr("preserveAspectRatio", "none")
                         .attr("xlink:href", "../static/img/species." + ss.species.id + ".png");	
@@ -654,13 +654,13 @@ function main () {
             graph.append("text")
                         .attr("class", "x label")
                         .attr("text-anchor", "end")
-                        .text("TM");
+                        .text("SID");
             graph.append("text")
                         .attr("class", "y label")
                         .attr("y", margin.top)
                         .attr("x", margin.left + 10)
                         .attr("dy",".75em")
-                        .text("SID");
+                        .text("TM-score");
 
             var brush = d3.svg.brush()
                         .x(x)
