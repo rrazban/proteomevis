@@ -169,12 +169,13 @@ function main () {
         // Hide it AFTER the action was triggered
         $(".custom-menu").hide(100);
     });
-    var chainName = function (d) {
-            return d.slice(0, -1) + d.slice(-1).toUpperCase();
+    var chainName = function (d) {	//not sure what the point of this function is, just return d...
+            return d.slice(0, -1) + d.slice(-1);
         },
         chainImage = function (d) {
             return "<img class='media-object' src ='../static/img/" + d[
-                    0] + '/' + d[1] + '/' + chainName(d) + ".png'>";
+                    0] + '/' + d[1] + '/' + d + ".png'>";
+                   // 0] + '/' + d[1] + '/' + chainName(d) + ".png'>";
         },
         setPanelSizes = function () {
             // column 1
@@ -842,7 +843,7 @@ function main () {
             },
             nodeMousedOver = function (d) {
                 tooltip.style('opacity', 1)
-                    .html(chainImage(d.pdb) + d.pdb.toUpperCase());
+                    .html(chainImage(d.pdb) + d.pdb);	
                 $(eventHandler)
                     .trigger("clusterHighlight", [data.clusters[d.cluster],d]);
             },
@@ -2623,9 +2624,9 @@ function main () {
 
             if (sChain) {
                 sDom = sDom.toLowerCase();
-                return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + sChain + ".png";
+                return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + '.' + sChain + ".png";	
             }
-            return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + ".png";
+            return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + ".png";	//none should go here with updated data cuz even monomers now have chain id (no longer '_')
         }
 
         this.clear = function (_list) {
