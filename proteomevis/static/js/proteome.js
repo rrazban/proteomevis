@@ -661,7 +661,7 @@ function main () {
                         .attr("y", margin.top)
                         .attr("x", margin.left + 10)
                         .attr("dy",".75em")
-                        .text("TM-score");
+                        .text("TM");
 
             var brush = d3.svg.brush()
                         .x(x)
