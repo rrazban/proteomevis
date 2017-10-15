@@ -25,8 +25,7 @@ def export_nodes(request):
         SIDf = data['SIDf']
         species = data['species'].upper()
 
-        log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS']
-#have this read in from attributes file
+        log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS'] #have this read in from attributes file #cant read all cuz degree and weighted degree
         log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
@@ -47,7 +46,7 @@ def export_nodes(request):
                     csv_row.append(row[column])
             csv_data.append(csv_row)
 
-        better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted_degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evorate"}
+        better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted_degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
         pretty_columns = []
         for col in columns:
 			try:
