@@ -344,8 +344,8 @@ circle.big-graph.splom {
   text-align:center;
 }
 
-li.disabled{
-    pointer-events:none;
+.disabled{
+    pointer-events: none; 
     opacity:0.4;
 }
 
