@@ -18,50 +18,49 @@ better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted degree",
 def export_nodes(request):
 	if request.method == 'POST':
 		data = cleanRequest(request.POST)
-		if 'columns' in data:
-			dat = data['columns']
-			if type(dat)!=list:
-				dat = [dat]		
-			columns = ['id'] + dat
+		dat = data['columnsnodes']
+		if type(dat)!=list:
+			dat = [dat]		
+		columns = ['id'] + dat
 
-			node_data = json.loads(data['nodes'])
-			TMi = data['TMi']
-			TMf = data['TMf']
-			SIDi = data['SIDi']
-			SIDf = data['SIDf']
-			species = data['species'].upper()
+		node_data = json.loads(data['nodes'])
+		TMi = data['TMi']
+		TMf = data['TMf']
+		SIDi = data['SIDi']
+		SIDf = data['SIDf']
+		species = data['species'].upper()
 
-			log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS'] #have this read in from attributes file #cant read all cuz degree and weighted degree
-			log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
-			current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
+		log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS'] #have this read in from attributes file #cant read all cuz degree and weighted degree
+		log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
+		current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         # Create the HttpResponse object with the appropriate CSV header.
-			response = HttpResponse(content_type='text/csv')
-			response['Content-Disposition'] = 'attachment; filename="NODES_'+species+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="NODES_'+species+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
 
-			csv_data = []	#parse those in TM/SID range?
+		csv_data = []	#parse those in TM/SID range?
 
-			for row in node_data:
-				csv_row = []
-				for column in columns:
-					if row[column] == None:
-						csv_row.append('')
-					elif column in log_values:
-						csv_row.append(pow10(row[column],log_decimals[column]))
-					else:
-						csv_row.append(row[column])
-				csv_data.append(csv_row)
+		for row in node_data:
+			csv_row = []
+			for column in columns:
+				if row[column] == None:
+					csv_row.append('')
+				elif column in log_values:
+					csv_row.append(pow10(row[column],log_decimals[column]))
+				else:
+					csv_row.append(row[column])
+			csv_data.append(csv_row)
 
-			pretty_columns = []
-			for col in columns:
-				try:
-					pretty_columns.append(better_labels[col])
-				except:
-					pretty_columns.append(col)
-	
-			t = loader.get_template('proteomevis/data.csv')
-			response.write(t.render({'data': csv_data,'header': pretty_columns}))
-			return response
+		pretty_columns = []
+		for col in columns:
+			try:
+				pretty_columns.append(better_labels[col])
+			except:
+				pretty_columns.append(col)
+
+		t = loader.get_template('proteomevis/data.csv')
+		response.write(t.render({'data': csv_data,'header': pretty_columns}))
+		return response
 
 @csrf_exempt
 def export_edges(request):
@@ -116,7 +115,8 @@ def export_splom(request):
         correlations = json.loads(data['correlations'])
         correlation_option = data['correlationoptions']
 
-        columns = data['columns']
+        print data		
+        columns = data['columnscorrelations']
 #        columns.remove('mutant')
         column_indices = [column_order.index(col) for col in columns]
 

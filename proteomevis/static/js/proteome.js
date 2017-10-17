@@ -309,6 +309,12 @@ function main () {
         $(eventHandler)
             .bind("displayData", function (event, status) {
                 typelimitsVis.updateVis();
+            kaixin = $('input[name="columns_correlations"]:checkbox:checked').length;
+            console.log(kaixin);
+        if (kaixin==0){
+            console.log('hallo');
+            d3.select("#btnSubmitSPLOMExport").classed("disabled", "True");
+        }
             });
         $(eventHandler)
             .bind("focus-forcevis", function (event, _data) {
@@ -1192,6 +1198,38 @@ function main () {
             $("#mlDataexport").html('Download options - all proteins');
             d3.select("#numedges_adddisclaimer_label").classed("disabled",((ss.tmi == ss.tmf) && (ss.sidi == ss.sidf)));
         });
+
+		function runThis(){
+		    corr_columns = $('input[name="columns_correlations"]:checkbox:checked').length;
+		    corr_options = $('input[name="correlation-options"]:checkbox:checked').length;
+			if (corr_columns==0 || corr_options==0){	
+	            d3.select("#btnSubmitSPLOMExport").classed("disabled", 1);
+			}
+			else {
+	            d3.select("#btnSubmitSPLOMExport").classed("disabled", 0);
+			}
+		}		
+
+		d3.select("#mbSPLOMexport").on("click", function () {
+			setTimeout(function() {runThis()}, 100);	//need delay cuz too fast
+		});
+
+		function runThis1(){
+		    columns = $('input[name="columns_nodes"]:checkbox:checked').length;
+			if (columns==0){	
+	            d3.select("#btnSubmitDataExport").classed("disabled", 1);
+			}
+			else {
+	            d3.select("#btnSubmitDataExport").classed("disabled", 0);
+			}
+		}		
+
+		d3.select("#mbDataexport").on("click", function () {
+			setTimeout(function() {runThis1()}, 100);	//need delay cuz too fast
+		});
+
+
+
     };
 
     SplomBar = function (_parentElement) {
@@ -2889,7 +2927,7 @@ function main () {
             .append("label")
             .attr("class","btn active")
             .html(function (d) {
-                return "<input name='columns' type='checkbox' value='" + d +
+                return "<input name='columns_nodes' type='checkbox' value='" + d +
                     "' checked>" + (attributes.isAttr(d) ? attributes.prettyprint2(d) : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
             });
 
@@ -2899,7 +2937,7 @@ function main () {
             .append("label")
             .attr("class","btn active")
             .html(function (d) {
-                return "<input name='columns' type='checkbox' value='" + d +
+                return "<input name='columns_correlations' type='checkbox' value='" + d +
                     "' checked>" + (attributes.isAttr(d) ? attributes.prettyprint2(d) : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
             });
 
