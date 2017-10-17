@@ -10,53 +10,58 @@ from django.core.cache import cache
 from django.template.context_processors import csrf
 from wsgiref.util import FileWrapper
 
+
+
+better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
+
 @csrf_exempt
 def export_nodes(request):
-    if request.method == 'POST':
-        data = cleanRequest(request.POST)
-	try:
-	        columns = ['id'] + data['columns']
-	except:
-	        columns = ['id'] + [data['columns']]	#handles len(data)==1 case
-        node_data = json.loads(data['nodes'])
-        TMi = data['TMi']
-        TMf = data['TMf']
-        SIDi = data['SIDi']
-        SIDf = data['SIDf']
-        species = data['species'].upper()
+	if request.method == 'POST':
+		data = cleanRequest(request.POST)
+		if 'columns' in data:
+			dat = data['columns']
+			if type(dat)!=list:
+				dat = [dat]		
+			columns = ['id'] + dat
 
-        log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS'] #have this read in from attributes file #cant read all cuz degree and weighted degree
-        log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
-        current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
+			node_data = json.loads(data['nodes'])
+			TMi = data['TMi']
+			TMf = data['TMf']
+			SIDi = data['SIDi']
+			SIDf = data['SIDf']
+			species = data['species'].upper()
+
+			log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS'] #have this read in from attributes file #cant read all cuz degree and weighted degree
+			log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
+			current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         # Create the HttpResponse object with the appropriate CSV header.
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="NODES_'+species+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
+			response = HttpResponse(content_type='text/csv')
+			response['Content-Disposition'] = 'attachment; filename="NODES_'+species+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
 
-        csv_data = []
+			csv_data = []	#parse those in TM/SID range?
 
-        for row in node_data:
-            csv_row = []
-            for column in columns:
-                if row[column] == None:
-                    csv_row.append('')
-                elif column in log_values:
-                    csv_row.append(pow10(row[column],log_decimals[column]))
-                else:
-                    csv_row.append(row[column])
-            csv_data.append(csv_row)
+			for row in node_data:
+				csv_row = []
+				for column in columns:
+					if row[column] == None:
+						csv_row.append('')
+					elif column in log_values:
+						csv_row.append(pow10(row[column],log_decimals[column]))
+					else:
+						csv_row.append(row[column])
+				csv_data.append(csv_row)
 
-        better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted_degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
-        pretty_columns = []
-        for col in columns:
-			try:
-				pretty_columns.append(better_labels[col])
-			except:
-				pretty_columns.append(col)
+			pretty_columns = []
+			for col in columns:
+				try:
+					pretty_columns.append(better_labels[col])
+				except:
+					pretty_columns.append(col)
 	
-        t = loader.get_template('proteomevis/data.csv')
-        response.write(t.render({'data': csv_data,'header': pretty_columns}))
-        return response
+			t = loader.get_template('proteomevis/data.csv')
+			response.write(t.render({'data': csv_data,'header': pretty_columns}))
+			return response
 
 @csrf_exempt
 def export_edges(request):
@@ -102,7 +107,6 @@ def export_splom(request):
 
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
 
-        better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted_degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"dN/dS"}
 
         TMi = data['TMi']
         TMf = data['TMf']
@@ -113,7 +117,7 @@ def export_splom(request):
         correlation_option = data['correlationoptions']
 
         columns = data['columns']
-        columns.remove('mutant')
+#        columns.remove('mutant')
         column_indices = [column_order.index(col) for col in columns]
 
         wb = xlwt.Workbook(encoding='utf-8')
@@ -121,14 +125,15 @@ def export_splom(request):
         response['Content-Disposition'] = 'attachment; filename="CORRELATIONS_'+data['species']+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.xls"'
 
         for corr in correlation_option:
-            corr = unicode(corr, "utf-8")
+#            corr1 = unicode(corr, "utf-8")
+            corr = corr.decode('utf-8', 'ignore')
             ws = wb.add_sheet(corr)
             for i,column_index in enumerate(column_indices):
                 ws.write(0,i+1,label=better_labels[column_order[column_index]])
             for r, ci1 in enumerate(column_indices):
-                ws.write(r+1,0,label=column_order[ci1])
+                ws.write(r+1,0,label=better_labels[column_order[ci1]])
                 for c, ci2 in enumerate(column_indices):
-                    ws.write(r+1,c+1,label=better_labels[correlations[ci1][ci2][corr]])
+                    ws.write(r+1,c+1,correlations[ci1][ci2][corr])
 
         wb.save(response)
 
