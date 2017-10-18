@@ -40,7 +40,17 @@ def export_nodes(request):
 
 		csv_data = []	#parse those in TM/SID range?
 
+		id_list = []
+		if data['option']=='1':
+			edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+			for edge in edges:
+				edge_list = edge.edgeCSV()
+				id_list.extend([edge_list[0], edge_list[1]])
+
 		for row in node_data:
+			if id_list!=[]:
+				if row['id'] not in id_list:
+					continue
 			csv_row = []
 			for column in columns:
 				if row[column] == None:
@@ -81,7 +91,7 @@ def export_edges(request):
 			TMf=SIDf='1'
         edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
         node_data = json.loads(data['nodes'])
-        if node_data!= "":
+        if node_data!= 0:
 			id_list = [node['id'] for node in node_data]
 			csv_data = [edge.edgeCSV() for edge in edges if edge.edgeCSV()[0] in id_list and edge.edgeCSV()[1] in id_list]
         else:

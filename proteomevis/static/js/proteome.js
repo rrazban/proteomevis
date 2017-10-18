@@ -2960,6 +2960,7 @@ function main () {
             $("#dataExport_SIDi").val(ss.sidi);
             $("#dataExport_SIDf").val(ss.sidf);
             $("#dataExport_species").val(ss.species.id);
+            $("#dataExport_option").val($(".more-options.active>input").val());
             if ($(".more-options.active>input").val() !== '0') {
                 $("#exportEdges").submit(function () {
                     $("#dataExport_edges").val($(".more-options.active>input").val());
