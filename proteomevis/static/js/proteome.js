@@ -2459,6 +2459,7 @@ function main () {
                 function () {
                     $("#mlDataexport").html("Download options - selected cluster");
                     d3.select("#mb-tab-corr").classed("disabled", 1);		//have to undo this....
+					$("a[href='#mbDataexport']").tab('show');
                     $("#dataExport_triggeredby").val(_cluster.id);
                 });
 
@@ -2941,6 +2942,7 @@ function main () {
 
         $("#mbDataexport").submit(function () {
             var selectedCluster = $("#dataExport_triggeredby").val();		//need this to forget
+			console.log(selectedCluster);
             if (selectedCluster == "") {
                 $("#dataExport_nodes").val(JSON.stringify(data.nodes));
             } else {
