@@ -1202,7 +1202,7 @@ function main () {
 		function runThis(){
 		    corr_columns = $('input[name="columns_correlations"]:checkbox:checked').length;
 		    corr_options = $('input[name="correlation-options"]:checkbox:checked').length;
-			if (corr_columns==0 || corr_options==0){	
+			if (corr_columns==1 || corr_options==0){	
 	            d3.select("#btnSubmitSPLOMExport").classed("disabled", 1);
 			}
 			else {

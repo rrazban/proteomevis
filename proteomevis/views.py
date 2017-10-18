@@ -113,10 +113,16 @@ def export_splom(request):
         SIDf = data['SIDf']
         column_order = json.loads(data['columnorder'])
         correlations = json.loads(data['correlations'])
+        if type(correlations)!=list:
+			correlations = [correlations]
         correlation_option = data['correlationoptions']
+        if type(correlation_option)!=list:
+			correlation_option = [correlation_option]
 
-        print data		
         columns = data['columnscorrelations']
+        if type(columns)!=list:
+			columns = [columns]
+        
 #        columns.remove('mutant')
         column_indices = [column_order.index(col) for col in columns]
 
