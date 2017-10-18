@@ -309,12 +309,6 @@ function main () {
         $(eventHandler)
             .bind("displayData", function (event, status) {
                 typelimitsVis.updateVis();
-            kaixin = $('input[name="columns_correlations"]:checkbox:checked').length;
-            console.log(kaixin);
-        if (kaixin==0){
-            console.log('hallo');
-            d3.select("#btnSubmitSPLOMExport").classed("disabled", "True");
-        }
             });
         $(eventHandler)
             .bind("focus-forcevis", function (event, _data) {
@@ -1194,9 +1188,11 @@ function main () {
             txtSIDi.value = formatFloat(ss.sidi);
             txtSIDf.value = formatFloat(ss.sidf);
         };
+
         d3.select("#downloadAllDataBtn").on("click", function () {
             $("#mlDataexport").html('Download options - all proteins');
             d3.select("#numedges_adddisclaimer_label").classed("disabled",((ss.tmi == ss.tmf) && (ss.sidi == ss.sidf)));
+       		d3.select("#mb-tab-corr").classed("disabled",0);		//undo what clusters tab does 
         });
 
 		function runThis(){
@@ -2460,7 +2456,8 @@ function main () {
             panelHeader.select(".download").on("click",
                 function () {
                     $("#mlDataexport").html("Download options - selected cluster");
-                    d3.select("#mb-tab-corr").attr("class","disabled");
+                   // d3.select("#mb-tab-corr").attr("class","disabled");		//have to undo this....
+                    d3.select("#mb-tab-corr").classed("disabled", 1);		//have to undo this....
                     $("#dataExport_triggeredby").val(_cluster.id);
                 });
 
