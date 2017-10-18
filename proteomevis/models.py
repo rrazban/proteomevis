@@ -35,7 +35,7 @@ class Chain(models.Model):
         return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostol":self.dostox,"dN":self.dN,"dS":self.dS,"ppi":self.ppi,"degree":0,"degree_log":0,"weighted_degree":0,"weighted_degree_log":0,"ppi_degree":0,"mutant":self.mutant})
         # return dict(id=self.chain_id,species=self.species,pdb=self.pdb,domain=self.domain,chain=self.chain,length=self.length,abundance=self.abundance,evorate=self.evorate,conden=self.conden,dostox=self.dostox,dN=self.dN,dS=self.dS)
 
-class DomainLocalization(models.Model):
+class DomainLocalization(models.Model):	#removed
     uniprot = models.CharField(max_length=10)
     localizationID = models.IntegerField()
 
@@ -86,14 +86,14 @@ class Edge(models.Model):
         return ["sourceID","targetID","sid","tm","ppi","species","mutant"]
         # return dict(sourceID=self.sourceID,species=self.species,targetID=self.targetID,sid=self.sid,tm=self.tm,ppi=self.ppi)
 
-class Function(models.Model):
+class Function(models.Model):	#removed
     id = models.IntegerField(primary_key=True)
     function = models.CharField(max_length=30)
 
     def __str__(self):
         return self.function
 
-class Localization(models.Model):
+class Localization(models.Model):	#removed, if I want in the future, probably easier to put in Domain file
     id = models.IntegerField(primary_key=True)
     localization = models.CharField(max_length=30)
 
