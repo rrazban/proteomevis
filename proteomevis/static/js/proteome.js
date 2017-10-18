@@ -2438,7 +2438,8 @@ function main () {
         this.addContent = function (_cluster) {
             // the overall rows
             var panel = cluster_list.append("div")
-                .attr('class', 'panel panel-default'+_cluster.id);	//is this really necessary? yes very necessary. for somewhere reason default color changes when +_cluster.id
+                .attr('class', 'panel panel-default')	
+				.attr('id', 'entirepanel' + _cluster.id);	//make new id here instead of putting in class, because lose nice default behavior
             // each of the visible row headers
             var panelHeader = panel.append("div")
                 .attr('class', 'panel-heading')
@@ -2456,7 +2457,6 @@ function main () {
             panelHeader.select(".download").on("click",
                 function () {
                     $("#mlDataexport").html("Download options - selected cluster");
-                   // d3.select("#mb-tab-corr").attr("class","disabled");		//have to undo this....
                     d3.select("#mb-tab-corr").classed("disabled", 1);		//have to undo this....
                     $("#dataExport_triggeredby").val(_cluster.id);
                 });
@@ -2507,7 +2507,7 @@ function main () {
   //                  .on("mouseout", nodeMousedOut)
 				.on("click", function () {	
                 $(eventHandler).trigger("removeClusterHighlightfixed", _cluster);
-				$('.panel.panel-default'+_cluster.id).remove();
+				$('#entirepanel'+_cluster.id).remove();
             	});
         };
 //				panelHeader.html('');	//removes everything but a sliver
