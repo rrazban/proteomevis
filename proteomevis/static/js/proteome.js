@@ -1193,6 +1193,7 @@ function main () {
             $("#mlDataexport").html('Download options - all proteins');
             d3.select("#numedges_adddisclaimer_label").classed("disabled",((ss.tmi == ss.tmf) && (ss.sidi == ss.sidf)));
        		d3.select("#mb-tab-corr").classed("disabled",0);		//undo what clusters tab does 
+            $("#dataExport_triggeredby").val("");					//forget that clusters download had been even clicked
         });
 
 		function runThis(){
@@ -2939,7 +2940,7 @@ function main () {
             });
 
         $("#mbDataexport").submit(function () {
-            var selectedCluster = $("#dataExport_triggeredby").val();
+            var selectedCluster = $("#dataExport_triggeredby").val();		//need this to forget
             if (selectedCluster == "") {
                 $("#dataExport_nodes").val(JSON.stringify(data.nodes));
             } else {
