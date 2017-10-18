@@ -1194,7 +1194,7 @@ function main () {
             d3.select("#numedges_adddisclaimer_label").classed("disabled",((ss.tmi == ss.tmf) && (ss.sidi == ss.sidf)));
        		d3.select("#mb-tab-corr").classed("disabled",0);		//undo what clusters tab does 
             $("#dataExport_triggeredby").val("");					//forget that clusters download had been even clicked
-        });
+        });		//need this for cluster download btn
 
 		function runThis(){
 		    corr_columns = $('input[name="columns_correlations"]:checkbox:checked').length;
@@ -2460,6 +2460,7 @@ function main () {
                     $("#mlDataexport").html("Download options - selected cluster");
                     d3.select("#mb-tab-corr").classed("disabled", 1);		//have to undo this....
 					$("a[href='#mbDataexport']").tab('show');
+            		d3.select("#numedges_adddisclaimer_label").classed("disabled",0);
                     $("#dataExport_triggeredby").val(_cluster.id);
                 });
 
@@ -2942,11 +2943,13 @@ function main () {
 
         $("#mbDataexport").submit(function () {
             var selectedCluster = $("#dataExport_triggeredby").val();		//need this to forget
-			console.log(selectedCluster);
+
+			var selectedProteins;
             if (selectedCluster == "") {
                 $("#dataExport_nodes").val(JSON.stringify(data.nodes));
+				selectedProteins=0;
             } else {
-                var selectedProteins = data.clusters[parseInt(selectedCluster)].cluster
+                selectedProteins = data.clusters[parseInt(selectedCluster)].cluster
                     .map(function (d) {
                         return data.nodes[ID2i(d)];
                     });
@@ -2965,6 +2968,7 @@ function main () {
                     $("#dataExport_edges_SIDi").val(ss.sidi);
                     $("#dataExport_edges_SIDf").val(ss.sidf);
                     $("#dataExport_edges_species").val(ss.species.id);
+                	$("#dataExport_edges_nodes").val(JSON.stringify(selectedProteins));	//need to empty if not cluster download
                     return true;
                 });
                 setTimeout(function () { $("#exportEdges").submit(); }, 1000);

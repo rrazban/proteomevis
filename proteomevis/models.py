@@ -4,8 +4,8 @@ class Chain(models.Model):
     chain_id = models.IntegerField(default=0)
     species = models.IntegerField(default=0)
     pdb = models.CharField(max_length=10)
-    uniprot = models.CharField(max_length=10,null=True)
-    other_id = models.CharField(max_length=15,null=True)
+    uniprot = models.CharField(max_length=10,null=True)	#remove
+    other_id = models.CharField(max_length=15,null=True)	#remove
     domain = models.CharField(max_length=10)
     chain = models.CharField(max_length=2)
     length = models.FloatField(blank=True,null=True)
@@ -43,7 +43,7 @@ class DomainLocalization(models.Model):
         return self.uniprot
         # return dict(uniprot=self.uniprot,localizationID=lself.ocalizationID)
 
-class Domain(models.Model):
+class Domain(models.Model):	#call this a better name?
     id = models.IntegerField(primary_key=True)
     domain = models.CharField(max_length=10,blank=True,null=True)
     uniprot = models.CharField(max_length=30,blank=True,null=True)

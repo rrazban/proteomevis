@@ -36,7 +36,7 @@ def export_nodes(request):
         
         # Create the HttpResponse object with the appropriate CSV header.
 		response = HttpResponse(content_type='text/csv')
-		response['Content-Disposition'] = 'attachment; filename="NODES_'+species+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
+		response['Content-Disposition'] = 'attachment; filename="NODES_'+species+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'	#make TM/SID have 3 decimal places
 
 		csv_data = []	#parse those in TM/SID range?
 
@@ -73,14 +73,19 @@ def export_edges(request):
         SIDf = data['SIDf']
         species = int(data['species'])
 
+
         current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
         
         if data['edges'] != '1':
 			TMi=SIDi='0'
 			TMf=SIDf='1'
-
         edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
-        csv_data = [edge.edgeCSV() for edge in edges]
+        node_data = json.loads(data['nodes'])
+        if node_data!= "":
+			id_list = [node['id'] for node in node_data]
+			csv_data = [edge.edgeCSV() for edge in edges if edge.edgeCSV()[0] in id_list and edge.edgeCSV()[1] in id_list]
+        else:
+        	csv_data = [edge.edgeCSV() for edge in edges]
         columns = edges[0].keys()
 
         response = HttpResponse(content_type='text/csv')	#if want to use StreamingHttpResponse need to change syntax
