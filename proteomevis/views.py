@@ -14,6 +14,12 @@ from wsgiref.util import FileWrapper
 
 better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
 
+def get_filename(what, species, TMi, TMf, SIDi, SIDf):
+	species_name = Species.objects.get(id=species)
+	current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
+	filename = "attachment; filename={0}_{1}_TM_{2:.2f}-{3:.2f}_SID_{4:.2f}-{5:.2f}_{6}.csv".format(what, species_name, TMi, TMf, SIDi, SIDf, current_time)
+	return filename
+
 @csrf_exempt
 def export_nodes(request):
 	if request.method == 'POST':
@@ -32,11 +38,14 @@ def export_nodes(request):
 
 		log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS'] #have this read in from attributes file #cant read all cuz degree and weighted degree
 		log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
-		current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
-        
+ 
+		if data['option'] != '1':
+			TMi=SIDi='0'
+			TMf=SIDf='1'
+       
         # Create the HttpResponse object with the appropriate CSV header.
 		response = HttpResponse(content_type='text/csv')
-		response['Content-Disposition'] = 'attachment; filename="NODES_'+species+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'	#make TM/SID have 3 decimal places
+		response['Content-Disposition'] = get_filename('NODES', species, float(TMi), float(TMf), float(SIDi), float(SIDf))
 
 		csv_data = []	#parse those in TM/SID range?
 
@@ -84,8 +93,6 @@ def export_edges(request):
         species = int(data['species'])
 
 
-        current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
-        
         if data['edges'] != '1':
 			TMi=SIDi='0'
 			TMf=SIDf='1'
@@ -99,7 +106,7 @@ def export_edges(request):
         columns = edges[0].keys()
 
         response = HttpResponse(content_type='text/csv')	#if want to use StreamingHttpResponse need to change syntax
-        response['Content-Disposition'] = 'attachment; filename="EDGES_'+data['species']+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.csv"'
+        response['Content-Disposition'] = get_filename('EDGES', species, float(TMi), float(TMf), float(SIDi), float(SIDf))
 
         t = loader.get_template('proteomevis/data.csv')	
         response.write(t.render({'data': csv_data,'header': columns}))
@@ -118,8 +125,6 @@ def export_splom(request):
     if request.method == 'POST':
         import xlwt
         data = cleanRequest(request.POST)
-
-        current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
 
 
         TMi = data['TMi']
@@ -143,10 +148,9 @@ def export_splom(request):
 
         wb = xlwt.Workbook(encoding='utf-8')
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="CORRELATIONS_'+data['species']+"_TM_"+TMi+"-"+TMf+"_SID_"+SIDi+"-"+SIDf+"_"+current_time+'.xls"'
+        response['Content-Disposition'] = get_filename('CORRELATIONS', data['species'], float(TMi), float(TMf), float(SIDi), float(SIDf))
 
         for corr in correlation_option:
-#            corr1 = unicode(corr, "utf-8")
             corr = corr.decode('utf-8', 'ignore')
             ws = wb.add_sheet(corr)
             for i,column_index in enumerate(column_indices):
