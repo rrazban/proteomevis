@@ -655,13 +655,13 @@ function main () {
             graph.append("text")
                         .attr("class", "x label")
                         .attr("text-anchor", "end")
-                        .text("SID");
+                        .text("TM");
             graph.append("text")
                         .attr("class", "y label")
                         .attr("y", margin.top)
                         .attr("x", margin.left + 10)
                         .attr("dy",".75em")
-                        .text("TM");
+                        .text("SID");
 
             var brush = d3.svg.brush()
                         .x(x)
