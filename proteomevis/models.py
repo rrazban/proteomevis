@@ -107,6 +107,7 @@ class Species(models.Model):
     has_function = models.BooleanField()
     has_mutant_data = models.BooleanField(default=False)
 
+#   hii = models.FloatField(null=True, blank=True)#for database updating purposes
     def toDict(self):
         return dict(id=self.id,name=self.name,has_localization=self.has_localization,has_function=self.has_function,has_mutant_data=self.has_mutant_data)
 
