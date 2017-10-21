@@ -245,6 +245,7 @@ function main () {
                 clusterScatter.updateVis();
             }
             proteinmediaItem.clear("#cluster_list");
+   //does nothing         proteinmediaItem.clear("#individual_list");
 			index_list_cluster.length=0;		
             calculateState.hide();
         }
@@ -294,6 +295,7 @@ function main () {
                     highlighter.removeHighlight();
                     typeVis.updateImage();
                     waitDataLoadUpdate(0,true);
+					proteinList = [];
                 });
             });
         // triggered when you change the coloring scheme of the clusters
@@ -410,7 +412,6 @@ function main () {
                 proteinmediaItem.addDomainsToList(_data.domainData,
                     d3.select("#individual_list"));
             });
-
         $(eventHandler)
             .bind("add-to-cluster-list", function (event, _data) {
                 var clusterListItem = '#list' + _data.cluster.id;
@@ -2029,6 +2030,7 @@ function main () {
         });
     };
 
+	var proteinList = [];
     /***********************************
     ***********************************
     PROTEIN SEARCH
@@ -2036,7 +2038,7 @@ function main () {
     **********************************/
     ProteinSearch = function (_parentElement) {
         var mediaList = _parentElement.select(".media-list"),
-            proteinList = [],
+//            proteinList = [],	 //made into a global variable so that can reset upon species change
             that = this;
             triggerDestinationIndividual = 'add-to-individual-list',	//upon adding full functionality of delete button in cluster, any error shows up in the console related to this. since it has to do with domains i can safely silence for now 
             triggerDestinationCluster = 'add-to-cluster-list';	//same as above
@@ -2047,7 +2049,6 @@ function main () {
                 domainData: [],
                 dLength: 0
             };
-
         $('#protein_search').selectivity({
             multiple: true,
             closeOnSelect: false,
@@ -2747,7 +2748,6 @@ function main () {
             mediaList = _mediaList;
             closeSpan = (mediaList.attr("id") == 'individual_list');
             cluster = _cID;
-
             var domains = (!(Array.isArray(_domains))) ? [_domains] : _domains;
             domains.forEach(function (domain, i) {
                 mediaItem(domain);
