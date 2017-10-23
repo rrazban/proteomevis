@@ -11,6 +11,6 @@ conn = sqlite3.connect("db.sqlite3")
 c = conn.cursor()
 
 for column in column_list:
-	c.execute('DROP TABLE {0}'.format(column))
+#	c.execute('DROP TABLE {0}'.format(column))
 	df = pandas.read_csv("make_database/{0}.csv".format(column))
 	df.to_sql(column, conn)

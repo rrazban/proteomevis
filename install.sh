@@ -7,3 +7,4 @@ pip install numpy;
 pip install django;
 pip install wsgiref;
 pip install xlwt;
+pip install pandas;
