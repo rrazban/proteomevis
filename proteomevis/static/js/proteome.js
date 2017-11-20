@@ -1372,15 +1372,16 @@ function main () {
         var details = d3.select(_parentElement).select("svg")
             .append('g')
             .attr("id",'splomfocusplot-details')
-            .attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize+10) + ")");	//align here
+       		.attr("transform","translate(" + margin.left + "," + (parent.height-1.75*margin.bottom-(6.75-2.5)*text.size) + ")"); 
+//            .attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize+10) + ")");	//align here
 
 
         var detail_labels = details.append("g").attr('class',"detail-labels");
         var detail_values = details.append("g").attr('class',"detail-values");
 
-        detail_labels.append("text")
+        detail_labels.append("text")	//maybe putting this in a table would be better
             .attr("x",text.position)
-            .attr("y",text.size*2.5)
+            .attr("y",text.size*2.5)	
             .attr("class","text-subtitle")
             .text("PEARSON");
 
@@ -1392,13 +1393,13 @@ function main () {
 
         detail_labels.append("text")
             .attr("x",text.position-60)
-            .attr("y",text.size*5)
-            .text("p-value");
+            .attr("y",text.size*3.75)
+            .text("cor coef");
 
         detail_labels.append("text")
             .attr("x",text.position-60)
-            .attr("y",text.size*3.75)
-            .text("cor coef");
+            .attr("y",text.size*5)
+            .text("p-value");
 
         detail_labels.append("text")
             .attr("x",text.position-60)
@@ -1580,12 +1581,12 @@ function main () {
         };
 	
 		this.setHeight = function (_dim, _pltsize) {
-       		details.attr("transform","translate(" + margin.left + "," + (_dim - 2*_pltsize+10) + ")");	//margin from above not SplomVis var
 
             pos = d3.max([((_dim + 2*_pltsize)/2),250]),
             parent = { height: $("#splom").height(), width: $("#splom").width() },
             height = parent.height - pos - margin.top - margin.bottom,
             width = parent.width - pos - margin.left - margin.right,
+       		details.attr("transform","translate(" + margin.left + "," + (parent.height-1.75*margin.bottom-(6.75-2.5)*text.size) + ")"); 
         x.range([0, width]);
         y.range([height, 0]);
 
