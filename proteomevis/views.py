@@ -211,7 +211,11 @@ def fetch_edges(request):
         for i,node in enumerate(nodes):
             i2ID[i] = node[0]
             ID2i[node[0]] = i
-        
+            try:
+	            nodes[ID2i[node[0]]][1]['weighted_degree'] += pow(10,nodes[ID2i[node[0]]][1]['abundance'])
+            except:
+	            nodes[ID2i[node[0]]][1]['weighted_degree'] = None	#weighted degree for a node that has no abundance is empty
+     
         # make a temporary graph
         SG = nx.Graph()
         SG_ppi = nx.Graph()
@@ -226,15 +230,10 @@ def fetch_edges(request):
         SG.add_edges_from(edges)
         SG_ppi.add_edges_from(edges_ppi)
 
-        for source, target, edge_dict in edges:
+        for source, target, edge_dict in edges:	#slightly wrong, need to add abundance to itself irregardless of edge formation
             try:
-                nodes[ID2i[source]][1]['weighted_degree'] += pow(10,nodes[ID2i[target]][1]['abundance'])		#this is logged!	#maybe only include values that have abundance
-                nodes[ID2i[target]][1]['weighted_degree'] += pow(10,nodes[ID2i[target]][1]['abundance'])	
-            except:
-                pass
-            try:
+                nodes[ID2i[source]][1]['weighted_degree'] += pow(10,nodes[ID2i[target]][1]['abundance'])		#this is logged!
                 nodes[ID2i[target]][1]['weighted_degree'] += pow(10,nodes[ID2i[source]][1]['abundance'])
-                nodes[ID2i[source]][1]['weighted_degree'] += pow(10,nodes[ID2i[source]][1]['abundance'])
             except:
                 pass
 
