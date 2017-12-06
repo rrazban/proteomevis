@@ -7,4 +7,4 @@ To deploy the web app locally:
 3. `python manage.py runserver`
 4. In any web browser, go to [http://localhost:8000/proteomevis/](http://localhost:8000/proteomevis/)
 
-To learn more about how the database and static images are created, check out this GitHub [repository](https://github.com/rrazban/proteomevis_scripts)
+To learn more about how the database and static images are created, check out [this](https://github.com/rrazban/proteomevis_scripts) GitHub repository
