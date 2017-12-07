@@ -139,9 +139,11 @@
                 <div class="modal-header">
                     <h1>Oops!</h1>
                 </div>
-                <div class="modal-body">The website timed out. Please refresh and try again.</div>
+        <!--        <div class="modal-body">The website timed out. Please refresh and try again.</div>-->
+                <div class="modal-body">The website timed out. Please try again.</div>
                 <div class="modal-footer">
-                    <button class="btn btn-info pull-left " data-dismiss="modal" type="button" onClick="window.location.reload()">Refresh</button>
+                    <button class="btn btn-warning pull-left " data-dismiss="modal" type="button">Okay</button>
+       <!--             <button class="btn btn-info pull-left " data-dismiss="modal" type="button" onClick="window.location.reload()">Refresh</button>	Hypothesis: refreshing makes the situation worse cuz more cpu being burned continuously-->
                 </div>
             </div>
         </div>
