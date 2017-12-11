@@ -11,7 +11,6 @@ from django.template.context_processors import csrf
 from wsgiref.util import FileWrapper
 
 
-
 better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
 
 def get_filename(what, species, TMi, TMf, SIDi, SIDf):
@@ -306,12 +305,13 @@ def fetch_proteins(request):
         keys = ['function1','function2','chains']
         if species.has_localization:
             keys.append('localizations')
-            data = {result.domain:dict(domain=result.domain,function1=set(),function2=set(),uniprot=[],chains=[],localizations=set()) for result in results}
+            data = {result.domain:dict(domain=result.domain,function1=[],function2=set(),uniprot=[],chains=[],localizations=set()) for result in results}
         else:
-            data = {result.domain:dict(domain=result.domain,function1=set(),function2=set(),uniprot=[],chains=[]) for result in results}
+            data = {result.domain:dict(domain=result.domain,function1=[],function2=set(),uniprot=[],chains=[]) for result in results}
 
         for e in results:
-            data[e.domain]['function1'].add(e.function1)
+            if e.function1 not in data[e.domain]['function1']:	#could make more elaborate, see if any part in the whole #also could add chains for which function applies
+	            data[e.domain]['function1'].append(e.function1)
             data[e.domain]['function2'].add(e.function2)
             data[e.domain]['uniprot'].append(dict(uniprot=e.uniprot,genes=e.genes))
             # if species.has_localization:
