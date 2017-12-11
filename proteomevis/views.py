@@ -192,7 +192,7 @@ def fetch_edges(request):
 
         if include_mutants:
             chains = Chain.objects.filter(species=species)
-            edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+            edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)[:15001]
         else: # don't include mutants, want chains and edges with mutant = 0
             chains = Chain.objects.filter(species=species,mutant=0)
             edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf,mutant=0)
