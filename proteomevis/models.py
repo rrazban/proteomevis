@@ -35,33 +35,21 @@ class Chain(models.Model):
         return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostol":self.dostox,"dN":self.dN,"dS":self.dS,"ppi":self.ppi,"degree":0,"degree_log":0,"weighted_degree":0,"weighted_degree_log":0,"ppi_degree":0,"mutant":self.mutant})
         # return dict(id=self.chain_id,species=self.species,pdb=self.pdb,domain=self.domain,chain=self.chain,length=self.length,abundance=self.abundance,evorate=self.evorate,conden=self.conden,dostox=self.dostox,dN=self.dN,dS=self.dS)
 
-class DomainLocalization(models.Model):	#removed
-    uniprot = models.CharField(max_length=10)
-    localizationID = models.IntegerField()
-
-    def __str__(self):
-        return self.uniprot
-        # return dict(uniprot=self.uniprot,localizationID=lself.ocalizationID)
-
-class Domain(models.Model):	#call this a better name?
+class Inspect(models.Model):
     id = models.IntegerField(primary_key=True)
-    domain = models.CharField(max_length=10,blank=True,null=True)
+    pdb = models.CharField(max_length=10,blank=True,null=True)
     uniprot = models.CharField(max_length=30,blank=True,null=True)
     genes = models.CharField(max_length=30,blank=True,null=True)
-    details = models.CharField(max_length=200,blank=True,null=True)
+    location = models.CharField(max_length=200,blank=True,null=True)
     function1 = models.CharField(max_length=200,blank=True,null=True)
     function2 = models.CharField(max_length=30,blank=True,null=True)
-    invis = models.BooleanField(blank=True)
-    obsolete = models.CharField(max_length=30,blank=True,null=True)
     species = models.IntegerField(default=0,blank=True,null=True)
 
-#    hii = models.FloatField(null=True, blank=True)#for database updating purposes
-	#return pdb_complex, chain
     def __str__(self):
-        return self.domain
-        # return dict(id=self.id,domain=self.domain,uniprot=self.uniprot,genes=self.genes,details=self.details,function1=self.function1,function2=self.function2,invis=self.invis,obsolete=self.obsolete,species=self.species)
+        return self.pdb
+
     def parse_pdb(self):
-		pdb = self.domain
+		pdb = self.pdb
 		pdb_complex = pdb[:pdb.index('.')].upper()
 		pdb_chain = pdb[pdb.index('.')+1:]
 		return pdb_complex, pdb_chain	

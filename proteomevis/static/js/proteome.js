@@ -2067,8 +2067,10 @@ function main () {
                 },
                 processItem: function (item) {
                     return {
-                        id: item.domain,
-                        text: item.domain,
+//                        id: item.domain,
+  //                      text: item.domain,
+                        id: item.pdb,
+                        text: item.pdb,
                         text2: item.uniprot,
                         description: item.function2 ? item.genes + " | " + item.function2 + "; " + item.function1 : item.genes
                     };

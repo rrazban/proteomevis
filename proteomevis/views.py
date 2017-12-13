@@ -297,14 +297,10 @@ def fetch_proteins(request):
         for domain in domains:
             if len(domain)>4:	#maybe always have pdb sent over (need to go into proteome.js)
 				domain = domain[:domain.index('.')]
-            tmp = Domain.objects.filter(domain__icontains=domain)
+            tmp = Inspect.objects.filter(pdb__icontains=domain)
             results += tmp
             tmp = Chain.objects.filter(pdb__icontains=domain)
             chains += tmp
-        keys = ['function1','function2','chains']
-        if species.has_localization:
-            keys.append('localizations')
-#            data = {result.domain:dict(domain=result.domain,function1=[],function2=set(),uniprot=[],chains=[],localizations=set()) for result in results}
 
         data = {result.parse_pdb()[0]:dict(domain=result.parse_pdb()[0],function1=[],function1chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for result in results}
         for e in results:
@@ -341,7 +337,7 @@ def fetch_proteins(request):
             data[pdb_complex]['uniprot'].append(dict(uniprot=e.uniprot,genes=e.genes))
 
             if species.has_localization:
-				localization = e.details
+				localization = e.location
 				if not data[pdb_complex]['localizations'] and localization:
 					if '{' in localization:
 						localization = localization[:localization.find('{')-1]
@@ -353,11 +349,6 @@ def fetch_proteins(request):
 						localization = localization[:-1]
 					data[pdb_complex]['localizations'] = [localization]
 
-        pdb_complex_list = set([e.parse_pdb()[0] for e in results])
-        for pdb_complex in pdb_complex_list:
-			for f in range(len(data[pdb_complex]['function1'])):
-				data[pdb_complex]['function1'][f] = '{0}: {1}'.format(', '.join(data[pdb_complex]['function1chain'][f]), data[pdb_complex]['function1'][f])
-
         for chain in chains:
             try:
                 data[chain.domain]
@@ -368,11 +359,12 @@ def fetch_proteins(request):
                     data[chain.domain] = dict(domain=chain.domain,function1=set(),function2=set(),uniprot=[],chains=[])
             data[chain.domain]['chains'].append(dict(chain=chain.chain,id=chain.chain_id))
 
-        for ea in data:
-            for k in keys:
-                data[ea][k] = list(data[ea][k])
+        pdb_complex_list = set([e.parse_pdb()[0] for e in results])
+        for pdb_complex in pdb_complex_list:
+			if len(data[pdb_complex]['chains'])>1:
+				for f in range(len(data[pdb_complex]['function1'])):
+					data[pdb_complex]['function1'][f] = '{0}: {1}'.format(', '.join(data[pdb_complex]['function1chain'][f]), data[pdb_complex]['function1'][f])
 
-        # # // TO DO //
         return HttpResponse(
             json.dumps(data.values(),cls=SetEncoder),
             content_type="application/json"
@@ -393,22 +385,20 @@ def query(request):
 
         species = Species.objects.get(id=int(data['species']))
 
-        query = "SELECT * FROM proteomevis_domain WHERE "
+        query = "SELECT * FROM proteomevis_inspect WHERE "
         query += "((uniprot LIKE '%"+q+"%') OR "
-        query += "(domain LIKE '%"+q+"%') OR "
+        query += "(pdb LIKE '%"+q+"%') OR "
         query += "(genes LIKE '%"+q+"%') OR "
-        query += "(details LIKE '%"+q+"%') OR "
+        query += "(location LIKE '%"+q+"%') OR "
         query += "(function1 LIKE '%"+q+"%') OR "
-        query += "(function2 LIKE '%"+q+"%') OR "
-        query += "(obsolete LIKE '%"+q+"%')) "
-        query += "GROUP BY domain"
-        tmp = Domain.objects.raw(query)
-
+        query += "(function2 LIKE '%"+q+"%')) "
+        query += "GROUP BY pdb"
+        tmp = Inspect.objects.raw(query)
         data = []
         for d in list(tmp):
            R= d.__dict__
            R['_state']=0        #_state makes sure keys are unique. its value messes up calling in httpresponse
-           if R['invis']==True and R['species']==species_chosen:
+           if R['species']==species_chosen:
                 data.append(R)
 
         return HttpResponse(
