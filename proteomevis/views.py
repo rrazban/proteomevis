@@ -295,7 +295,7 @@ def fetch_proteins(request):
         chains = []
 
         for domain in domains:
-            if len(domain)>4:	#maybe always have pdb sent over
+            if len(domain)>4:	#maybe always have pdb sent over (need to go into proteome.js)
 				domain = domain[:domain.index('.')]
             tmp = Domain.objects.filter(domain__icontains=domain)
             results += tmp
@@ -306,14 +306,33 @@ def fetch_proteins(request):
             keys.append('localizations')
 #            data = {result.domain:dict(domain=result.domain,function1=[],function2=set(),uniprot=[],chains=[],localizations=set()) for result in results}
 
-        data = {result.parse_pdb()[0]:dict(domain=result.parse_pdb()[0],function1=[],function2=[],uniprot=[],chains=[],localizations=[]) for result in results}
-
-
+        data = {result.parse_pdb()[0]:dict(domain=result.parse_pdb()[0],function1=[],function1chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for result in results}
         for e in results:
+            control = 2
             pdb_complex, pdb_chain = e.parse_pdb()
-			
-            if e.function1 not in data[pdb_complex]['function1']:	#could make more elaborate, see if any part in the whole #also could add chains for which function applies
-	            data[pdb_complex]['function1'].append(e.function1)
+	
+            if not data[pdb_complex]['function1']:
+				data[pdb_complex]['function1'].append(e.function1)
+				data[pdb_complex]['function1chain'].append([pdb_chain])
+            else:
+				for f,function in enumerate(data[pdb_complex]['function1']):
+					if function in e.function1:
+						data[pdb_complex]['function1chain'][f].append(pdb_chain)
+						control = 0
+						break			
+					elif e.function1 in function:
+						data[pdb_complex]['function1chain'][f].append(pdb_chain)
+						control = 1	
+						break
+					else: pass
+
+				if control:
+					if control==1:
+						data[pdb_complex]['function1'][f] = e.function1
+					elif control==2:
+						data[pdb_complex]['function1'].append(e.function1)
+						data[pdb_complex]['function1chain'].append([pdb_chain])
+					
             if not data[pdb_complex]['function2']:
 				function2 = e.function2
 				sparse_f2 = function2[:function2.find('[GO')-1]
@@ -333,9 +352,11 @@ def fetch_proteins(request):
 					if '.' in localization:
 						localization = localization[:-1]
 					data[pdb_complex]['localizations'] = [localization]
-            #     c.execute("SELECT * FROM domain_localizations, localizations WHERE domain_localizations.uniprot = ? AND localizations.id == domain_localizations.localizationID", (uniprot,))
-            #     localizations = [x[0] for x in c.fetchall()]
-            #     [data[domain]['localizations'].add(x) for x in localizations]
+
+        pdb_complex_list = set([e.parse_pdb()[0] for e in results])
+        for pdb_complex in pdb_complex_list:
+			for f in range(len(data[pdb_complex]['function1'])):
+				data[pdb_complex]['function1'][f] = '{0}: {1}'.format(','.join(data[pdb_complex]['function1chain'][f]), data[pdb_complex]['function1'][f])
 
         for chain in chains:
             try:
