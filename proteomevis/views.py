@@ -284,7 +284,6 @@ def fetch_proteins(request):
     if request.method == 'POST':
         data = cleanRequest(request.POST)
         domains = data['domains']
-
         if not isinstance(domains,list):
             domains = [domains]
 
@@ -296,25 +295,44 @@ def fetch_proteins(request):
         chains = []
 
         for domain in domains:
-            tmp = Domain.objects.filter(domain=domain)
+            if len(domain)>4:	#maybe always have pdb sent over
+				domain = domain[:domain.index('.')]
+            tmp = Domain.objects.filter(domain__icontains=domain)
             results += tmp
-            
-            tmp = Chain.objects.filter(domain=domain)
+            tmp = Chain.objects.filter(pdb__icontains=domain)
             chains += tmp
-
         keys = ['function1','function2','chains']
         if species.has_localization:
             keys.append('localizations')
-            data = {result.domain:dict(domain=result.domain,function1=[],function2=set(),uniprot=[],chains=[],localizations=set()) for result in results}
-        else:
-            data = {result.domain:dict(domain=result.domain,function1=[],function2=set(),uniprot=[],chains=[]) for result in results}
+#            data = {result.domain:dict(domain=result.domain,function1=[],function2=set(),uniprot=[],chains=[],localizations=set()) for result in results}
+
+        data = {result.parse_pdb()[0]:dict(domain=result.parse_pdb()[0],function1=[],function2=[],uniprot=[],chains=[],localizations=[]) for result in results}
+
 
         for e in results:
-            if e.function1 not in data[e.domain]['function1']:	#could make more elaborate, see if any part in the whole #also could add chains for which function applies
-	            data[e.domain]['function1'].append(e.function1)
-            data[e.domain]['function2'].add(e.function2)
-            data[e.domain]['uniprot'].append(dict(uniprot=e.uniprot,genes=e.genes))
-            # if species.has_localization:
+            pdb_complex, pdb_chain = e.parse_pdb()
+			
+            if e.function1 not in data[pdb_complex]['function1']:	#could make more elaborate, see if any part in the whole #also could add chains for which function applies
+	            data[pdb_complex]['function1'].append(e.function1)
+            if not data[pdb_complex]['function2']:
+				function2 = e.function2
+				sparse_f2 = function2[:function2.find('[GO')-1]
+				sparser_f2 = sparse_f2.split(',')
+				data[pdb_complex]['function2'].append(sparser_f2[0])
+            data[pdb_complex]['uniprot'].append(dict(uniprot=e.uniprot,genes=e.genes))
+
+            if species.has_localization:
+				localization = e.details
+				if not data[pdb_complex]['localizations'] and localization:
+					if '{' in localization:
+						localization = localization[:localization.find('{')-1]
+					if ';' in localization:
+						localization = localization[:localization.find(';')]
+					if 'Note' in localization:
+						localization = localization[:localization.find('Note')-2]
+					if '.' in localization:
+						localization = localization[:-1]
+					data[pdb_complex]['localizations'] = [localization]
             #     c.execute("SELECT * FROM domain_localizations, localizations WHERE domain_localizations.uniprot = ? AND localizations.id == domain_localizations.localizationID", (uniprot,))
             #     localizations = [x[0] for x in c.fetchall()]
             #     [data[domain]['localizations'].add(x) for x in localizations]

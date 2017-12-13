@@ -2580,13 +2580,13 @@ function main () {
                 "media-heading").html(mediaHeading(oDomain
                 .domain, oDomain.function2));
 
-//            if (ss.species.has_localization) {
-//                mediaBody.append("div").html("localization: " +
- //                   ((oDomain.localizations.length) ? oDomain.localizations.reduce(
-   //                         function (a, b) {
-       //                         return a + ', ' + b;
-     //                       }) : " - "));
-         //   };	//current version does not get localization info
+            if (ss.species.has_localization) {
+                mediaBody.append("div").html("localization: " +
+                    ((oDomain.localizations.length) ? oDomain.localizations.reduce(
+                            function (a, b) {
+                                return a + ', ' + b;
+                            }) : " - "));
+            };	//current version does not get localization info
 
             mediaBody.append("div").html(createGeneLinks(
                 oDomain.uniprot, oDomain.domain));

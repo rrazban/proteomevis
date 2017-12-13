@@ -56,10 +56,16 @@ class Domain(models.Model):	#call this a better name?
     species = models.IntegerField(default=0,blank=True,null=True)
 
 #    hii = models.FloatField(null=True, blank=True)#for database updating purposes
-
+	#return pdb_complex, chain
     def __str__(self):
         return self.domain
         # return dict(id=self.id,domain=self.domain,uniprot=self.uniprot,genes=self.genes,details=self.details,function1=self.function1,function2=self.function2,invis=self.invis,obsolete=self.obsolete,species=self.species)
+    def parse_pdb(self):
+		pdb = self.domain
+		pdb_complex = pdb[:pdb.index('.')].upper()
+		pdb_chain = pdb[pdb.index('.')+1:]
+		return pdb_complex, pdb_chain	
+
 
 class Edge(models.Model):
     sourceID = models.IntegerField(default=0)
