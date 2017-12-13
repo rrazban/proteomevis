@@ -2689,8 +2689,8 @@ function main () {
                     entry.uniprot +
                     "' target='_blank'>" + entry.genes
                     .split(" ")[0] + "</a>";
-                tmp += " <small>(" + entry.uniprot +
-                    ")</small>";
+//                tmp += " <small>(" + entry.uniprot +
+  //                  ")</small>";
                 return tmp;
             }).reduce(function (a, b) {
                 return a + ", " + b;

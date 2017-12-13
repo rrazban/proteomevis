@@ -356,7 +356,7 @@ def fetch_proteins(request):
         pdb_complex_list = set([e.parse_pdb()[0] for e in results])
         for pdb_complex in pdb_complex_list:
 			for f in range(len(data[pdb_complex]['function1'])):
-				data[pdb_complex]['function1'][f] = '{0}: {1}'.format(','.join(data[pdb_complex]['function1chain'][f]), data[pdb_complex]['function1'][f])
+				data[pdb_complex]['function1'][f] = '{0}: {1}'.format(', '.join(data[pdb_complex]['function1chain'][f]), data[pdb_complex]['function1'][f])
 
         for chain in chains:
             try:
