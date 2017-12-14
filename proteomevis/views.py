@@ -35,8 +35,8 @@ def export_nodes(request):
 		SIDf = data['SIDf']
 		species = data['species'].upper()
 
-		log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance','dN','dS'] #have this read in from attributes file #cant read all cuz degree and weighted degree
-		log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0,dN=3,dS=3)
+		log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance'] #have this read in from attributes file #cant read all cuz degree and weighted degree
+		log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0)
  
 		if data['option'] != '1':
 			TMi=SIDi='0'
@@ -110,21 +110,12 @@ def export_edges(request):
         t = loader.get_template('proteomevis/data.csv')	
         response.write(t.render({'data': csv_data,'header': columns}))
         return response
-#        else:
- #           filename = "proteomevis/static/data_download/ALL_EDGES."+str(species)+".csv"
-  #          filepath = os.path.basename(filename)
-   #         chunk_size = 8192
-    #        response = StreamingHttpResponse(File	Wrapper(open(filename), chunk_size),content_type='text/csv')	#have sqlite file opened here	#put need to parse by species	#just find first instance and the take all rows up until then or after that?
-     #       response['Content-Length'] = os.path.getsize(filename)    
-      #      response['Content-Disposition'] = "attachment; filename=%s" % filepath
-       #     return response
 
 @csrf_exempt
 def export_splom(request):
     if request.method == 'POST':
         import xlwt
         data = cleanRequest(request.POST)
-
 
         TMi = data['TMi']
         TMf = data['TMf']
@@ -142,7 +133,6 @@ def export_splom(request):
         if type(columns)!=list:
 			columns = [columns]
         
-#        columns.remove('mutant')
         column_indices = [column_order.index(col) for col in columns]
 
         wb = xlwt.Workbook(encoding='utf-8')
@@ -184,17 +174,12 @@ def fetch_edges(request):
         TMf = data['TMf']
         SIDi = data['SIDi']
         SIDf = data['SIDf']
-        include_mutants = (data['mutants'] == 'true')
 
         i2ID = dict()
         ID2i = dict()
 
-        if include_mutants:
-            chains = Chain.objects.filter(species=species)
-            edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)[:15001]
-        else: # don't include mutants, want chains and edges with mutant = 0
-            chains = Chain.objects.filter(species=species,mutant=0)
-            edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf,mutant=0)
+        chains = Chain.objects.filter(species=species)
+        edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)[:15001]
         edges = [(edge.targetID,edge.sourceID,edge.__dict__) for edge in edges]
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
         if len(list(edges)) > 15000:
@@ -247,7 +232,7 @@ def fetch_edges(request):
         correlations, limits, data = computeCorrelations(nodes, columns)
         species = Species.objects.get(id=species).toDict()
 
-        data = {'species':species,'zero':-5,'columns':columns,'correlations':correlations,'domains':limits,'nodes':[node[1] for node in nodes],'edges':links,'clusters':clusters,'cluster_frequencies':cluster_frequencies}
+        data = {'species':species,'columns':columns,'correlations':correlations,'domains':limits,'nodes':[node[1] for node in nodes],'edges':links,'clusters':clusters,'cluster_frequencies':cluster_frequencies}
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),
             content_type="application/json"

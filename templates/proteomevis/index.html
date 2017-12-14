@@ -32,9 +32,6 @@
                 <button class="btn btn-default active" name='speciesBtn' type="button" value='0'><i>S. cerevisiae</i></button>
                 <button class="btn btn-default" name='speciesBtn' type="button" value='1'><i>E. coli</i></button>
             </div>
-<!--            <div class="navbar-form navbar-left" id='mutantToggleDiv'>
-                <input checked id='toggleMutant' type="checkbox" data-toggle="toggle" data-on="Mutants" data-off="No mutants">
-            </div>	-->
             <div class="navbar-form navbar-left" id='typeLimitsBtnGroup'>
                 <label>TM</label> <input class="typeLimitsInput form-control" id='TMi' placeholder='min' type="text"> to <input class="typeLimitsInput form-control" id='TMf' placeholder='max' type="text"> <label>SID</label> <input class="typeLimitsInput form-control" id='SIDi' placeholder='min' type="text"> to <input class="typeLimitsInput form-control" id='SIDf' placeholder='max' type="text">
             </div>
@@ -291,9 +288,6 @@
                     </div>
                     
                 </div>
-             <!--   <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal" type="button">Close</button>
-                </div> -->
             </div>
         </div>
     </div>
@@ -313,9 +307,6 @@
       $('.glyphicon-asterisk').popover({placement: 'left'});
       $('.glyphicon-asterisk').on('mouseover', function () { $(this).popover('show'); });
       $('.glyphicon-asterisk').on('mouseout', function () { $(this).popover('hide'); });
-      $(function() {
-        $('#toggleMutant').bootstrapToggle();
-      });
     </script>
 
 </body>

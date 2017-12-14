@@ -76,9 +76,7 @@ function main () {
                  name: 'yeast',
      has_localization: true,
          has_function: true,
-      has_mutant_data: true
     };
-    ss.mutants = true;
 
     var cluster,
         loaded,
@@ -236,7 +234,6 @@ function main () {
         link_tooltip.style("left", "10px").style("top", $('#forceLayoutDiv').position().top + "px");
         $("#individual_list").height($("#view").height() - 110);
         function updateVises () {
-            d3.select("#mutantToggleDiv").style("display",data.species.has_mutant_data ? null : "none");
          splomVis = new SplomVis("#splomVis", true);
             splomVis.updateVis();
             forceVis.updateVis();
@@ -495,7 +492,6 @@ function main () {
             TMf: ss.tmf,
             SIDi: ss.sidi,
             SIDf: ss.sidf,
-            mutants: ss.mutants
         });
         var jqxhr_data = $.ajax({
                 url: "fetch_edges/", // the endpoint
@@ -889,7 +885,6 @@ function main () {
 
                 nodes
                     .attr("fill", nodeColor)
-                    .classed("mutant", function (d) { return d.mutant; })
                     .on("click", function (d) {
                         d3.select(this).classed("highlight", true); 
                         $(eventHandler)
@@ -953,7 +948,6 @@ function main () {
                         return "pcg p" + d.id + " c" + d.cluster;
                     })
                     .attr("fill", nodeColor)
-                    .classed("mutant", function (d) { return d.mutant; })
                     .on("click", function (d) {
                         d3.select(this).classed("highlight", true);
                         $(eventHandler)
@@ -1168,10 +1162,6 @@ function main () {
                 d3.select(this).classed("active", true);
                 $(eventHandler).trigger("speciesChanged");
             }
-        });
-        $("#toggleMutant").change(function () {
-            ss.mutants = $(this).prop('checked');
-            $(eventHandler).trigger("speciesChanged");
         });
         $(".typeLimitsInput").on("enterKey", function () {
             $(this).value = this.value;
@@ -2618,7 +2608,7 @@ function main () {
                     return "label label-default label-chains p" + d.id + " c" + (cluster ? cluster : d.cluster);
                 })
                 .html(function (d) {
-                    return d.chain + (d.mutant ? "<sup>M</sup>" : "");
+                    return d.chain;
                 })
                 .on('click', function (d) {
                     d3.select(this)
@@ -2729,11 +2719,9 @@ function main () {
 
         function generateChainDetailsTable (chainID) {
             var d = data.nodes[ID2i(chainID)];
-            var str = '<span class="lb-chainTitle">'+d.pdb+' <span class="label label-default">' + (d.mutant ? "MUTANT" : "") + '</span></span><table class="lb-chainTable"><tbody>';
+            var str = '<span class="lb-chainTitle">'+d.pdb+' <span class="label label-default">' + '</span></span><table class="lb-chainTable"><tbody>';
             attributes.all().forEach(function (attr) {
-		if (attr!='mutant') {
                 str += "<tr><td>"+attributes.prettyprint2(attr)+"</td><td class='detail-values'>"+formattedNum(d,attr)+"</td></tr>";
-		}
             });
             str += "</tbody></table>";
             return str;
