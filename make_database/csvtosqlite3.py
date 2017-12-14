@@ -5,7 +5,7 @@ import csv
 import pandas
 
 
-column_list = ['proteomevis_species', 'proteomevis_chain', 'proteomevis_domain', 'proteomevis_edge']
+column_list = ['proteomevis_species', 'proteomevis_chain', 'proteomevis_inspect', 'proteomevis_edge']
 
 conn = sqlite3.connect("db.sqlite3")
 c = conn.cursor()
