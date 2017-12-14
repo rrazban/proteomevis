@@ -1,10 +1,11 @@
 from django.db import models
 
+
 class Chain(models.Model):
     chain_id = models.IntegerField(default=0)
     species = models.IntegerField(default=0)
     pdb = models.CharField(max_length=10)
-    domain = models.CharField(max_length=10)
+    domain = models.CharField(max_length=10)	#redundant, remove
     chain = models.CharField(max_length=2)
     length = models.FloatField(blank=True,null=True)
     abundance = models.FloatField(blank=True,null=True)	
@@ -13,16 +14,8 @@ class Chain(models.Model):
     dostox = models.FloatField(blank=True,null=True)
     ppi = models.FloatField(null=True, blank=True)
 
-    unique_together = ("chain_id", "species")
-
     def __str__(self):
         return self.pdb
-
-    def keys(self):
-        return ["chain_id","ppi","species","pdb","domain","chain","length","abundance","evorate","conden","dostox"]
-
-    def stat_attr(self):
-        return ["length","abundance","evorate","conden","dostox","weighted_degree",'weighted_degree_log','degree','degree_log','ppi_degree']
 
     def node(self):
         return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostol":self.dostox,"ppi":self.ppi,"degree":0,"degree_log":0,"weighted_degree":0,"weighted_degree_log":0,"ppi_degree":0})
@@ -59,20 +52,16 @@ class Edge(models.Model):
     def __str__(self):
         return str(self.sourceID) + " to " + str(self.targetID)
 
-    def edge(self):
-        return dict(sourceID=self.sourceID,targetID=self.targetID,sid=self.sid,tm=self.tm,ppi=self.ppi,species=self.species)
-
     def edgeCSV(self):
-        return [self.sourceID,self.targetID,self.sid,self.tm,self.ppi,self.species]
-
-    def keys(self):
-        return ["sourceID","targetID","sid","tm","ppi","species"]
+        return [self.sourceID,self.targetID,self.sid,self.tm,self.ppi]
+    def keys(self):	#matches edgeCSV
+        return ["sourceID","targetID","sid","tm","ppi"]
 
 
 class Species(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
-    has_localization = models.BooleanField()
+    has_localization = models.BooleanField()	#remove? all organisms have localization to some extent
 
     def toDict(self):
         return dict(id=self.id,name=self.name,has_localization=self.has_localization)

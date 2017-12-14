@@ -1,14 +1,10 @@
 from django.shortcuts import render
-from django.forms.models import model_to_dict
 from django.http import HttpResponse,StreamingHttpResponse
-import json, tempfile, random, string,csv,datetime
+import json, datetime 
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from .FetchEdges import *
 from django.template import loader, Context
-from django.core.cache import cache
-from django.template.context_processors import csrf
-from wsgiref.util import FileWrapper
 
 
 better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
@@ -102,7 +98,7 @@ def export_edges(request):
 			csv_data = [edge.edgeCSV() for edge in edges if edge.edgeCSV()[0] in id_list and edge.edgeCSV()[1] in id_list]
         else:
         	csv_data = [edge.edgeCSV() for edge in edges]
-        columns = edges[0].keys()
+        columns = ["sourceID","targetID","sid","tm","ppi"]#  edges[0].keys()
 
         response = HttpResponse(content_type='text/csv')	#if want to use StreamingHttpResponse need to change syntax
         response['Content-Disposition'] = get_filename('EDGES', species, float(TMi), float(TMf), float(SIDi), float(SIDf))
@@ -214,7 +210,7 @@ def fetch_edges(request):
         SG.add_edges_from(edges)
         SG_ppi.add_edges_from(edges_ppi)
 
-        for source, target, edge_dict in edges:	#slightly wrong, need to add abundance to itself irregardless of edge formation
+        for source, target, edge_dict in edges:	
             try:
                 nodes[ID2i[source]][1]['weighted_degree'] += pow(10,nodes[ID2i[target]][1]['abundance'])		#this is logged!
                 nodes[ID2i[target]][1]['weighted_degree'] += pow(10,nodes[ID2i[source]][1]['abundance'])
@@ -235,27 +231,6 @@ def fetch_edges(request):
         data = {'species':species,'columns':columns,'correlations':correlations,'domains':limits,'nodes':[node[1] for node in nodes],'edges':links,'clusters':clusters,'cluster_frequencies':cluster_frequencies}
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),
-            content_type="application/json"
-        )
-    else:
-        return HttpResponse(
-            json.dumps({"error":"Not an appropriately formatted request."},cls=SetEncoder),
-            content_type="application/json"
-        )
-
-@csrf_exempt
-def fetch_edge(request):
-    if request.method == 'POST':
-        # // TO DO //
-        data = cleanRequest(request.POST)
-        source = data['source']
-        target = data['target']
-
-        species = int(data['species'])
-        edge = Edge.objects.get(sourceID=source,targetID=target,species=species)
-
-        return HttpResponse(
-            json.dumps(edge.__dict__,cls=SetEncoder),
             content_type="application/json"
         )
     else:
@@ -291,7 +266,8 @@ def fetch_proteins(request):
         for e in results:
             control = 2
             pdb_complex, pdb_chain = e.parse_pdb()
-	
+
+            if not e.function1: break	#null case			
             if not data[pdb_complex]['function1']:
 				data[pdb_complex]['function1'].append(e.function1)
 				data[pdb_complex]['function1chain'].append([pdb_chain])
@@ -313,12 +289,14 @@ def fetch_proteins(request):
 					elif control==2:
 						data[pdb_complex]['function1'].append(e.function1)
 						data[pdb_complex]['function1chain'].append([pdb_chain])
+					else: pass
 					
-            if not data[pdb_complex]['function2']:
-				function2 = e.function2
-				sparse_f2 = function2[:function2.find('[GO')-1]
-				sparser_f2 = sparse_f2.split(',')
-				data[pdb_complex]['function2'].append(sparser_f2[0])
+            function2 = e.function2
+            if not data[pdb_complex]['function2'] and function2:
+				if 'GO' in function2:
+					function2 = function2[:function2.find('[GO')-1]
+#				function2 = function2.split(',')
+				data[pdb_complex]['function2'].append(function2)
             data[pdb_complex]['uniprot'].append(dict(uniprot=e.uniprot,genes=e.genes))
 
             if species.has_localization:
@@ -330,7 +308,7 @@ def fetch_proteins(request):
 						localization = localization[:localization.find(';')]
 					if 'Note' in localization:
 						localization = localization[:localization.find('Note')-2]
-					if '.' in localization:
+					if '.' == localization[-1]:
 						localization = localization[:-1]
 					data[pdb_complex]['localizations'] = [localization]
 
@@ -338,10 +316,7 @@ def fetch_proteins(request):
             try:
                 data[chain.domain]
             except:
-                if species.has_localization:
-                    data[chain.domain] = dict(domain=chain.domain,function1=set(),function2=set(),uniprot=[],chains=[],localizations=set())
-                else:
-                    data[chain.domain] = dict(domain=chain.domain,function1=set(),function2=set(),uniprot=[],chains=[])
+				data[chain.domain] = dict(domain=chain.domain,chains=[])
             data[chain.domain]['chains'].append(dict(chain=chain.chain,id=chain.chain_id))
 
         pdb_complex_list = set([e.parse_pdb()[0] for e in results])
@@ -363,14 +338,10 @@ def fetch_proteins(request):
 @csrf_exempt
 def query(request):
     if request.method == 'GET':
-        # // TO DO //
         data = cleanRequest(request.GET)
         q = data['q']
-	species_chosen = int(data['species'])
-
-        species = Species.objects.get(id=int(data['species']))
-
         query = "SELECT * FROM proteomevis_inspect WHERE "
+        query += "(species = "+data['species']+") AND "
         query += "((uniprot LIKE '%"+q+"%') OR "
         query += "(pdb LIKE '%"+q+"%') OR "
         query += "(genes LIKE '%"+q+"%') OR "
@@ -381,10 +352,9 @@ def query(request):
         tmp = Inspect.objects.raw(query)
         data = []
         for d in list(tmp):
-           R= d.__dict__
-           R['_state']=0        #_state makes sure keys are unique. its value messes up calling in httpresponse
-           if R['species']==species_chosen:
-                data.append(R)
+           R = d.__dict__
+           del R['_state']  #_state makes sure keys are unique. cant be passed by httpresponse
+           data.append(R)
 
         return HttpResponse(
             json.dumps(data,cls=SetEncoder),

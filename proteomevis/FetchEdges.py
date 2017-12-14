@@ -6,6 +6,7 @@ from types import *
 from math import isnan,pow
 import json
 
+
 class SetEncoder(json.JSONEncoder):
    def default(self, obj):
       if isinstance(obj, set):
@@ -33,8 +34,6 @@ def computeCorrelations(nodes,selected_columns):
 			minBound = 0 
 			maxBound = 0 
 		limits[column] = [minBound,maxBound]
-	# c.execute("SELECT name FROM proteins")
-	# rows = c.fetchall()
 	columnDict['names'] = [val[1]['pdb'] for val in nodes]
 	for i,column1 in enumerate(selected_columns):
 		resultsArray.append([])
@@ -72,7 +71,6 @@ def updateDegrees_log(deg,nodes,ID2i):
 			nodes[ID2i[e]][1]['degree_log'] = -1
 		else:	
 			nodes[ID2i[e]][1]['degree_log'] = np.log10(nodes[ID2i[e]][1]['degree'])
-
 
 		if nodes[ID2i[e]][1]['weighted_degree']==None:
 			nodes[ID2i[e]][1]['weighted_degree_log'] = None
@@ -121,12 +119,7 @@ def correlationJSON(x,xArr,y,yArr):
 	return results
 
 def getClusters(_clusters,nodes,ID2i):
-	attr = list(nodes[0][1].keys())
-	attr.remove("pdb")
-	attr.remove("id")
-	attr.remove("chain")
-	attr.remove("domain")
-	attr.remove("species")
+	attr = ["ppi","species","pdb","length","abundance","evorate","conden","dostol","degree_log","weighted_degree_log"]	#seems useful to define as a global variable in proteomevis/views.py and pass it
 	unique_sizes = sorted(list(set(map(lambda x: len(x),_clusters))))
 	clusters, cluster_frequencies = emptyClusters(unique_sizes,attr)
 	for i,c in enumerate(_clusters):
@@ -171,15 +164,12 @@ def pow10(n,d):
 	format_str = "{:0."+str(d)+"f}"
 	return format_str.format(tmp)
 
-def isArray(a):
-	return isinstance(a,list)
-
 def cleanRequest(queryDict):
     cleaned_request = {}
     for qk in queryDict:
         k = re.sub("[^a-zA-Z]+", "",str(qk))
         val = queryDict.getlist(qk)
-        if isArray(val) and len(val) > 1:
+        if type(val)==list and len(val) > 1:
             cleaned_request[k] = [str(v) for v in val]
         else:
             cleaned_request[k] = str(val[0])
