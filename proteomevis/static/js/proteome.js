@@ -679,7 +679,7 @@ function main () {
                 ss.sidi = formatFloat(extent[0][1]);
                 ss.tmf = formatFloat(extent[1][0]);
                 ss.sidf = formatFloat(extent[1][1]);
-                if (_update) {
+                if (_update && (ss.tmi !== ss.tmf) && (ss.sidi !== ss.sidf)) {
                     $(eventHandler).trigger("dataChanged", brush.empty());
                 }
                 $(eventHandler).trigger("displayData", brush.empty());
@@ -694,7 +694,7 @@ function main () {
                     .transition()
                     .call(brush.extent(extent));
 
-                if (_brushEvent && (ss.tmi !== ss.tmf) && (ss.sidi !== ss.sidf)) {
+                if (_brushEvent && (ss.tmi !== ss.tmf) && (ss.sidi !== ss.sidf)) {	//also dont calculate if just a point
                     graph.select(".brush").call(brush.event);
                 }
             };
