@@ -1,5 +1,5 @@
 """
-WSGI config for proteome project.
+WSGI config for proteomevis
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
