@@ -2055,13 +2055,13 @@ function main () {
                     };
                 },
                 processItem: function (item) {
+					gene = item.genes
+					gene_list = gene.split(" ");
                     return {
-//                        id: item.domain,
-  //                      text: item.domain,
                         id: item.pdb,
                         text: item.pdb,
                         text2: item.uniprot,
-                        description: item.function2 ? item.genes + " | " + item.function2 + "; " + item.function1 : item.genes
+                        description: item.function2 ? gene_list[0] + " | " + item.function2 + "; " + item.function1 : gene_list[0]
                     };
                 },
                 results: function (data, offset) {
