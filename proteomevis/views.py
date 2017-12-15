@@ -184,7 +184,7 @@ def fetch_edges(request):
             content_type="application/json"
             )	#StreamingHttpResponse more robust for large transfers
 
-            response.status_code=400    #choose 400 not 404 cuz 404 automatically says file is not found (not what's goin on here)
+            response.status_code=400
             return response             #message called in proteome.js file
 
         nodes = [node.node() for node in chains]

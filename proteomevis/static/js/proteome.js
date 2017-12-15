@@ -1181,7 +1181,6 @@ function main () {
         };
 
         d3.select("#downloadAllDataBtn").on("click", function () {
-            $("#mlDataexport").html('Download options - all proteins');
             d3.select("#numedges_adddisclaimer_label").classed("disabled",((ss.tmi == ss.tmf) && (ss.sidi == ss.sidf)));
        		d3.select("#mb-tab-corr").classed("disabled",0);		//undo what clusters tab does 
             $("#dataExport_triggeredby").val("");					//forget that clusters download had been even clicked

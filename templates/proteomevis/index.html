@@ -70,7 +70,7 @@
                     </ul>
                     <div id='nodeList'>
                         <div style='display:block;'>
-                            <div class='selectivity-input' id='protein_search'></div> <!--<button class='btn btn-default' id='btnProteinSearch' role='button' type='button'><span class='glyphicon glyphicon-search'></span></button>-->
+                            <div class='selectivity-input' id='protein_search'></div> 
                         </div>
                         <ul class="media-list" id='individual_list'></ul>
                     </div>
@@ -106,7 +106,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button" style="float: left"><span aria-hidden="true">&times;</span></button>
                     <h1 align='center'>ProteomeVis</h1>
                     <h1 align='center'><small>last updated November 30, 2017</small> </h1>
                     <h1 align='center'><small>links: <a href="https://doi.org/10.1101/227827">preprint</a>,  <a href="https://github.com/rrazban/proteomevis">source code</a>, <a href="mailto:rrazban@g.harvard.edu?Subject=Question/comment%20about%20ProteomeVis" target="_top">contact us</a></small></h1>
@@ -140,39 +140,12 @@
                 <div class="modal-body">The website timed out. Please try again.</div>
                 <div class="modal-footer">
                     <button class="btn btn-warning pull-left " data-dismiss="modal" type="button">Okay</button>
-       <!--             <button class="btn btn-info pull-left " data-dismiss="modal" type="button" onClick="window.location.reload()">Refresh</button>	Hypothesis: refreshing makes the situation worse cuz more cpu being burned continuously-->
+       <!--             <button class="btn btn-info pull-left " data-dismiss="modal" type="button" onClick="window.location.reload()">Refresh</button>	Hypothesis: refreshing makes the situation worse cuz more cpu being burned continuously. Still need to refresh if happens at start of opening web page-->	
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="editAttributes" role="dialog" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-                    <h4>Edit scatterplot matrix</h4>
-                </div>
-                <div class="modal-body container">
-                    <div class="sideBySide row">
-                        <div class="right col-xs-3">
-                            Order:
-                            <ul class="target connected" id='attributes-used'></ul>
-                        </div>
-                        <div class="left col-xs-3">
-                            Not included:
-                            <ul class="source connected" id='attributes-unused'>
-                                <!-- add stuff here -->
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal" type="button">Close</button> <button class="btn btn-primary" id='btnSaveAttributes' type="button">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="modal fade" data-backdrop="static" data-keyboard="false" id="pleaseWaitDialog" role="dialog" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -190,10 +163,6 @@
     <div aria-labelledby="data-export" class="modal fade" id="mDataexport" role="dialog" tabindex="-1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="mlDataexport">Download options</h4>
-                </div>
                 <div class='modal-body'>
                     <ul class="nav nav-tabs" id="tabContent">
                             <li id='mb-tab-nodes' class="active"><a href="#mbDataexport" data-toggle="tab">Nodes & Edges</a></li>
@@ -205,10 +174,6 @@
                        <form action="export_nodes/" class="tab-pane active" id='mbDataexport' method="post" name="mbDataexport">{% csrf_token %}
                             <div data-toggle="buttons" id='main-options' class='modal-body-buttons'></div>
                             <hr>
-                            <div class="input-group col-xs-2" id='delimiter'>
-<!--                                <span class="input-group-addon" id="basic-addon1">Delimiter</span>		doesnt work, also i think unnecsarry, csv format is standard
-                                <input aria-describedby="basic-addon1" class="form-control" name='delimiter' type="text" value=",">-->
-                            </div>
                             <hr>
                             <div class="modal-body-buttons" data-toggle="buttons" id='more-options'>
                                 <label class="more-options btn active">
