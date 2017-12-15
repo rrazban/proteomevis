@@ -2061,7 +2061,7 @@ function main () {
                         id: item.pdb,
                         text: item.pdb,
                         text2: item.uniprot,
-                        description: item.function2 ? gene_list[0] + " | " + item.function2 + "; " + item.function1 : gene_list[0]
+                        description: item.function2 ? gene_list[0] + " | " + (item.function2).slice(0,(item.function2).indexOf('[GO')-1) : gene_list[0]
                     };
                 },
                 results: function (data, offset) {
