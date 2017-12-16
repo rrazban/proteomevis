@@ -290,7 +290,7 @@ function main () {
             .bind("speciesChanged", function (event) {
                 calculateState.show();
                 makeRequest(function () {
-                    document.title = "ProteomeVis";
+                    document.title = "ProteomeVis";	//already set in html
                     proteinmediaItem.clear();
                     highlighter.removeHighlight();
                     typeVis.updateImage();
@@ -378,14 +378,14 @@ function main () {
         $(eventHandler)
             .bind("removeClusterHighlight", function (event) {
                 highlighter.removeHoverHighlight();
+//                proteinsearch.removeProteinCluster(_oDomain.domain);
             });
 
 		var index_list_cluster =[];	
         $(eventHandler)
             .bind("clusterClicked", function (event, _cluster, _index) {
                 if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {	
-//                    highlighter.highlight(null, _index);	//includes too many protein chains
-                    highlighter.highlight(_cluster.cluster, _index); //edit here, make like highlightDomains by sending over protein chains rather than protein complex
+                    highlighter.highlight(_cluster.cluster, _index); 
 					if (index_list_cluster.indexOf(_index)==-1){
 						index_list_cluster.push(_index);
        		             clusterList.addContent(_cluster);
@@ -2129,7 +2129,6 @@ function main () {
                     })
                     .done(function (_data) {
                         var d = {domainData: _data};
-							
 	                    $(eventHandler).trigger(triggerDestinationIndividual,d);
 
                         if (_triggerDomainHighlighting) {
@@ -2521,16 +2520,16 @@ function main () {
             alert("TODO"); //dataExport.export(d.cluster, columns, ',');
         }
 
-        function mediaHeader (chainName) {
-            var tmp = "<h4>";
-            tmp +=
-                "<a href='http://www.rcsb.org/pdb/explore/explore.do?structureId=";
-            tmp += chainName.slice(0, -1) +
-                "' target='_blank'>" + chainName + "</a> ";
+      //  function mediaHeader (chainName) {
+      //      var tmp = "<h4>";
+          //  tmp +=
+        //        "<a href='http://www.rcsb.org/pdb/explore/explore.do?structureId=";
+      //      tmp += chainName.slice(0, -1) +
+    //            "' target='_blank'>" + chainName + "</a> ";
             // tmp += "<small>" + sFunction +
             //     "</small><a href='#'><span class='remove' style='float:right'>&times;</span></a>";
-            return tmp;
-        }
+  //          return tmp;
+//        }
     };
 
     /* PROTEIN MEDIA ITEM */
@@ -2744,7 +2743,7 @@ function main () {
 			var addbool = true;
             domains.forEach(function (domain, i) {
 				proteinList.forEach(function (protein){
-					if (protein.domain == domain.domain){
+					if (protein.domain == domain.domain && _mediaList[0][0].id=='individual_list'){
 						addbool = false;
 					}
 				});
@@ -2752,7 +2751,9 @@ function main () {
 	                mediaItem(domain);
 				}
             })
-            proteinList = proteinList.concat(domains);
+			if (_mediaList[0][0].id=='individual_list'){
+	            proteinList = proteinList.concat(domains);	//having this here is convenient for determining whether to add media item if already present. dont want cluster to go here
+			}
         };
     };
 
@@ -2803,42 +2804,29 @@ function main () {
         };
 
         this.highlight = function (proteins, _index) {
-            /* if they provide a valid protein */
-            if (proteins) {
-                if (Array.isArray(proteins) && (proteins.length > 1)) {
-                    proteins.forEach(function (protein) {
-                        styleString = singleHighlight(protein);
-                        $("head").append(styleString);
-
-                    });
-                } 
-				else {
-                    var protein = Array.isArray(proteins) ?
-                        proteins[0] : proteins;
-                    styleString = singleHighlight(protein)
+            if (Array.isArray(proteins) && (proteins.length > 1)) {
+                proteins.forEach(function (protein) {
+                    styleString = singleHighlight(protein);
                     $("head").append(styleString);
-                    d3.select(".pcg.p" + protein)
-                        .classed("highlight", true);
-                    arrProteins.push(protein);
-                }
 
-				if ((_index) || (_index==0)){
+                });
+            } 
+			else {
+                var protein = Array.isArray(proteins) ? proteins[0] : proteins;
+               	styleString = singleHighlight(protein)
+                $("head").append(styleString);
+                d3.select(".pcg.p" + protein).classed("highlight", true);
+                arrProteins.push(protein);
+            }
+
+			if ((_index) || (_index==0)){
                 styleString = clusterHighlight(_index);	
-                d3.select("head").insert("style",
-                        ".style-highlight")
+                d3.select("head").insert("style",".style-highlight")
                     .attr("id", "style-c" + _index)
                     .attr("class", "style-highlight-cluster")
                     .html(styleString);
-            	}
-            }// else {	//no longer needed
-             //   styleString = clusterHighlight(_index);	
-             //   d3.select("head").insert("style",
-               //         ".style-highlight")
-                 //   .attr("id", "style-c" + _index)
-                   // .attr("class", "style-highlight-cluster")
-                  //  .html(styleString);
-          //  }
-            i += 1;
+            }
+			i += 1;
         };
 
         this.removeHighlight = function (proteins, _index) {	
