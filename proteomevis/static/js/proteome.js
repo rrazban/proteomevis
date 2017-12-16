@@ -373,12 +373,11 @@ function main () {
         $(eventHandler)
             .bind("clusterHighlight", function (event, _cluster, _center) {
                 highlighter.hoverHighlight(_cluster, _center);
-            });	//responsible for pink color color when hover over	//TODO: lingers when remove it
+            });	//responsible for pink color color when hover over
 
         $(eventHandler)
             .bind("removeClusterHighlight", function (event) {
                 highlighter.removeHoverHighlight();
-//                proteinsearch.removeProteinCluster(_oDomain.domain);
             });
 
 		var index_list_cluster =[];	
@@ -397,6 +396,7 @@ function main () {
                 highlighter.removeHighlight(_cluster.cluster, _cluster.id);	
 				remove_index = index_list_cluster.indexOf(_cluster.id);
 				index_list_cluster.splice(remove_index, 1);
+                highlighter.removeHoverHighlight();
             });
 
 
