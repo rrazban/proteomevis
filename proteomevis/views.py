@@ -202,8 +202,6 @@ def fetch_edges(request):
         SG.add_nodes_from(nodes)
         SG_ppi.add_nodes_from(nodes)
 
-
-
         links = [dict(sourceID=source,targetID=target,source=ID2i[source],target=ID2i[target],tm=data["tm"],sid=data["sid"],ppi=data["ppi"],dashed=False) for source,target,data in edges]
 
         # add the edges to the graph
@@ -243,9 +241,9 @@ def fetch_edges(request):
 def fetch_proteins(request):
     if request.method == 'POST':
         data = cleanRequest(request.POST)
-        domains = data['domains']
-        if not isinstance(domains,list):
-            domains = [domains]
+        pdb_list = data['domains']
+        if not isinstance(pdb_list,list):
+            pdb_list = [pdb_list]
 
         species = Species.objects.get(id=int(data['species']))
 
@@ -253,15 +251,18 @@ def fetch_proteins(request):
         
         results = []
         chains = []
+        pdb_complex_list = []
 
-        for domain in domains:
-            if len(domain)>4:	#maybe always have pdb sent over (need to go into proteome.js)
-				domain = domain[:domain.index('.')]
-            tmp = Inspect.objects.filter(pdb__icontains=domain)
-            results += tmp
-            tmp = Chain.objects.filter(pdb__icontains=domain)
-            chains += tmp
+        for pdb_complex in pdb_list:
+            if '.' in pdb_complex:	#goes here for clicking node, searching in PI	(make this always the case, i.e. for cluster tab)
+				pdb_complex = pdb_complex[:pdb_complex.index('.')]
 
+            if pdb_complex not in pdb_complex_list:
+				pdb_complex_list.append(pdb_complex)
+				tmp = Inspect.objects.filter(pdb__icontains=pdb_complex)
+				results += tmp
+				tmp = Chain.objects.filter(pdb__icontains=pdb_complex)
+				chains += tmp
         data = {result.parse_pdb()[0]:dict(domain=result.parse_pdb()[0],function1=[],function1chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for result in results}
         for e in results:
             control = 2
@@ -313,18 +314,21 @@ def fetch_proteins(request):
 					data[pdb_complex]['localizations'] = [localization]
 
         for chain in chains:
-            try:
-                data[chain.domain]
-            except:
-				data[chain.domain] = dict(domain=chain.domain,chains=[])
-            data[chain.domain]['chains'].append(dict(chain=chain.chain,id=chain.chain_id))
+            pdb_complex = (chain.domain).lower()
+            if pdb_complex not in data:
+				data[pdb_complex] = dict(domain=pdb_complex,chains=[])
 
-        pdb_complex_list = set([e.parse_pdb()[0] for e in results])
+            if chain.pdb in pdb_list:
+				highlight_bool = True
+            else:
+				highlight_bool = False 
+
+            data[pdb_complex]['chains'].append(dict(chain=chain.chain,id=chain.chain_id, highlight_bool=highlight_bool))
+
         for pdb_complex in pdb_complex_list:
 			if len(data[pdb_complex]['chains'])>1:
 				for f in range(len(data[pdb_complex]['function1'])):
 					data[pdb_complex]['function1'][f] = '{0}: {1}'.format(', '.join(data[pdb_complex]['function1chain'][f]), data[pdb_complex]['function1'][f])
-
         return HttpResponse(
             json.dumps(data.values(),cls=SetEncoder),
             content_type="application/json"

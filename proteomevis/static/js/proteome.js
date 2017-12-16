@@ -170,6 +170,9 @@ function main () {
     var chainName = function (d) {	//not sure what the point of this function is, just return d...
             return d.slice(0, -1) + d.slice(-1);
         },
+		complexName = function(d) {
+			return d.slice(0, d.indexOf('.'));
+		},
         chainImage = function (d) {
             return "<img class='media-object' src ='../static/img/" + d[
                     0] + '/' + d[1] + '/' + d + ".png'>";
@@ -279,7 +282,7 @@ function main () {
                 typevisBrush = status;
                 calculateState.show();
                 highlighter.updateHighlight();
-                makeRequest(function () { waitDataLoadUpdate(0); });
+                makeRequest(function () { waitDataLoadUpdate(0); });//not sure if wait dataloadupdate is necessary
 
             });
         // triggered when you select a different ss.species
@@ -332,7 +335,7 @@ function main () {
             .bind("nodeClicked", function (
                 event, _node) {
                 tmsid.addLinks(_node);
-                $.when(proteinsearch.individualSearch(_node.domain, false))
+                $.when(proteinsearch.individualSearch(_node.pdb, false))
                     .done(function () {
                         highlighter.highlight(_node.id);
                     });
@@ -346,12 +349,10 @@ function main () {
                         $(eventHandler).trigger("nodeClicked", data.nodes[ID2i(d)]);
                     })
                     .toUpperCase();
-                // $.when(proteinsearch.individualSearch(node,false))
-                //     .done(function () { highlighter.highlight(_node.id); });
             });
 
         $(eventHandler)
-            .bind("highlightDomains", function (event, _data) {
+            .bind("highlightDomains", function (event, _data) {	//rename to highlightChain
                 _data.data.forEach(function (domains) {
                     highlighter.highlight(domains);
                 });
@@ -372,7 +373,7 @@ function main () {
         $(eventHandler)
             .bind("clusterHighlight", function (event, _cluster, _center) {
                 highlighter.hoverHighlight(_cluster, _center);
-            });	//responsible for pink color color when hover over
+            });	//responsible for pink color color when hover over	//TODO: lingers when remove it
 
         $(eventHandler)
             .bind("removeClusterHighlight", function (event) {
@@ -384,7 +385,7 @@ function main () {
             .bind("clusterClicked", function (event, _cluster, _index) {
                 if (!(d3.select('.cluster.c' + _index).classed("highlight"))) {	
 //                    highlighter.highlight(null, _index);	//includes too many protein chains
-                    highlighter.highlight(_cluster.cluster, _index);
+                    highlighter.highlight(_cluster.cluster, _index); //edit here, make like highlightDomains by sending over protein chains rather than protein complex
 					if (index_list_cluster.indexOf(_index)==-1){
 						index_list_cluster.push(_index);
        		             clusterList.addContent(_cluster);
@@ -2096,11 +2097,13 @@ function main () {
         });
 
 
-        var getChainIDs = function (_data) {
+        var getChainIDs = function (_data, domains) {
             return {
                 data: _data.map(function (domain) {
                     return domain.chains.map(function (chain) {
-                        return chain.id;
+						if (chain.highlight_bool){
+	                        return chain.id;
+						}
                     });
                 })
             };
@@ -2125,19 +2128,15 @@ function main () {
                         data: request
                     })
                     .done(function (_data) {
-                        var d = {
-                            domainData: _data
-                        };
-                        $(eventHandler)
-                            .trigger(
-                                triggerDestinationIndividual,
-                                d);
+                        var d = {domainData: _data};
+							
+	                    $(eventHandler).trigger(triggerDestinationIndividual,d);
+
                         if (_triggerDomainHighlighting) {
                             var dData = getChainIDs(_data);
                             $(eventHandler).trigger("highlightDomains",dData);
                         }
                     });
-                proteinList = proteinList.concat(domains);
             }
             return true;
         }
@@ -2149,10 +2148,8 @@ function main () {
             cluster.domainData = [];
             cluster.domains = _data.clusterdata;
             cluster.dLength = _data.clusterdata.length;
-
             while (cluster.domains.length > 0) {
                 chunk = cluster.domains.splice(0, 10);
-
                 var request = $.param({
                     species: ss.species.id,
                     domains: chunk
@@ -2170,7 +2167,7 @@ function main () {
                         if (isDone) {
                             // wait for everything else to finish
                             $(eventHandler).trigger(triggerDestinationCluster,cluster);
-                            if (_triggerDomainHighlighting) {
+                            if (_triggerDomainHighlighting) {	//doesnt seem to go there
                                 var domainIDs = getChainIDs(cluster.domainData);
                                 $(eventHandler).trigger("highlightDomains",domainIDs);
                             }
@@ -2188,7 +2185,12 @@ function main () {
         }
 
         this.removeProtein = function (p) {
-            proteinList.remove(p);
+			var proteinListcopy = proteinList.slice();
+			proteinListcopy.forEach(function (protein){
+				if (protein.domain == p){
+            		proteinList.remove(protein);
+				}
+			});
         };
 
         this.proteins = function () {
@@ -2418,7 +2420,7 @@ function main () {
             var chains = {},
                 domain, chain;
             _cluster.cluster.forEach(function (node) {
-                domain = data.nodes[ID2i(node)].domain;
+                domain = data.nodes[ID2i(node)].domain;	//easier to do domain
                 chains[domain] = [];
             });
 
@@ -2739,9 +2741,18 @@ function main () {
             closeSpan = (mediaList.attr("id") == 'individual_list');
             cluster = _cID;
             var domains = (!(Array.isArray(_domains))) ? [_domains] : _domains;
+			var addbool = true;
             domains.forEach(function (domain, i) {
-                mediaItem(domain);
+				proteinList.forEach(function (protein){
+					if (protein.domain == domain.domain){
+						addbool = false;
+					}
+				});
+				if (addbool) {
+	                mediaItem(domain);
+				}
             })
+            proteinList = proteinList.concat(domains);
         };
     };
 
@@ -2798,8 +2809,10 @@ function main () {
                     proteins.forEach(function (protein) {
                         styleString = singleHighlight(protein);
                         $("head").append(styleString);
+
                     });
-                } else {
+                } 
+				else {
                     var protein = Array.isArray(proteins) ?
                         proteins[0] : proteins;
                     styleString = singleHighlight(protein)
@@ -2808,6 +2821,7 @@ function main () {
                         .classed("highlight", true);
                     arrProteins.push(protein);
                 }
+
 				if ((_index) || (_index==0)){
                 styleString = clusterHighlight(_index);	
                 d3.select("head").insert("style",
@@ -2816,14 +2830,14 @@ function main () {
                     .attr("class", "style-highlight-cluster")
                     .html(styleString);
             	}
-            } else {	//no longer needed
-                styleString = clusterHighlight(_index);	
-                d3.select("head").insert("style",
-                        ".style-highlight")
-                    .attr("id", "style-c" + _index)
-                    .attr("class", "style-highlight-cluster")
-                    .html(styleString);
-            }
+            }// else {	//no longer needed
+             //   styleString = clusterHighlight(_index);	
+             //   d3.select("head").insert("style",
+               //         ".style-highlight")
+                 //   .attr("id", "style-c" + _index)
+                   // .attr("class", "style-highlight-cluster")
+                  //  .html(styleString);
+          //  }
             i += 1;
         };
 

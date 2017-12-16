@@ -36,7 +36,7 @@ class Inspect(models.Model):
 
     def parse_pdb(self):
 		pdb = self.pdb
-		pdb_complex = pdb[:pdb.index('.')].upper()
+		pdb_complex = pdb[:pdb.index('.')]
 		pdb_chain = pdb[pdb.index('.')+1:]
 		return pdb_complex, pdb_chain	
 
