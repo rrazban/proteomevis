@@ -2674,6 +2674,9 @@ function main () {
 
         function createGeneLinks (oUniprot, sDomain) {
             var str = "genes: ";
+			if (oUniprot.length==1){
+				str = "gene: ";
+			}
             str += oUniprot.length ? oUniprot.map(function (
                 entry) {
                 var tmp =
