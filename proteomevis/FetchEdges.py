@@ -91,12 +91,6 @@ def addCluster(clusters,nodes,ID2i):
 			j += 1
 	return nodes,clusters
 
-def getAbundance(nodes,id,ID2i):
-	tmp = nodes[ID2i[id]][1]['abundance']
-	if tmp == None:
-		tmp = 0
-	return tmp
-
 def correlationJSON(x,xArr,y,yArr):
 	results = {}
 	arr_corr = linregress(xArr,yArr)
@@ -174,3 +168,89 @@ def cleanRequest(queryDict):
         else:
             cleaned_request[k] = str(val[0])
     return cleaned_request
+
+class Inspect_data:
+	def __init__(self, inspect_list):
+		self.inspect_list = inspect_list
+		self.data = {inspect.parse_pdb()[0]:dict(domain=inspect.parse_pdb()[0],function1=[],function1_chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for inspect in inspect_list}
+
+	def get_uniprot(self, pdb_complex, uniprot, genes):
+		self.data[pdb_complex]['uniprot'].append(dict(uniprot=uniprot,genes=genes))
+
+	def get_function1(self, pdb_complex, pdb_chain, function1):
+		if not function1: 
+			return	#null case			
+
+		control = 2
+		if not self.data[pdb_complex]['function1']:
+			self.data[pdb_complex]['function1'].append(function1)
+			self.data[pdb_complex]['function1_chain'].append([pdb_chain])
+		else:
+			for f,function in enumerate(self.data[pdb_complex]['function1']):
+				if function in function1:
+					self.data[pdb_complex]['function1_chain'][f].append(pdb_chain)
+					control = 0
+					break			
+				elif function1 in function:
+					self.data[pdb_complex]['function1_chain'][f].append(pdb_chain)
+					control = 1	
+					break
+				else: pass
+
+			if control:
+				if control==1:
+					self.data[pdb_complex]['function1'][f] = function1
+				elif control==2:
+					self.data[pdb_complex]['function1'].append(function1)
+					self.data[pdb_complex]['function1_chain'].append([pdb_chain])
+				else: pass
+
+	def get_function2(self, pdb_complex, function2):
+		if not self.data[pdb_complex]['function2'] and function2:
+			if 'GO' in function2:
+					function2 = function2[:function2.find('[GO')-1]
+#			function2 = function2.split(',')
+			self.data[pdb_complex]['function2'].append(function2)
+
+	def get_localization(self, pdb_complex, localization):
+		if not self.data[pdb_complex]['localizations'] and localization:
+			if '{' in localization:
+				localization = localization[:localization.find('{')-1]
+			if ';' in localization:
+				localization = localization[:localization.find(';')]
+			if 'Note' in localization:
+				localization = localization[:localization.find('Note')-2]
+			if '.' == localization[-1]:
+				localization = localization[:-1]
+			self.data[pdb_complex]['localizations'] = [localization]
+
+	def get_chains(self, pdb_list, pdb, pdb_complex, pdb_chain, pdb_id):
+            if pdb_complex not in self.data:
+				data[pdb_complex] = dict(domain=pdb_complex,chains=[])
+
+            if pdb in pdb_list:
+				highlight_bool = True
+            else:
+				highlight_bool = False 
+            self.data[pdb_complex]['chains'].append(dict(chain=pdb_chain,id=pdb_id, highlight_bool=highlight_bool))
+
+ 
+	def get_data(self, has_localization, pdb_list):
+		for inspect in self.inspect_list:
+			pdb_complex, pdb_chain = inspect.parse_pdb()
+
+			self.get_uniprot(pdb_complex, inspect.uniprot, inspect.genes)
+			self.get_function1(pdb_complex, pdb_chain, inspect.function1)
+			self.get_function2(pdb_complex, inspect.function2)
+			if has_localization:
+				self.get_localization(pdb_complex, inspect.location)
+			self.get_chains(pdb_list, inspect.pdb, pdb_complex, pdb_chain, inspect.id)
+
+	def add_chain_to_function1(self, pdb_complex_list):
+		for pdb_complex in pdb_complex_list:
+			if len(self.data[pdb_complex]['chains'])>1:
+				for f in range(len(self.data[pdb_complex]['function1'])):
+					self.data[pdb_complex]['function1'][f] = '{0}: {1}'.format(', '.join(self.data[pdb_complex]['function1_chain'][f]), self.data[pdb_complex]['function1'][f])
+
+
+

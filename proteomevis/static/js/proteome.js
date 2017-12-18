@@ -2578,7 +2578,7 @@ function main () {
                             function (a, b) {
                                 return a + ', ' + b;
                             }) : " - "));
-            };	//current version does not get localization info
+            };
 
             mediaBody.append("div").html(createGeneLinks(
                 oDomain.uniprot, oDomain.domain));
@@ -2673,9 +2673,9 @@ function main () {
         };
 
         function createGeneLinks (oUniprot, sDomain) {
-            var str = "genes: ";
-			if (oUniprot.length==1){
-				str = "gene: ";
+            var str = "gene: ";
+			if (oUniprot.length>1){
+				str = "genes: ";
 			}
             str += oUniprot.length ? oUniprot.map(function (
                 entry) {

@@ -9,13 +9,13 @@ from django.template import loader, Context
 
 better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
 
-def get_filename(what, species, TMi, TMf, SIDi, SIDf):
+def get_filename(what, species, TMi, TMf, SIDi, SIDf):	#move to FetchEdges (change name of FetchEdges)
 	species_name = Species.objects.get(id=species)
 	current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
 	filename = "attachment; filename={0}_{1}_TM_{2:.2f}-{3:.2f}_SID_{4:.2f}-{5:.2f}_{6}.csv".format(what, species_name, TMi, TMf, SIDi, SIDf, current_time)
 	return filename
 
-@csrf_exempt
+@csrf_exempt	#necessary?
 def export_nodes(request):
 	if request.method == 'POST':
 		data = cleanRequest(request.POST)
@@ -155,7 +155,7 @@ def export_splom(request):
         # return response
 
 
-def index(request):
+def index(request):	#dont think this is necessary anymore since column order is now static
     data = {}
     return render(request, "proteomevis/index.html", data)
 
@@ -240,95 +240,28 @@ def fetch_edges(request):
 @csrf_exempt
 def fetch_proteins(request):
     if request.method == 'POST':
-        data = cleanRequest(request.POST)
-        pdb_list = data['domains']
+        input_data = cleanRequest(request.POST)
+        pdb_list = input_data['domains']
         if not isinstance(pdb_list,list):
             pdb_list = [pdb_list]
+        species = Species.objects.get(id=int(input_data['species']))
 
-        species = Species.objects.get(id=int(data['species']))
-
-        data = {}
-        
-        results = []
-        chains = []
+        inspect_list = []
         pdb_complex_list = []
 
         for pdb_complex in pdb_list:
-            if '.' in pdb_complex:	#goes here for clicking node, searching in PI	(make this always the case, i.e. for cluster tab)
+            if '.' in pdb_complex:	#goes here for clicking node, searching in PI	(not for cluster tab)
 				pdb_complex = pdb_complex[:pdb_complex.index('.')]
 
             if pdb_complex not in pdb_complex_list:
 				pdb_complex_list.append(pdb_complex)
-				tmp = Inspect.objects.filter(pdb__icontains=pdb_complex)
-				results += tmp
-				tmp = Chain.objects.filter(pdb__icontains=pdb_complex)
-				chains += tmp
-        data = {result.parse_pdb()[0]:dict(domain=result.parse_pdb()[0],function1=[],function1chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for result in results}
-        for e in results:
-            control = 2
-            pdb_complex, pdb_chain = e.parse_pdb()
+				inspect_list += Inspect.objects.filter(pdb__icontains=pdb_complex)
 
-            if not e.function1: break	#null case			
-            if not data[pdb_complex]['function1']:
-				data[pdb_complex]['function1'].append(e.function1)
-				data[pdb_complex]['function1chain'].append([pdb_chain])
-            else:
-				for f,function in enumerate(data[pdb_complex]['function1']):
-					if function in e.function1:
-						data[pdb_complex]['function1chain'][f].append(pdb_chain)
-						control = 0
-						break			
-					elif e.function1 in function:
-						data[pdb_complex]['function1chain'][f].append(pdb_chain)
-						control = 1	
-						break
-					else: pass
+        inspect_data = Inspect_data(inspect_list)
+        inspect_data.get_data(species.has_localization, pdb_list)
+        inspect_data.add_chain_to_function1(pdb_complex_list)	
+        data = inspect_data.__dict__['data']
 
-				if control:
-					if control==1:
-						data[pdb_complex]['function1'][f] = e.function1
-					elif control==2:
-						data[pdb_complex]['function1'].append(e.function1)
-						data[pdb_complex]['function1chain'].append([pdb_chain])
-					else: pass
-					
-            function2 = e.function2
-            if not data[pdb_complex]['function2'] and function2:
-				if 'GO' in function2:
-					function2 = function2[:function2.find('[GO')-1]
-#				function2 = function2.split(',')
-				data[pdb_complex]['function2'].append(function2)
-            data[pdb_complex]['uniprot'].append(dict(uniprot=e.uniprot,genes=e.genes))
-
-            if species.has_localization:
-				localization = e.location
-				if not data[pdb_complex]['localizations'] and localization:
-					if '{' in localization:
-						localization = localization[:localization.find('{')-1]
-					if ';' in localization:
-						localization = localization[:localization.find(';')]
-					if 'Note' in localization:
-						localization = localization[:localization.find('Note')-2]
-					if '.' == localization[-1]:
-						localization = localization[:-1]
-					data[pdb_complex]['localizations'] = [localization]
-
-        for chain in chains:
-            pdb_complex = (chain.domain).lower()
-            if pdb_complex not in data:
-				data[pdb_complex] = dict(domain=pdb_complex,chains=[])
-
-            if chain.pdb in pdb_list:
-				highlight_bool = True
-            else:
-				highlight_bool = False 
-
-            data[pdb_complex]['chains'].append(dict(chain=chain.chain,id=chain.chain_id, highlight_bool=highlight_bool))
-
-        for pdb_complex in pdb_complex_list:
-			if len(data[pdb_complex]['chains'])>1:
-				for f in range(len(data[pdb_complex]['function1'])):
-					data[pdb_complex]['function1'][f] = '{0}: {1}'.format(', '.join(data[pdb_complex]['function1chain'][f]), data[pdb_complex]['function1'][f])
         return HttpResponse(
             json.dumps(data.values(),cls=SetEncoder),
             content_type="application/json"
