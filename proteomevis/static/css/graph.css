@@ -161,14 +161,9 @@ a:focus, a:hover {
 
 /* ANYTHING TO DO WITH COLORING */
 /* appearance of protein nodes in the force layout */
-circle.pcg:not(.mutant) {
+circle.pcg{
   stroke-width: 1px;
   stroke:black;
-  r:8;
-}
-circle.pcg.mutant {
-  stroke-width: 2px;
-  stroke:red;
   r:8;
 }
 .pcg:hover {

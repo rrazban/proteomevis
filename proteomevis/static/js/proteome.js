@@ -275,7 +275,7 @@ function main () {
                 }
             }
         }
-        // triggered when you select a range on the TM v SID graph (typevis.js)
+        // triggered when you select a range on the TM v SID graph
         $(eventHandler)
             .bind("dataChanged", function (event,
                 status) {
@@ -439,13 +439,13 @@ function main () {
                 ]);
         });
 
-        $(eventHandler).bind("changeScale", function (event, _type) {
+        $(eventHandler).bind("changeScale", function (event, _type) {	//ever used?
             // force change the view
             var t = _type.split("-");
             splomFocusPlot.changeScale(t[0], t[1]);
         });
 
-        $(eventHandler).bind("node-focus", function (event, _oDomain) {
+        $(eventHandler).bind("node-focus", function (event, _oDomain) {	//ever used?
             // force change the view
             tmsid.focusNode(node);
         });
@@ -463,7 +463,7 @@ function main () {
             typeVis.setHeight();
             forceVis.setHeight();
             splomBar.setHeight();
-	    splomVis.setHeight();
+	    	splomVis.setHeight();
 //            splomVis.updateVis();	//doesnt work
         });
     }
@@ -505,7 +505,7 @@ function main () {
                 _callback();
                 loaded = true;
             })
-            .fail(function(_data){      //RMRx
+            .fail(function(_data){
                var errorMessage = new ErrorMessage();
                 if (_data['status']==400){
                         errorMessage.show("You've selected too many edges. Try selecting a smaller area.");
@@ -576,7 +576,7 @@ function main () {
 
     setPanelSizes();
     setAttributes();
-    /***********************************
+    /***********************************  better name would be panel name: Edge Filtering
     ***********************************
     TYPE VIS
     ***********************************
@@ -944,7 +944,7 @@ function main () {
                     .start();
 
                 // Enter any new nodes.
-                nodes.enter().append("circle").attr('r', 8);	//already defined in graph.css for chrome and others	
+                nodes.enter().append("circle").attr('r', 8);	//firefox //already defined in graph.css for chrome and others	
                 nodes.attr('class', function (d) {
                         return "pcg p" + d.id + " c" + d.cluster;
                     })
@@ -2781,7 +2781,7 @@ function main () {
                 "' class='style-highlight'> " +
                 "circle.p" + protein + "{ fill: " + color(i) +	
                 " !important;}" +
-                ".pcg.p" + protein + "{r:15;}" +
+                ".pcg.p" + protein + "{r:8;}" +	
                 ".pcg.highlight-center.p" + protein + "{r:35;}" +
                 ".splom.p" + protein +
                 " {r:3 !important; stroke:" + color(i) +	
