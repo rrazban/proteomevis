@@ -22,7 +22,7 @@ class Chain(models.Model):
 
 
 class Inspect(models.Model):
-    id = models.IntegerField(primary_key=True)
+    chain_id = models.IntegerField(primary_key=True)
     pdb = models.CharField(max_length=10,blank=True,null=True)
     uniprot = models.CharField(max_length=30,blank=True,null=True)
     genes = models.CharField(max_length=30,blank=True,null=True)

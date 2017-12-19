@@ -244,7 +244,7 @@ class Inspect_data:
 			self.get_function2(pdb_complex, inspect.function2)
 			if has_localization:
 				self.get_localization(pdb_complex, inspect.location)
-			self.get_chains(pdb_list, inspect.pdb, pdb_complex, pdb_chain, inspect.id)
+			self.get_chains(pdb_list, inspect.pdb, pdb_complex, pdb_chain, inspect.chain_id)
 
 	def add_chain_to_function1(self, pdb_complex_list):
 		for pdb_complex in pdb_complex_list:

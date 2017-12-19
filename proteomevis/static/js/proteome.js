@@ -439,17 +439,6 @@ function main () {
                 ]);
         });
 
-        $(eventHandler).bind("changeScale", function (event, _type) {	//ever used?
-            // force change the view
-            var t = _type.split("-");
-            splomFocusPlot.changeScale(t[0], t[1]);
-        });
-
-        $(eventHandler).bind("node-focus", function (event, _oDomain) {	//ever used?
-            // force change the view
-            tmsid.focusNode(node);
-        });
-
         $(eventHandler).bind("openModal", function (event) {
             attributeseditor.openModal();
         });
@@ -1591,33 +1580,6 @@ function main () {
         xText.attr("x", width/2);
         yText.attr("x", -height/2);
 		};
-
-        // this.changeScale = function (_type, _scale) {
-        //     var tmpScale;
-        //     switch (_scale) {
-        //         case "sqrt":
-        //             tmpScale = d3.scale.sqrt();
-        //             break;
-        //         case "lin":
-        //             tmpScale = d3.scale.linear();
-        //             break;
-        //         case "exp":
-        //             tmpScale = d3.scale.pow().exponent(2);
-        //             break;
-        //     }
-        //     switch (_type) {
-        //         case "x":
-        //             tmpScale.range(x.range());
-        //             x = tmpScale;
-        //             break;
-        //         case "y":
-        //             tmpScale.range(y.range());
-        //             y = tmpScale;
-        //             break;
-        //     }
-
-        //     that.plot(currentThisPlt, currentPlt);
-        // };
 
         function brushended () {
             if (brush.empty()) {
@@ -3050,64 +3012,6 @@ function main () {
             }
         }
 
-        this.focusNode = function (_protein) {
-            center = _protein.id;
-
-            // remove all the stuff we don't care about
-            d3.selectAll(".link.highlight").classed('highlight',
-                function (d) {
-                    return (d.source.id == center || d.target
-                        .id == center);
-                });
-
-            d3.selectAll(".link:not(.highlight)").remove();
-            d3.selectAll("circle.pcg:not(.highlight)").remove();
-            d3.select(".pcg.p" + center)
-                .classed("highlight-center", true)
-                .classed("highlight", false);
-
-            var _links = links.filter(function (link) {
-                return (link.source == _protein.id ||
-                    link.target == _protein.id);
-            });
-
-            var new_links = [],
-                done = false;
-
-            _links.forEach(function (link, i) {
-                var jqxhr_data = $.getJSON(
-                        formatRequest(link.source, link
-                            .target))
-                    .done(function (_data) {
-                        var l = {};
-                        l.ppi = _data.ppi;
-                        l.tm = _data.tm;
-                        l.sid = _data.sid;
-                        l.dashed = true;
-                        l.source = ID2i(link.source);
-                        l.target = ID2i(link.target);
-                        new_links.push(l);
-                    });
-            });
-
-
-            var check_if_done = function () {
-                if (done) {
-                    links = d3.selectAll(".link.highlight")
-                        .data().concat(new_links);
-                    edgeData.edges = links;
-                    //get all the links that we care about
-                    $(eventHandler)
-                        .trigger('focus-forcevis', edgeData);
-                } else {
-                    done = (new_links.length == _links.length);
-                    setTimeout(function () {
-                        check_if_done();
-                    }, 1000);
-                }
-            };
-            check_if_done();
-        }
     };
 
     TipLink = function (_parentElement) {
