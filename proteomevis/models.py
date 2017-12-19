@@ -1,12 +1,15 @@
 from django.db import models
 
 
+def parse_pdb(pdb):
+	pdb_complex = pdb[:pdb.index('.')]
+	pdb_chain = pdb[pdb.index('.')+1:]
+	return pdb_complex, pdb_chain	
+
 class Chain(models.Model):
     chain_id = models.IntegerField(default=0)
     species = models.IntegerField(default=0)
     pdb = models.CharField(max_length=10)
-    domain = models.CharField(max_length=10)	#redundant, remove
-    chain = models.CharField(max_length=2)
     length = models.FloatField(blank=True,null=True)
     abundance = models.FloatField(blank=True,null=True)	
     evorate = models.FloatField(blank=True,null=True)
@@ -18,7 +21,8 @@ class Chain(models.Model):
         return self.pdb
 
     def node(self):
-        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":self.domain,"chain":self.chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostol":self.dostox,"ppi":self.ppi,"degree":0,"degree_log":0,"weighted_degree":0,"weighted_degree_log":0,"ppi_degree":0})
+        pdb_complex, pdb_chain = parse_pdb(self.pdb)
+        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":pdb_complex,"chain":pdb_chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostol":self.dostox,"ppi":self.ppi,"degree":0,"degree_log":0,"weighted_degree":0,"weighted_degree_log":0,"ppi_degree":0})
 
 
 class Inspect(models.Model):
@@ -33,12 +37,6 @@ class Inspect(models.Model):
 
     def __str__(self):
         return self.pdb
-
-    def parse_pdb(self):
-		pdb = self.pdb
-		pdb_complex = pdb[:pdb.index('.')]
-		pdb_chain = pdb[pdb.index('.')+1:]
-		return pdb_complex, pdb_chain	
 
 
 class Edge(models.Model):

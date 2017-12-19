@@ -31,7 +31,7 @@ def export_nodes(request):
 		SIDf = data['SIDf']
 		species = data['species'].upper()
 
-		log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance'] #have this read in from attributes file #cant read all cuz degree and weighted degree
+		log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance'] #have this read in from attributes file
 		log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0)
  
 		if data['option'] != '1':
@@ -173,9 +173,11 @@ def fetch_edges(request):
 
         i2ID = dict()
         ID2i = dict()
-
-        chains = Chain.objects.filter(species=species)
+        print data
+#        chains = Chain.objects.filter(species=species)
+        chains = Chain.objects.get(species=species)
         edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)[:15001]
+        print edges
         edges = [(edge.targetID,edge.sourceID,edge.__dict__) for edge in edges]
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
         if len(list(edges)) > 15000:
@@ -186,7 +188,9 @@ def fetch_edges(request):
 
             response.status_code=400
             return response             #message called in proteome.js file
-
+        print chains
+        for node in chains:
+			print node
         nodes = [node.node() for node in chains]
         for i,node in enumerate(nodes):
             i2ID[i] = node[0]
@@ -251,7 +255,7 @@ def fetch_proteins(request):
 
         for pdb_complex in pdb_list:
             if '.' in pdb_complex:	#goes here for clicking node, searching in PI	(not for cluster tab)
-				pdb_complex = pdb_complex[:pdb_complex.index('.')]
+				pdb_complex, pdb_chain = parse_pdb(pdb_complex)
 
             if pdb_complex not in pdb_complex_list:
 				pdb_complex_list.append(pdb_complex)

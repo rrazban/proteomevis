@@ -5,7 +5,7 @@ import numpy as np
 from types import *
 from math import isnan,pow
 import json
-
+from .models import parse_pdb
 
 class SetEncoder(json.JSONEncoder):
    def default(self, obj):
@@ -172,7 +172,7 @@ def cleanRequest(queryDict):
 class Inspect_data:
 	def __init__(self, inspect_list):
 		self.inspect_list = inspect_list
-		self.data = {inspect.parse_pdb()[0]:dict(domain=inspect.parse_pdb()[0],function1=[],function1_chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for inspect in inspect_list}
+		self.data = {parse_pdb(inspect.pdb)[0]:dict(domain=parse_pdb(inspect.pdb)[0],function1=[],function1_chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for inspect in inspect_list}
 
 	def get_uniprot(self, pdb_complex, uniprot, genes):
 		self.data[pdb_complex]['uniprot'].append(dict(uniprot=uniprot,genes=genes))
@@ -237,7 +237,7 @@ class Inspect_data:
  
 	def get_data(self, has_localization, pdb_list):
 		for inspect in self.inspect_list:
-			pdb_complex, pdb_chain = inspect.parse_pdb()
+			pdb_complex, pdb_chain = parse_pdb(inspect.pdb)
 
 			self.get_uniprot(pdb_complex, inspect.uniprot, inspect.genes)
 			self.get_function1(pdb_complex, pdb_chain, inspect.function1)
