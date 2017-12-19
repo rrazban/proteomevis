@@ -7,6 +7,7 @@ from math import isnan,pow
 import json
 from .models import parse_pdb
 
+
 class SetEncoder(json.JSONEncoder):
    def default(self, obj):
       if isinstance(obj, set):

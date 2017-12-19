@@ -7,7 +7,7 @@ def parse_pdb(pdb):
 	return pdb_complex, pdb_chain	
 
 class Chain(models.Model):
-    chain_id = models.IntegerField(default=0)
+    chain_id = models.IntegerField(primary_key=True)
     species = models.IntegerField(default=0)
     pdb = models.CharField(max_length=10)
     length = models.FloatField(blank=True,null=True)

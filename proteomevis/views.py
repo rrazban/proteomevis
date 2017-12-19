@@ -173,11 +173,8 @@ def fetch_edges(request):
 
         i2ID = dict()
         ID2i = dict()
-        print data
-#        chains = Chain.objects.filter(species=species)
-        chains = Chain.objects.get(species=species)
+        chains = Chain.objects.filter(species=species)
         edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)[:15001]
-        print edges
         edges = [(edge.targetID,edge.sourceID,edge.__dict__) for edge in edges]
         edges_ppi = filter(lambda x: x[-1]['ppi'] == 1, edges)
         if len(list(edges)) > 15000:
@@ -188,9 +185,6 @@ def fetch_edges(request):
 
             response.status_code=400
             return response             #message called in proteome.js file
-        print chains
-        for node in chains:
-			print node
         nodes = [node.node() for node in chains]
         for i,node in enumerate(nodes):
             i2ID[i] = node[0]
