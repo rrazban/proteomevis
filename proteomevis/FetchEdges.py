@@ -228,7 +228,7 @@ class Inspect_data:
             if pdb_complex not in self.data:
 				data[pdb_complex] = dict(domain=pdb_complex,chains=[])
 
-            if pdb in pdb_list:
+            if pdb in pdb_list:			#used only for PI, Individual tab
 				highlight_bool = True
             else:
 				highlight_bool = False 
