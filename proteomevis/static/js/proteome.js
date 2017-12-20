@@ -236,7 +236,7 @@ function main () {
         link_tooltip.style("left", "10px").style("top", $('#forceLayoutDiv').position().top + "px");
         $("#individual_list").height($("#view").height() - 110);
         function updateVises () {
-         splomVis = new SplomVis("#splomVis", true);
+        	splomVis = new SplomVis("#splomVis", true);
             splomVis.updateVis();
             forceVis.updateVis();
             nodeColorVis.update();
@@ -244,7 +244,6 @@ function main () {
                 clusterScatter.updateVis();
             }
             proteinmediaItem.clear("#cluster_list");
-   //does nothing         proteinmediaItem.clear("#individual_list");
 			index_list_cluster.length=0;		
             calculateState.hide();
         }
@@ -278,7 +277,6 @@ function main () {
         $(eventHandler)
             .bind("dataChanged", function (event,
                 status) {
-                typevisBrush = status;
                 calculateState.show();
                 highlighter.updateHighlight();
                 makeRequest(function () { waitDataLoadUpdate(0); });//not sure if wait dataloadupdate is necessary
@@ -289,7 +287,6 @@ function main () {
             .bind("speciesChanged", function (event) {
                 calculateState.show();
                 makeRequest(function () {
-                    document.title = "ProteomeVis";	//already set in html
                     proteinmediaItem.clear();
                     highlighter.removeHighlight();
                     typeVis.updateImage();
@@ -445,14 +442,12 @@ function main () {
         $(eventHandler).bind("windowResize", function (event) {
             setPanelSizes();
             $("#individual_list").height($("#view").height() - 110);
-//        	var clusterScatter = new ClusterScatter(d3.select("#clusterScatter"), 300, $("#clusterList").width());
 			clusterScatter.setHeight();
 			clusterScatter.updateVis();
             typeVis.setHeight();
             forceVis.setHeight();
             splomBar.setHeight();
 	    	splomVis.setHeight();
-//            splomVis.updateVis();	//doesnt work
         });
     }
 
@@ -734,7 +729,6 @@ function main () {
 
                 vis.attr("transform", "translate(" + width / 2 + "," + height / 2 + ") scale(0.35)");
                 tooltip.style("top", $('#forceLayoutDiv').position().top + "px");
-
             }
 
             this.setHeight = function () {
@@ -819,8 +813,6 @@ function main () {
                 .style("fill", "none").style("pointer-events", "all");
 
             var vis = graph.append("g").attr("class", "vis");
-
-            // var nodes, links;
 
             // functions
             var proteinClass = function (a) {
@@ -1067,7 +1059,6 @@ function main () {
             .scale(legendScale)
             .orient('bottom')
             .tickSize(2)
-          //  .ticks(5)
             .tickFormat(d3.format('.1f'));
 
         var legendLabels = svg.append('g')
@@ -1079,7 +1070,6 @@ function main () {
         legendLabels.select("path.domain").style("display",'none');
 
         var suffix = parentElement.append('div')
-//            .style("float","right")
 			.style("font-size", "12px")
             .attr("id",'color-scale-suffix');
 
@@ -1187,9 +1177,6 @@ function main () {
 		d3.select("#mbDataexport").on("click", function () {
 			setTimeout(function() {runThis1()}, 100);	//need delay cuz too fast
 		});
-
-
-
     };
 
     SplomBar = function (_parentElement) {
