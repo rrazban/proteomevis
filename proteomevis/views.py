@@ -242,6 +242,7 @@ def fetch_proteins(request):
         species = Species.objects.get(id=int(data['species']))
         if 'pdbcomplexlist' in data:	#for cluster
 			pdb_complex_list = data['pdbcomplexlist']
+			if type(pdb_complex_list)!=list: pdb_complex_list = [pdb_complex_list]
 			pdb_list = []
         else:	#for clicking node, searching in PI
 			pdb_list = data['pdblist']
