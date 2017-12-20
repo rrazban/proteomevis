@@ -2082,7 +2082,7 @@ function main () {
             if (newDomains) {
                 var request = $.param({
                     species: ss.species.id,
-                    domains: newDomains
+                    pdb_list: newDomains
                 });
                 var jqxhr_data = $.ajax({
                         url: "fetch_proteins/", // the endpoint
@@ -2113,7 +2113,7 @@ function main () {
                 chunk = cluster.domains.splice(0, 10);
                 var request = $.param({
                     species: ss.species.id,
-                    domains: chunk
+                    pdb_complex_list: chunk
                 });
                 var jqxhr_data = $.ajax({
                         url: "fetch_proteins/", // the endpoint

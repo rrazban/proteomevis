@@ -238,23 +238,23 @@ def fetch_edges(request):
 @csrf_exempt
 def fetch_proteins(request):
     if request.method == 'POST':
-        input_data = cleanRequest(request.POST)
-        pdb_list = input_data['domains']
-        if not isinstance(pdb_list,list):
-            pdb_list = [pdb_list]
-        species = Species.objects.get(id=int(input_data['species']))
-
+        data = cleanRequest(request.POST)
+        species = Species.objects.get(id=int(data['species']))
+        if 'pdbcomplexlist' in data:	#for cluster
+			pdb_complex_list = data['pdbcomplexlist']
+			pdb_list = []
+        else:	#for clicking node, searching in PI
+			pdb_list = data['pdblist']
+			if type(pdb_list)!=list: pdb_list = [pdb_list]
+			pdb_complex_list = []
+			for pdb in pdb_list:
+				pdb_complex, pdb_chain = parse_pdb(pdb)
+				if pdb_complex not in pdb_complex_list:
+					pdb_complex_list.append(pdb_complex)
+					
         inspect_list = []
-        pdb_complex_list = []
-
-        for pdb_complex in pdb_list:
-            if '.' in pdb_complex:	#goes here for clicking node, searching in PI	(not for cluster tab)
-				pdb_complex, pdb_chain = parse_pdb(pdb_complex)
-
-            if pdb_complex not in pdb_complex_list:
-				pdb_complex_list.append(pdb_complex)
-				inspect_list += Inspect.objects.filter(pdb__icontains=pdb_complex)
-
+        for pdb_complex in pdb_complex_list:
+			inspect_list += Inspect.objects.filter(pdb__icontains=pdb_complex)
         inspect_data = Inspect_data(inspect_list)
         inspect_data.get_data(species.has_localization, pdb_list)
         inspect_data.add_chain_to_function1(pdb_complex_list)	
