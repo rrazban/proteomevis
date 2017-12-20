@@ -66,7 +66,7 @@ function main () {
     }
 
 
-    var force, tipLink, eventHandler = {}, node;
+    var force, eventHandler = {}, node;
     $( window ).resize(function () { $(eventHandler).trigger("windowResize"); });
     ss.tmi = 0;
     ss.tmf = 0;
@@ -221,7 +221,6 @@ function main () {
         /* MENTIONED HERE */
 
         var nodeColorVis = new NodeColorVis("#nodeColor");
-        tipLink = new TipLink(link_tooltip);
         var clusterScatter = new ClusterScatter(d3.select("#clusterScatter"), 300, $("#clusterList").width());
 
         var clusterList = new ClusterList(d3.select("#clusterList"));
@@ -502,7 +501,6 @@ function main () {
                 else {
             			calculateState.hide();
 						$("#errorMessagetwo").modal();
-//                        errorMessage.show("The website timed out. Please refresh and try again.");
                 }
             });
 
@@ -1993,8 +1991,8 @@ function main () {
         var mediaList = _parentElement.select(".media-list"),
 //            proteinList = [],	 //made into a global variable so that can reset upon species change
             that = this;
-            triggerDestinationIndividual = 'add-to-individual-list',	//upon adding full functionality of delete button in cluster, any error shows up in the console related to this. since it has to do with domains i can safely silence for now 
-            triggerDestinationCluster = 'add-to-cluster-list';	//same as above
+            triggerDestinationIndividual = 'add-to-individual-list',
+            triggerDestinationCluster = 'add-to-cluster-list';
 
             cluster = {
                 cluster: null,
@@ -2082,7 +2080,7 @@ function main () {
             if (newDomains) {
                 var request = $.param({
                     species: ss.species.id,
-                    pdb_list: newDomains
+                    pdblist: newDomains		//cant pass _, pdb_list becomes pdblist Python-side
                 });
                 var jqxhr_data = $.ajax({
                         url: "fetch_proteins/", // the endpoint
@@ -2113,7 +2111,7 @@ function main () {
                 chunk = cluster.domains.splice(0, 10);
                 var request = $.param({
                     species: ss.species.id,
-                    pdb_complex_list: chunk
+                    pdbcomplexlist: chunk
                 });
                 var jqxhr_data = $.ajax({
                         url: "fetch_proteins/", // the endpoint
@@ -3012,34 +3010,6 @@ function main () {
             }
         }
 
-    };
-
-    TipLink = function (_parentElement) {
-        var that = this,
-            parentElement = _parentElement;
-
-        var tmText = d3.select("#link-text-tm"),
-            sidText = d3.select("#link-text-sid")
-        sourceImg = d3.select("#link-img-source"),
-            targetImg = d3.select("#link-img-target"),
-            sourceText = d3.select("#link-text-source"),
-            targetText = d3.select("#link-text-target");
-
-        this.show = function (_center, _d, _edge) {
-            tmText.html(_edge.tm);
-            sidText.html(_edge.sid);
-
-            sourceImg.attr(chainImage(_d.pdb));
-            targetImg.attr(chainImage(_center.pdb));
-            sourceText.html(_d.pdb);
-            targetText.html(_center.pdb);
-
-            parentElement.style("opacity", 1);
-        }
-
-        this.hide = function () {
-            parentElement.style("opacity", 0);
-        }
     };
 
     ErrorMessage = function () {
