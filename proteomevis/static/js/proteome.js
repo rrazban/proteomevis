@@ -248,10 +248,9 @@ function main () {
             calculateState.hide();
         }
 
-        function waitDataLoadUpdate(_tries,_update) {
+        function waitDataLoadUpdate(_tries,_update) {	//necessary, gives time for request
             if (loaded) {
                 if (data.edges) {
-
                     if (_update) {
                         setIDdictionary(updateVises);
                     } else {
@@ -279,7 +278,7 @@ function main () {
                 status) {
                 calculateState.show();
                 highlighter.updateHighlight();
-                makeRequest(function () { waitDataLoadUpdate(0); });//not sure if wait dataloadupdate is necessary
+                makeRequest(function () { waitDataLoadUpdate(0); });
 
             });
         // triggered when you select a different ss.species
@@ -492,15 +491,12 @@ function main () {
                var errorMessage = new ErrorMessage();
                 if (_data['status']==400){
                         errorMessage.show("You've selected too many edges. Try selecting a smaller area.");
-                }
-                else {
+                } else {
             			calculateState.hide();
 						$("#errorMessagetwo").modal();
                 }
             });
-
         setTimeout(function () { jqxhr_data.abort(); }, 6000);
-
     }
 
     function setIDdictionary (_callback) {
@@ -524,7 +520,6 @@ function main () {
             } else {
                 setTimeout(function () { waitDataLoadInitial(_tries); }, 1000);
             }
-
         }
     }
 
@@ -2347,7 +2342,7 @@ function main () {
 
         this.clear = function () {
             cluster_list.selectAll("div").remove();
-        };	//make one that clears one cluster	
+        };
 
         this.addContent = function (_cluster) {
             // the overall rows
@@ -2403,7 +2398,6 @@ function main () {
                 .on("click", function (d) {
                     if (!(d3.select(this)
                             .classed("loaded"))) {
-                        // $(".collapse").collapse();
                         var clusterData = wrangleData(d);
                         var dt = {
                             cluster: d,
@@ -2419,36 +2413,11 @@ function main () {
                         .trigger("scrunch");
                 })
 				.select(".remove")
-//                    .on("mouseover", nodeMousedOver)
-  //                  .on("mouseout", nodeMousedOut)
 				.on("click", function () {	
                 $(eventHandler).trigger("removeClusterHighlightfixed", _cluster);
 				$('#entirepanel'+_cluster.id).remove();
             	});
         };
-//				panelHeader.html('');	//removes everything but a sliver
-//				$("media-list").remove();
-//                d3.select("#panel-heading").selectAll("li").remove();
-//                d3.select("#panel-heading").html('');//nada
-//				$('panel-heading').remove();	//doesnt do anythin
-//				panelHeader=null;
-//				delete panelHeader;
-
-        function exportData (d) {
-            var columns = ['name'].concat(attribute.all());
-            alert("TODO"); //dataExport.export(d.cluster, columns, ',');
-        }
-
-      //  function mediaHeader (chainName) {
-      //      var tmp = "<h4>";
-          //  tmp +=
-        //        "<a href='http://www.rcsb.org/pdb/explore/explore.do?structureId=";
-      //      tmp += chainName.slice(0, -1) +
-    //            "' target='_blank'>" + chainName + "</a> ";
-            // tmp += "<small>" + sFunction +
-            //     "</small><a href='#'><span class='remove' style='float:right'>&times;</span></a>";
-  //          return tmp;
-//        }
     };
 
     /* PROTEIN MEDIA ITEM */
