@@ -370,7 +370,7 @@ function main () {
             });
 
         $(eventHandler)
-            .bind("clusterHighlight", function (event, _cluster, _center) {
+            .bind("clusterHighlight", function (event, _cluster, _center) {	//rename to clusterHoverHighlight
                 highlighter.hoverHighlight(_cluster, _center);
             });	//responsible for pink color color when hover over
 
@@ -395,7 +395,7 @@ function main () {
                 highlighter.removeHighlight(_cluster.cluster, _cluster.id);	
 				remove_index = index_list_cluster.indexOf(_cluster.id);
 				index_list_cluster.splice(remove_index, 1);
-                highlighter.removeHoverHighlight();
+                highlighter.removeHoverHighlight();	//easiest way cuz need !important tag for color to span pcg, pi, splom
             });
 
 
@@ -603,9 +603,9 @@ function main () {
             }
 
             var x = d3.scale.linear().domain([0, 1]).range([margin.left, width]);
-                // .exponent(0.5);
+
             var y = d3.scale.linear().domain([0, 1]).range([height, margin.top]);
-                // .exponent(0.5);
+
             var xAxis = d3.svg.axis()
                         .scale(x)
                         .orient("bottom");
@@ -883,15 +883,10 @@ function main () {
                 vis.selectAll(".highlight:not(.center)")
                     .on("mouseover", function (d) {
                         linkTip.show(center, d, getEdge(d.id));
-                        // nodeMousedOver(d);
                     })
                     .on("mouseout", function (d) {
                         linkTip.hide();
-                        // nodeMousedOut(d);
                     });
-//                $('circle.pcg').bind("contextmenu", function (event) {
-//                    rightclick(event, "pcg-node", this);
-//                });
                 nodes.exit().remove();
 
                 links = vis.selectAll(".link").data(edgeData, function (d) {
@@ -944,10 +939,6 @@ function main () {
                     })
                     .on("mouseover", nodeMousedOver)
                     .on("mouseout", nodeMousedOut);
-//                $('circle.pcg').bind("contextmenu", function (
-  //                  event) {
-    //                rightclick(event, "pcg-node", this);
-      //          });
                 nodes.exit().remove();
 
                 links = vis.selectAll(".link").data(data.edges,
@@ -1107,12 +1098,6 @@ function main () {
 				legendAxis.tickValues(d3.range(newdomain[0], newdomain[1]+0.01,(newdomain[1]-newdomain[0])/5));
                 legendLabels.style('display',null).call(legendAxis);
                 $(eventHandler).trigger("nodeColorChanged");
-	//			if (dom=="length"){		all data have magnitude 0!
-      //          suffix.style("display","inline").html(" &times; 10<sup>"+magnitude+"</sup>");
-            //    suffix.style("display","inline").html(" &times; 10<sup>"+magnitude+"</sup>");
-		//		}
-//				else{	
-  //              suffix.style("display","none").html(" &times; 10<sup>"+magnitude+"</sup>");}
             } else { // the domain was null, meaning there was no range
                 // we should make the color bar striped in this case
                 legendLabels.style('display',"none");
@@ -1242,18 +1227,6 @@ function main () {
                 setHeight();
 				gColorbar.call(colorbar);	//calling twice ensures cbar aligns properly
             };
-
-/*        var editButton = splomBar.append("span")
-            .append("button")
-            .attr("id", 'editAttributesButton')
-            .attr("type", "button")
-            .attr("class", "btn btn-default")
-            .attr("data-toggle", 'modal')
-            .attr("data-target", "#editAttributes")
-            .on('click', function () {
-                $(eventHandler).trigger("openModal");
-            })
-            .html("<span class='glyphicon glyphicon-edit'></span>");*/ //feature not implemented
     };
 
 
@@ -2297,7 +2270,6 @@ function main () {
                         .trigger("removeClusterHighlight");
                 })
                 .on("click", function (d, i) {
-                    bSelected = true;
                     $(eventHandler)
                         .trigger("clusterClicked", [d, i]);
                 });
@@ -2754,13 +2726,6 @@ function main () {
         var clusterHighlight = function (index) {
             return "circle.c" + index + "{ fill: " + color(i) +
                 ";}" +
-            //    ".pcg.c" + index + "{r:15;}" +
-            //    ".splom.c" + index +
-           //     " {r:3 !important; stroke:" + color(i) +
-          //      " !important ; fill:" + color(i) +
-        //        " !important ;}" +
-      //          ".label-chains.c" + index +
-    //            " { background-color:" + color(i) + ";}" +	//does the highlighting in PI
                 ".cluster.c" + index + "{fill:" + color(i) +	//colors the little box!
                 "!important;}";
 
@@ -2771,7 +2736,6 @@ function main () {
                 proteins.forEach(function (protein) {
                     styleString = singleHighlight(protein);
                     $("head").append(styleString);
-
                 });
             } 
 			else {
@@ -2793,8 +2757,7 @@ function main () {
         };
 
         this.removeHighlight = function (proteins, _index) {	
-
-		if ((_index) || (_index==0)) {
+			if ((_index) || (_index==0)) {
                 tries_to_delete = i;	//easy way to get number of clusters clicked?	
 				
             	while (tries_to_delete > 0) {
@@ -2810,22 +2773,23 @@ function main () {
             } 
 
             /* if they provide a valid protein */
-        else if (proteins) {
+	        else if (proteins) {
                 if (!(Array.isArray(proteins))) {
                     proteins = [proteins];
                 }
                 proteins.forEach(function (protein) {
                     arrProteins.remove(protein);
-                    tries_to_delete = 1+i;	//best we can do without knowing how many times color changed for a given protein. no protein.length cuz what if multiple chains?
+                    tries_to_delete = 1+i;	//best we can do without knowing how many times color changed for a given protein. protein.length doesnt work for multiple chains per complex?
             	    while (tries_to_delete > 0) {
                         $("#style-p" + protein).remove();		//this be trippin when change initial color //needs the same number of times color was changed
-			tries_to_delete -= 1;
-		    }
+						tries_to_delete -= 1;
+				    }
             		d3.selectAll(".splom.p" +protein).attr('r',1);	//for firefox
                     d3.selectAll(".highlight.p" + protein).classed("highlight", false);
                     data.nodes[ID2i(protein)].highlight = false;
                 });
-            } else {
+            } 
+			else {
                 $(".style-highlight").remove();
                 $(".style-highlight-cluster").remove();
                 d3.selectAll(".highlight").classed("highlight",false);
@@ -2868,8 +2832,12 @@ function main () {
         };
     };
 
+    /***********************************
+    ***********************************
+    DATA DOWNLOAD
+    ***********************************
+    **********************************/
     DataExportModal = function () {
-
         var that = this,
             mbDataexport = d3.select("#mbDataexport"),
             mbSPLOMexport = d3.select("#mbSPLOMexport");
@@ -2897,7 +2865,7 @@ function main () {
             });
 
         $("#mbDataexport").submit(function () {
-            var selectedCluster = $("#dataExport_triggeredby").val();		//need this to forget
+            var selectedCluster = $("#dataExport_triggeredby").val();
 
 			var selectedProteins;
             if (selectedCluster == "") {
@@ -2924,12 +2892,12 @@ function main () {
                     $("#dataExport_edges_SIDi").val(ss.sidi);
                     $("#dataExport_edges_SIDf").val(ss.sidf);
                     $("#dataExport_edges_species").val(ss.species.id);
-                	$("#dataExport_edges_nodes").val(JSON.stringify(selectedProteins));	//need to empty if not cluster download
+                	$("#dataExport_edges_nodes").val(JSON.stringify(selectedProteins));	//empty if not cluster download
                     return true;
                 });
                 setTimeout(function () { $("#exportEdges").submit(); }, 1000);
             }
-            return true; //change back to get to submit!!!
+            return true;
         });
 
         $("#mbSPLOMexport").submit(function () {
@@ -2970,8 +2938,6 @@ function main () {
         function linkID(_p1, _p2) {
             if (_p2 !== null) {
                 return "#ls" + _p1 + "t" + _p2
-                    // } else if (Number.isInt(_p1.source)) {
-                    //     return "#ls"+d3.min([_p1.source,_p1.target])+"t"+d3.max([_p1.source,_p1.target]);
             } else {
                 return "#ls" + d3.min([_p1.source.id, _p1.target.id]) +
                     "t" + d3.max([_p1.source.id, _p1.target.id]);
