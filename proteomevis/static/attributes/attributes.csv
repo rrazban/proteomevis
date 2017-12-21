@@ -1,9 +1,9 @@
-name,prettyprint,order,magnitude,decimal,log
-degree_log,degree,0,0,0,1
-weighted_degree_log,weighted degree,1,0,0,1
-length,length,2,0,0,1
-conden,contact density,3,0,3,1
-abundance,abundance,4,0,0,1
-ppi,PPI degree,5,0,0,1
-dostol,dosage tolerance,6,0,3,0
-evorate,evolutionary rate,7,0,3,1
+name,prettyprint,order,decimal,log
+degree_log,degree,0,0,1
+weighted_degree_log,weighted degree,1,0,1
+length,length,2,0,1
+conden,contact density,3,3,1
+abundance,abundance,4,0,1
+ppi,PPI degree,5,0,1
+dostol,dosage tolerance,6,3,0
+evorate,evolutionary rate,7,3,1

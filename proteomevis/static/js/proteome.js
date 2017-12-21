@@ -979,11 +979,6 @@ function main () {
             return (domain[0] == domain[1]) ? null : domain;
         }
 
-        function adjustDomainMagnitude (m) {
-            return function (n) {
-                return [n[0]/(Math.pow(10,m)),n[1]/(Math.pow(10,m))];
-            };
-        }
         /* initialize select option */
         var select = parentElement.append("select");
 
@@ -1055,17 +1050,14 @@ function main () {
 
         /* triggered when the domain or the data selected changes */
         updateVis = function () {
-          var magnitude = attributes.magnitude(dom),
-                domain = checkDomain(data.domains[dom]);
-                adjustDomain = adjustDomainMagnitude(magnitude);
+          	var domain = checkDomain(data.domains[dom]);
             if ((domain) && (ss.tmi !== ss.tmf) && (ss.sidi !== ss.sidf)) { // the domain exists, so we should
                 // 1) change the legend scale appropriately
                 // 2) color the nodes appropriately
                 nodeColorScale.domain(domain);
-                legendScale.domain(adjustDomain(domain));
+                legendScale.domain(domain);
                 legend.selectAll(".color-block").classed("striped",false);
-				newdomain = adjustDomain(domain);
-				legendAxis.tickValues(d3.range(newdomain[0], newdomain[1]+0.01,(newdomain[1]-newdomain[0])/5));
+				legendAxis.tickValues(d3.range(domain[0], domain[1]+0.01,(domain[1]-domain[0])/5));
                 legendLabels.style('display',null).call(legendAxis);
                 $(eventHandler).trigger("nodeColorChanged");
             } else { // the domain was null, meaning there was no range
@@ -2895,10 +2887,6 @@ function main () {
 
         var getKey = function (attr,attr_property) {
             return lookup(attr)[attr_property];
-        };
-
-        this.magnitude = function (attr) {
-            return getKey(attr,'magnitude');
         };
 
         this.order = function (attr) {
