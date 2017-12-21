@@ -58,9 +58,6 @@ def computeCorrelations(nodes,selected_columns):
 					results = correlationJSON(column1,column1_data,column2,column2_data)
 				except:
 					results = {'slope':0.0, 'intercept':-1, 'r_value':0.0, 'p_value':1.0, 'std_err':0.0, 'rho_SP':0, 'p_value_SP':1}
-				if results['p_value_SP']==None:
-					results['p_value_SP']=1
-					results['p_value']=1
 				# save it
 				resultsArray[i].append(results)
 	return resultsArray, limits, columnDict
@@ -95,28 +92,26 @@ def addCluster(clusters,nodes,ID2i):
 			j += 1
 	return nodes,clusters
 
-def correlationJSON(x,xArr,y,yArr):	#why JSON added to name?
+def parse_nan(val):
+	if np.isnan(val):
+		return None 
+	else:
+		return np.asscalar(val)	#asscalar necessary to be interpreted by .js
+
+def correlationJSON(x,xArr,y,yArr):	#why JSON added to name? call this computeCorrelation, other getCorrelation
 	results = {}
 	arr_corr = linregress(xArr,yArr)
 	arr_sp = spearmanr(xArr,yArr)
-	print arr_sp
-	attributes = ['slope', 'intercept', 'r_value', 'p_value', 'std_err'] #order in which returned by linregress
-	for i,attribute in enumerate(attributes):
-		tmp = np.asscalar(arr_corr[i]) if isinstance(arr_corr[i], np.float64) else arr_corr[i]
-		results[attribute] = -1.0 if (np.isnan(tmp) or np.isinf(tmp)) else round(tmp,3)
+	corr_attr = ['slope', 'intercept', 'r_value', 'p_value', 'std_err'] #order in which returned by linregress
+	for i,attribute in enumerate(corr_attr):
+		results[attribute] = parse_nan(arr_corr[i])
+	for i,attribute in enumerate(['rho_SP','p_value_SP']):
+		results[attribute] = arr_sp[i]
 	results['x'] = x
 	results['y'] = y
-	rho_SP = arr_sp[0]
-	p_value_SP = arr_sp[1]
-	if np.isnan(rho_SP):
-		rho_SP = None
-	if np.isnan(p_value_SP):
-		print 'here'
-		p_value_SP = None
-	results['rho_SP'] = rho_SP
-	results['p_value_SP'] = p_value_SP
-
 	return results
+
+
 
 def getClusters(_clusters,nodes,ID2i):
 	attr = ["ppi","species","pdb","length","abundance","evorate","conden","dostol","degree_log","weighted_degree_log"]	#seems useful to define as a global variable in proteomevis/views.py and pass it

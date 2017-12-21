@@ -1347,8 +1347,8 @@ function main () {
 
  
                 pvalue.text(c.p_value.toExponential(2));
-                rvalue.text(c.r_value);
-                regression.text(c.slope + "x + " + c.intercept);
+                rvalue.text(formatFloat(c.r_value,3));
+                regression.text(formatFloat(c.slope,3) + "x + " + formatFloat(c.intercept,3));
              //   std_err.text(c.std_err);
                 rho_SP.text(formatFloat(c.rho_SP,3));
                 pvalue_SP.text(c.p_value_SP.toExponential(2));
@@ -1693,7 +1693,7 @@ function main () {
             .html(function (corr) {	//change to splom focus table format
                 return "<table style='text-align: center'><tr><td></td><td class='text-subtitle'> PEARSON</td><td class='text-subtitle'>SPEARMAN</tr>" +
                        "<tr><td class='detail-labels'>cor coef</td><td class='detail-values'>" + formatFloat(corr.r_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.rho_SP,3)+"</td></tr>"+
-                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_SP,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>best-fit </td><td class='detail-values'>" + corr.slope + "x + " + corr.intercept + "</td></tr></table>";
+                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_SP,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>best-fit </td><td class='detail-values'>" + formatFloat(corr.slope, 3) + "x + " + formatFloat(corr.intercept, 3) + "</td></tr></table>";
             });
 
         var svg = parentElement.append("svg");
