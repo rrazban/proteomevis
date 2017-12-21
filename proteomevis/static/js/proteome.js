@@ -79,8 +79,7 @@ function main () {
 
     var cluster,
         loaded,
-//        dom = 'degree',
-        dom = 'degree_log',	
+        dom = 'degree',
         tooltip = d3.select("#tooltip"),
         link_tooltip = d3.select("#link-tooltip"),
         colorschemes = {
@@ -885,7 +884,9 @@ function main () {
                 nodes = vis.selectAll("circle.pcg").
                     data(data.nodes.filter(
                         function (d) {
-                            return d.degree;
+							if (d.degree!=-1){
+	                            return 1; 
+							}
                         })
                     );
                 updateProgress();
@@ -938,7 +939,11 @@ function main () {
             var updateProgress = function () {
                 var lenNodes = data.nodes.length,
                     lenClusters = data.nodes
-                        .filter(function (d) { return d.degree; }).length;
+                        .filter(function (d) {
+							if (d.degree!=-1){
+	                            return 1; 
+							}
+						}).length;
                 progress
                     .style("width", (100.0 * lenClusters / lenNodes) + "%")
                     .attr("title", lenClusters + " of " + lenNodes + " shown");

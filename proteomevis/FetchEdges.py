@@ -64,16 +64,16 @@ def computeCorrelations(nodes,selected_columns):
 
 def updateDegrees(deg,ppideg,nodes,ID2i):
 	for e in deg:
-		nodes[ID2i[e]][1]['degree'] = deg[e]	#maybe call this unlogged degree	#need unlogged degree for PCG rendering in .js
+		nodes[ID2i[e]][1]['degree'] = deg[e]
 		nodes[ID2i[e]][1]['ppi_degree'] = ppideg[e]
 	return nodes
 
 def updateDegrees_log(deg,nodes,ID2i):
 	for e in deg:
-		if deg[e]==0:	
-			nodes[ID2i[e]][1]['degree_log'] = -1
+		if nodes[ID2i[e]][1]['degree']==0:
+			nodes[ID2i[e]][1]['degree'] = -1
 		else:	
-			nodes[ID2i[e]][1]['degree_log'] = np.log10(nodes[ID2i[e]][1]['degree'])
+			nodes[ID2i[e]][1]['degree'] = np.log10(nodes[ID2i[e]][1]['degree'])
 
 		if nodes[ID2i[e]][1]['weighted_degree']==None:
 			pass
@@ -114,7 +114,9 @@ def correlationJSON(x,xArr,y,yArr):	#why JSON added to name? call this computeCo
 
 
 def getClusters(_clusters,nodes,ID2i):
-	attr = ["ppi","species","pdb","length","abundance","evorate","conden","dostol","degree_log","weighted_degree"]	#seems useful to define as a global variable in proteomevis/views.py and pass it
+	attr = get_attributes().keys()
+	attr.extend(["species", "pdb"])	#are these necessary?
+#	attr = ["ppi","species","pdb","length","abundance","evorate","conden","dostol","degree_log","weighted_degree"]	#seems useful to define as a global variable in proteomevis/views.py and pass it
 	unique_sizes = sorted(list(set(map(lambda x: len(x),_clusters))))
 	clusters, cluster_frequencies = emptyClusters(unique_sizes,attr)
 	for i,c in enumerate(_clusters):
@@ -154,7 +156,7 @@ def emptyClusters(unique_sizes,attr):
 		cluster_frequencies[size]['frequency'] = 0
 	return [],cluster_frequencies
 
-def pow10(n,d):
+def pow10(n,d):	#remove, only one occurance of it
 	tmp = 10**n
 	format_str = "{:0."+str(d)+"f}"
 	return format_str.format(tmp)

@@ -35,6 +35,7 @@ def fetch_edges(request):
 
             response.status_code=400
             return response             #message called in proteome.js file
+
         nodes = [node.node() for node in chains]
         for i,node in enumerate(nodes):
             ID2i[node[0]] = i
@@ -216,7 +217,6 @@ def export_edges(request):
         SIDi = data['SIDi']
         SIDf = data['SIDf']
         species = int(data['species'])
-
 
         if data['edges'] != '1':
 			TMi=SIDi='0'
