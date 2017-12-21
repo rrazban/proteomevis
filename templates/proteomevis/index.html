@@ -205,26 +205,27 @@
                             <div data-toggle="buttons" id='correlation-main-options' class='modal-body-buttons'></div>
                             <hr>
                             <div class="modal-body-buttons" data-toggle="buttons" id='correlations-options'>
-                                <label class="more-options btn active">
-                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='p_value'> p-value <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
-                                </label>
                                 <label class="more-options btn active" id='numedges_adddisclaimer_label'>
-                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='r_value'> r<sup>2 </sup> value <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='r_value'> Pearson cor. coef. <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+                               <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='slope'> slope of best-fit line <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
                                 </label>
                                 <label class="more-options btn active">
-                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='slope'> slope <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='rho_SP'> Spearman cor. coef. <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                </label>
+
+                                <label class="more-options btn active">
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='p_value'> Pearson p-value <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
                                 </label>
                                 <label class="more-options btn active">
-                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='intercept'> intercept <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='std_err'> slope of best-fit line error <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
                                 </label>
                                 <label class="more-options btn active">
-                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='std_err'> slope error <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='p_value_SP'> Spearman p-value <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
                                 </label>
                                 <label class="more-options btn active">
-                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='p_value_SP'> p-value (Spearman) <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
-                                </label>
-                                <label class="more-options btn active">
-                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='rho_SP'> rho (Spearman) <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
+                                    <input autocomplete="off" checked name="correlation-options" type="checkbox" value='intercept'> intercept of best-fit line <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span>
                                 </label>
                             </div>
                             <hr>
