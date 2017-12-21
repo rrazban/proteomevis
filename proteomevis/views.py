@@ -7,151 +7,8 @@ from .FetchEdges import *
 from django.template import loader, Context
 
 
-better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
-
-@csrf_exempt	#necessary?
-def export_nodes(request):
-	if request.method == 'POST':
-		data = cleanRequest(request.POST)
-		dat = data['columnsnodes']	#is attributes in here?
-		if type(dat)!=list:
-			dat = [dat]		
-		columns = ['id'] + dat
-
-		node_data = json.loads(data['nodes'])
-		TMi = data['TMi']
-		TMf = data['TMf']
-		SIDi = data['SIDi']
-		SIDf = data['SIDf']
-		species = data['species'].upper()
-
-		log_values = ['degree_log','weighted_degree_log', 'conden', 'ppi', 'length','evorate','abundance'] #have this read in from attributes file
-		log_decimals = dict(degree_log=0, weighted_degree_log=0, conden=3, dostol=3, ppi=0, length=0, evorate=3,abundance=0)
- 
-		if data['option'] != '1':
-			TMi=SIDi='0'
-			TMf=SIDf='1'
-       
-        # Create the HttpResponse object with the appropriate CSV header.
-		response = HttpResponse(content_type='text/csv')
-		response['Content-Disposition'] = get_filename('NODES', Species.objects.get(id=species), float(TMi), float(TMf), float(SIDi), float(SIDf))
-
-		csv_data = []	#parse those in TM/SID range?
-
-		id_list = []
-		if data['option']=='1':
-			edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
-			for edge in edges:
-				edge_list = edge.edgeCSV()
-				id_list.extend([edge_list[0], edge_list[1]])
-
-		for row in node_data:
-			if id_list!=[]:
-				if row['id'] not in id_list:
-					continue
-			csv_row = []
-			for column in columns:
-				if row[column] == None:
-					csv_row.append('')
-				elif column in log_values:
-					csv_row.append(pow10(row[column],log_decimals[column]))
-				else:
-					csv_row.append(row[column])
-			csv_data.append(csv_row)
-
-		pretty_columns = []
-		for col in columns:
-			try:
-				pretty_columns.append(better_labels[col])
-			except:
-				pretty_columns.append(col)
-
-		t = loader.get_template('proteomevis/data.csv')
-		response.write(t.render({'data': csv_data,'header': pretty_columns}))
-		return response
-
-@csrf_exempt
-def export_edges(request):
-    if request.method == 'POST':
-        import os
-        data = cleanRequest(request.POST)
-        TMi = data['TMi']
-        TMf = data['TMf']
-        SIDi = data['SIDi']
-        SIDf = data['SIDf']
-        species = int(data['species'])
-
-
-        if data['edges'] != '1':
-			TMi=SIDi='0'
-			TMf=SIDf='1'
-        edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
-        node_data = json.loads(data['nodes'])
-        if node_data!= 0:
-			id_list = [node['id'] for node in node_data]
-			csv_data = [edge.edgeCSV() for edge in edges if edge.edgeCSV()[0] in id_list and edge.edgeCSV()[1] in id_list]
-        else:
-        	csv_data = [edge.edgeCSV() for edge in edges]
-        columns = ["sourceID","targetID","sid","tm","ppi"]#  edges[0].keys()
-
-        response = HttpResponse(content_type='text/csv')	#if want to use StreamingHttpResponse need to change syntax
-        response['Content-Disposition'] = get_filename('EDGES', species, float(TMi), float(TMf), float(SIDi), float(SIDf))
-
-        t = loader.get_template('proteomevis/data.csv')	
-        response.write(t.render({'data': csv_data,'header': columns}))
-        return response
-
-@csrf_exempt
-def export_splom(request):
-    if request.method == 'POST':
-        import xlwt
-        data = cleanRequest(request.POST)
-
-        TMi = data['TMi']
-        TMf = data['TMf']
-        SIDi = data['SIDi']
-        SIDf = data['SIDf']
-        column_order = json.loads(data['columnorder'])
-        correlations = json.loads(data['correlations'])
-        if type(correlations)!=list:
-			correlations = [correlations]
-        correlation_option = data['correlationoptions']
-        if type(correlation_option)!=list:
-			correlation_option = [correlation_option]
-
-        columns = data['columnscorrelations']
-        if type(columns)!=list:
-			columns = [columns]
-        
-        column_indices = [column_order.index(col) for col in columns]
-
-        wb = xlwt.Workbook(encoding='utf-8')
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = get_filename('CORRELATIONS', data['species'], float(TMi), float(TMf), float(SIDi), float(SIDf))
-
-        for corr in correlation_option:
-            corr = corr.decode('utf-8', 'ignore')
-            ws = wb.add_sheet(corr)
-            for i,column_index in enumerate(column_indices):
-                ws.write(0,i+1,label=better_labels[column_order[column_index]])
-            for r, ci1 in enumerate(column_indices):
-                ws.write(r+1,0,label=better_labels[column_order[ci1]])
-                for c, ci2 in enumerate(column_indices):
-                    ws.write(r+1,c+1,correlations[ci1][ci2][corr])
-
-        wb.save(response)
-
-        return response
-
-        
-        # t = loader.get_template('proteomevis/data.csv')
-        # response.write(t.render({'data': csv_data,'header': columns}))
-        # return response
-
-
-def index(request):	#dont think this is necessary anymore since column order is now static
-    data = {}
-    return render(request, "proteomevis/index.html", data)
+def index(request):	#displays web page
+    return render(request, "proteomevis/index.html")
 
 @csrf_exempt
 def fetch_edges(request):
@@ -263,7 +120,6 @@ def fetch_proteins(request):
             content_type="application/json"
         )
 
-@csrf_exempt
 def query(request):
     if request.method == 'GET':
         data = cleanRequest(request.GET)
@@ -293,3 +149,130 @@ def query(request):
             json.dumps({"error":"Not an appropriately formatted request."},cls=SetEncoder),
             content_type="application/json"
         )
+
+def export_nodes(request):
+	if request.method == 'POST':
+		data = cleanRequest(request.POST)
+		dat = data['columnsnodes']
+		if type(dat)!=list:
+			dat = [dat]		
+		columns = ['id'] + dat
+
+		node_data = json.loads(data['nodes'])
+		TMi = data['TMi']
+		TMf = data['TMf']
+		SIDi = data['SIDi']
+		SIDf = data['SIDf']
+		species = data['species'].upper()
+
+		if data['option'] != '1':
+			TMi=SIDi='0'
+			TMf=SIDf='1'
+       
+		attributes = get_attributes()
+        # Create the HttpResponse object with the appropriate CSV header.
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = get_filename('NODES', Species.objects.get(id=species), float(TMi), float(TMf), float(SIDi), float(SIDf))
+
+		csv_data = []
+		id_list = []
+		if data['option']=='1':
+			edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+			for edge in edges:
+				edge_list = edge.edgeCSV()
+				id_list.extend([edge_list[0], edge_list[1]])
+
+		for row in node_data:
+			if id_list!=[]:
+				if row['id'] not in id_list:
+					continue
+			csv_row = []
+			for column in columns:
+				if row[column] == None:
+					csv_row.append('')
+				elif column in attributes:
+					if attributes[column]['log']=='1':
+						csv_row.append(pow10(row[column],attributes[column]['decimal']))
+				else:
+					csv_row.append(row[column])
+			csv_data.append(csv_row)
+
+		pretty_columns = []
+		for col in columns:
+			if col in attributes:
+				pretty_columns.append(attributes[col]['prettyprint'])
+			else:
+				pretty_columns.append(col)
+
+		t = loader.get_template('proteomevis/data.csv')
+		response.write(t.render({'data': csv_data,'header': pretty_columns}))
+		return response
+
+def export_edges(request):
+    if request.method == 'POST':
+        data = cleanRequest(request.POST)
+        TMi = data['TMi']
+        TMf = data['TMf']
+        SIDi = data['SIDi']
+        SIDf = data['SIDf']
+        species = int(data['species'])
+
+
+        if data['edges'] != '1':
+			TMi=SIDi='0'
+			TMf=SIDf='1'
+        edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
+        node_data = json.loads(data['nodes'])
+        if node_data!= 0:
+			id_list = [node['id'] for node in node_data]
+			csv_data = [edge.edgeCSV() for edge in edges if edge.edgeCSV()[0] in id_list and edge.edgeCSV()[1] in id_list]
+        else:
+        	csv_data = [edge.edgeCSV() for edge in edges]
+        columns = ["sourceID","targetID","sid","tm","ppi"]
+
+        response = HttpResponse(content_type='text/csv')	#to use StreamingHttpResponse, need to change syntax
+        response['Content-Disposition'] = get_filename('EDGES', species, float(TMi), float(TMf), float(SIDi), float(SIDf))
+
+        t = loader.get_template('proteomevis/data.csv')	
+        response.write(t.render({'data': csv_data,'header': columns}))
+        return response
+
+def export_splom(request):
+    if request.method == 'POST':
+        import xlwt
+        data = cleanRequest(request.POST)
+
+        TMi = data['TMi']
+        TMf = data['TMf']
+        SIDi = data['SIDi']
+        SIDf = data['SIDf']
+        column_order = json.loads(data['columnorder'])
+        correlations = json.loads(data['correlations'])
+        if type(correlations)!=list:
+			correlations = [correlations]
+        correlation_option = data['correlationoptions']
+        if type(correlation_option)!=list:
+			correlation_option = [correlation_option]
+
+        columns = data['columnscorrelations']
+        if type(columns)!=list:
+			columns = [columns]
+        attributes = get_attributes()
+        column_indices = [column_order.index(col) for col in columns]
+
+        wb = xlwt.Workbook(encoding='utf-8')
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = get_filename('CORRELATIONS', data['species'], float(TMi), float(TMf), float(SIDi), float(SIDf))
+
+        for corr in correlation_option:
+            corr = corr.decode('utf-8', 'ignore')
+            ws = wb.add_sheet(corr)
+            for i,column_index in enumerate(column_indices):
+                ws.write(0,i+1,label=attributes[column_order[column_index]]['prettyprint'])
+            for r, ci1 in enumerate(column_indices):
+                ws.write(r+1,0,label=attributes[column_order[ci1]]['prettyprint'])
+                for c, ci2 in enumerate(column_indices):
+                    ws.write(r+1,c+1,correlations[ci1][ci2][corr])
+
+        wb.save(response)
+        return response

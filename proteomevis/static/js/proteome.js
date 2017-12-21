@@ -1122,8 +1122,7 @@ function main () {
 		    corr_options = $('input[name="correlation-options"]:checkbox:checked').length;
 			if (corr_columns==1 || corr_options==0){	
 	            d3.select("#btnSubmitSPLOMExport").classed("disabled", 1);
-			}
-			else {
+			} else {
 	            d3.select("#btnSubmitSPLOMExport").classed("disabled", 0);
 			}
 		}		
@@ -1136,8 +1135,7 @@ function main () {
 		    columns = $('input[name="columns_nodes"]:checkbox:checked').length;
 			if (columns==0){	
 	            d3.select("#btnSubmitDataExport").classed("disabled", 1);
-			}
-			else {
+			} else {
 	            d3.select("#btnSubmitDataExport").classed("disabled", 0);
 			}
 		}		

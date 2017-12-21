@@ -5,6 +5,7 @@ import numpy as np
 import json
 import datetime
 from .models import parse_pdb
+import csv
 #change name of FetchEdges to views_utlts
 
 def get_filename(what, species, TMi, TMf, SIDi, SIDf):
@@ -94,11 +95,12 @@ def addCluster(clusters,nodes,ID2i):
 			j += 1
 	return nodes,clusters
 
-def correlationJSON(x,xArr,y,yArr):
+def correlationJSON(x,xArr,y,yArr):	#why JSON added to name?
 	results = {}
 	arr_corr = linregress(xArr,yArr)
 	arr_sp = spearmanr(xArr,yArr)
-	attributes = ['slope', 'intercept', 'r_value', 'p_value', 'std_err']
+	print arr_sp
+	attributes = ['slope', 'intercept', 'r_value', 'p_value', 'std_err'] #order in which returned by linregress
 	for i,attribute in enumerate(attributes):
 		tmp = np.asscalar(arr_corr[i]) if isinstance(arr_corr[i], np.float64) else arr_corr[i]
 		results[attribute] = -1.0 if (np.isnan(tmp) or np.isinf(tmp)) else round(tmp,3)
@@ -109,6 +111,7 @@ def correlationJSON(x,xArr,y,yArr):
 	if np.isnan(rho_SP):
 		rho_SP = None
 	if np.isnan(p_value_SP):
+		print 'here'
 		p_value_SP = None
 	results['rho_SP'] = rho_SP
 	results['p_value_SP'] = p_value_SP
@@ -254,5 +257,11 @@ class Inspect_data:
 				for f in range(len(self.data[pdb_complex]['function1'])):
 					self.data[pdb_complex]['function1'][f] = '{0}: {1}'.format(', '.join(self.data[pdb_complex]['function1_chain'][f]), self.data[pdb_complex]['function1'][f])
 
-
-
+def get_attributes():
+	d={}
+	filename = 'proteomevis/static/attributes/attributes.csv'	#serve through static? 
+	with open(filename) as csvfile:
+		reader = csv.DictReader(csvfile)
+		for x in reader:
+			d[x['name']] = x
+	return d
