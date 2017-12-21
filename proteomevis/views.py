@@ -166,10 +166,6 @@ def export_nodes(request):
 		SIDf = data['SIDf']
 		species = data['species'].upper()
 
-		if data['option'] != '1':
-			TMi=SIDi='0'
-			TMf=SIDf='1'
-       
 		attributes = get_attributes()
         # Create the HttpResponse object with the appropriate CSV header.
 		response = HttpResponse(content_type='text/csv')
@@ -218,7 +214,7 @@ def export_edges(request):
         SIDf = data['SIDf']
         species = int(data['species'])
 
-        if data['edges'] != '1':
+        if data['edges'] == '2':
 			TMi=SIDi='0'
 			TMf=SIDf='1'
         edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)
