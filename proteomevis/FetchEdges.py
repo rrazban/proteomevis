@@ -176,7 +176,6 @@ class Inspect_data:
 	def __init__(self, inspect_list):
 		self.inspect_list = inspect_list
 		self.data = {parse_pdb(inspect.pdb)[0]:dict(domain=parse_pdb(inspect.pdb)[0],function1=[],function1_chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for inspect in inspect_list}
-																			#make function1 a tuple with (function1, [chain])
 	def get_uniprot(self, pdb_complex, uniprot, genes):
 		self.data[pdb_complex]['uniprot'].append(dict(uniprot=uniprot,genes=genes))
 
@@ -200,7 +199,7 @@ class Inspect_data:
 					break
 				else: pass
 
-			if control:
+			if control:	#seperate to not alter the list being iterated	
 				if control==1:
 					self.data[pdb_complex]['function1'][f] = function1
 				elif control==2:
