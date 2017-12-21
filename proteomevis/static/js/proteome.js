@@ -990,7 +990,7 @@ function main () {
             .data(attributes.all())
             .enter()
             .append("option").attr('value', function (d) { return d; })
-            .html(function (d) { return attributes.prettyprint(d); });
+            .html(function (d) { return d.split("_").join(" "); });
         /* when the select changed, trigger an update */
         select.on('change', function () {
             dom = $("#nodeColorSelect option:selected").val();
@@ -1394,8 +1394,8 @@ function main () {
 	
                 circles.exit().remove();
 
-                xText.html(attributes.prettyprint(currentPlt.x));
-                yText.html(attributes.prettyprint(currentPlt.y));
+                xText.html(currentPlt.x);
+                yText.html(currentPlt.y);
 
                 xAxis = d3.svg.axis()
                     .scale(x)
@@ -1715,7 +1715,7 @@ function main () {
             .attr("x", 10)
             .attr('class', 'splom-subgraph-text')
             .text(function (d) {
-                return d.i == d.j ? attributes.prettyprint(data.columns[d.i]) : '';
+                return d.i == d.j ? (data.columns[d.i]) : '';
             });
         cells.append("text")
             .attr("y", 14)
@@ -2523,7 +2523,7 @@ function main () {
             var d = data.nodes[ID2i(chainID)];
             var str = '<span class="lb-chainTitle">'+d.pdb+' <span class="label label-default">' + '</span></span><table class="lb-chainTable"><tbody>';
             attributes.all().forEach(function (attr) {
-                str += "<tr><td>"+attributes.prettyprint(attr)+"</td><td class='detail-values'>"+formattedNum(d,attr)+"</td></tr>";
+                str += "<tr><td>"+(attr.split("_").join(" "))+"</td><td class='detail-values'>"+formattedNum(d,attr)+"</td></tr>";
             });
             str += "</tbody></table>";
             return str;
@@ -2717,7 +2717,7 @@ function main () {
             .attr("class","btn active")
             .html(function (d) {
                 return "<input name='columns_nodes' type='checkbox' value='" + d +
-                    "' checked>" + (attributes.isAttr(d) ? attributes.prettyprint(d) : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
+                    "' checked>" + (attributes.isAttr(d) ? d.split("_").join(" ") : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
             });
 
         mbSPLOMexport.select("#correlation-main-options")
@@ -2727,7 +2727,7 @@ function main () {
             .attr("class","btn active")
             .html(function (d) {
                 return "<input name='columns_correlations' type='checkbox' value='" + d +
-                    "' checked>" + (attributes.isAttr(d) ? attributes.prettyprint(d) : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
+                    "' checked>" + (attributes.isAttr(d) ? d.split("_").join(" ") : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
             });
 
         $("#mbDataexport").submit(function () {
@@ -2878,10 +2878,6 @@ function main () {
 
         this.order = function (attr) {
             return getKey(attr,'order');
-        };
-
-        this.prettyprint = function (attr) {
-            return getKey(attr,'prettyprint');
         };
 
         this.decimalplaces = function (attr) {

@@ -197,7 +197,7 @@ def export_nodes(request):
 		pretty_columns = []
 		for col in columns:
 			if col in attributes:
-				pretty_columns.append(attributes[col]['prettyprint'])
+				pretty_columns.append(col)
 			else:
 				pretty_columns.append(col)
 
@@ -263,9 +263,9 @@ def export_splom(request):
             corr = corr.decode('utf-8', 'ignore')
             ws = wb.add_sheet(corr)
             for i,column_index in enumerate(column_indices):
-                ws.write(0,i+1,label=attributes[column_order[column_index]]['prettyprint'])
+                ws.write(0,i+1,label=column_order[column_index])
             for r, ci1 in enumerate(column_indices):
-                ws.write(r+1,0,label=attributes[column_order[ci1]]['prettyprint'])
+                ws.write(r+1,0,label=column_order[ci1])
                 for c, ci2 in enumerate(column_indices):
                     ws.write(r+1,c+1,correlations[ci1][ci2][corr])
 
