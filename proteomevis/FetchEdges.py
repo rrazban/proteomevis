@@ -76,11 +76,11 @@ def updateDegrees_log(deg,nodes,ID2i):
 			nodes[ID2i[e]][1]['degree_log'] = np.log10(nodes[ID2i[e]][1]['degree'])
 
 		if nodes[ID2i[e]][1]['weighted_degree']==None:
-			nodes[ID2i[e]][1]['weighted_degree_log'] = None
+			pass
 		elif nodes[ID2i[e]][1]['weighted_degree']==0:	
-			nodes[ID2i[e]][1]['weighted_degree_log'] = -1
+			nodes[ID2i[e]][1]['weighted_degree'] = -1
 		else:
-			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])	#not sure if weighted_degree_log is necessary, can just set equal to self
+			nodes[ID2i[e]][1]['weighted_degree'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])
 	return nodes
 
 def addCluster(clusters,nodes,ID2i):
@@ -114,7 +114,7 @@ def correlationJSON(x,xArr,y,yArr):	#why JSON added to name? call this computeCo
 
 
 def getClusters(_clusters,nodes,ID2i):
-	attr = ["ppi","species","pdb","length","abundance","evorate","conden","dostol","degree_log","weighted_degree_log"]	#seems useful to define as a global variable in proteomevis/views.py and pass it
+	attr = ["ppi","species","pdb","length","abundance","evorate","conden","dostol","degree_log","weighted_degree"]	#seems useful to define as a global variable in proteomevis/views.py and pass it
 	unique_sizes = sorted(list(set(map(lambda x: len(x),_clusters))))
 	clusters, cluster_frequencies = emptyClusters(unique_sizes,attr)
 	for i,c in enumerate(_clusters):

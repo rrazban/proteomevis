@@ -1,6 +1,6 @@
 name,prettyprint,order,decimal,log
 degree_log,degree,0,0,1
-weighted_degree_log,weighted degree,1,0,1
+weighted_degree,weighted degree,1,0,1
 length,length,2,0,1
 conden,contact density,3,3,1
 abundance,abundance,4,0,1
