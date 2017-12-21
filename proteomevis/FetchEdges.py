@@ -2,11 +2,15 @@ import re
 from scipy.stats import linregress, spearmanr
 import networkx as nx
 import numpy as np
-from types import *
-from math import isnan,pow
 import json
+import datetime
 from .models import parse_pdb
+#change name of FetchEdges to views_utlts
 
+def get_filename(what, species, TMi, TMf, SIDi, SIDf):
+	current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
+	filename = "attachment; filename={0}_{1}_TM_{2:.2f}-{3:.2f}_SID_{4:.2f}-{5:.2f}_{6}.csv".format(what, species, TMi, TMf, SIDi, SIDf, current_time)
+	return filename
 
 class SetEncoder(json.JSONEncoder):
    def default(self, obj):
@@ -62,7 +66,7 @@ def computeCorrelations(nodes,selected_columns):
 
 def updateDegrees(deg,ppideg,nodes,ID2i):
 	for e in deg:
-		nodes[ID2i[e]][1]['degree'] = deg[e]
+		nodes[ID2i[e]][1]['degree'] = deg[e]	#maybe call this unlogged degree	#need unlogged degree for PCG rendering in .js
 		nodes[ID2i[e]][1]['ppi_degree'] = ppideg[e]
 	return nodes
 
@@ -78,10 +82,8 @@ def updateDegrees_log(deg,nodes,ID2i):
 		elif nodes[ID2i[e]][1]['weighted_degree']==0:	
 			nodes[ID2i[e]][1]['weighted_degree_log'] = -1
 		else:
-			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])
+			nodes[ID2i[e]][1]['weighted_degree_log'] = np.log10(nodes[ID2i[e]][1]['weighted_degree'])	#not sure if weighted_degree_log is necessary, can just set equal to self
 	return nodes
-
-
 
 def addCluster(clusters,nodes,ID2i):
 	j = 0
@@ -104,9 +106,9 @@ def correlationJSON(x,xArr,y,yArr):
 	results['y'] = y
 	rho_SP = arr_sp[0]
 	p_value_SP = arr_sp[1]
-	if isnan(rho_SP):
+	if np.isnan(rho_SP):
 		rho_SP = None
-	if isnan(p_value_SP):
+	if np.isnan(p_value_SP):
 		p_value_SP = None
 	results['rho_SP'] = rho_SP
 	results['p_value_SP'] = p_value_SP
@@ -155,7 +157,7 @@ def emptyClusters(unique_sizes,attr):
 	return [],cluster_frequencies
 
 def pow10(n,d):
-	tmp = pow(10,n)
+	tmp = 10**n
 	format_str = "{:0."+str(d)+"f}"
 	return format_str.format(tmp)
 
@@ -174,7 +176,7 @@ class Inspect_data:
 	def __init__(self, inspect_list):
 		self.inspect_list = inspect_list
 		self.data = {parse_pdb(inspect.pdb)[0]:dict(domain=parse_pdb(inspect.pdb)[0],function1=[],function1_chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for inspect in inspect_list}
-
+																			#make function1 a tuple with (function1, [chain])
 	def get_uniprot(self, pdb_complex, uniprot, genes):
 		self.data[pdb_complex]['uniprot'].append(dict(uniprot=uniprot,genes=genes))
 
@@ -247,7 +249,7 @@ class Inspect_data:
 				self.get_localization(pdb_complex, inspect.location)
 			self.get_chains(pdb_list, inspect.pdb, pdb_complex, pdb_chain, inspect.chain_id)
 
-	def add_chain_to_function1(self, pdb_complex_list):
+	def add_chain_to_function1(self, pdb_complex_list):	#have this done on javascript side
 		for pdb_complex in pdb_complex_list:
 			if len(self.data[pdb_complex]['chains'])>1:
 				for f in range(len(self.data[pdb_complex]['function1'])):

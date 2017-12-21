@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse,StreamingHttpResponse
-import json, datetime 
+import json
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from .FetchEdges import *
@@ -9,17 +9,11 @@ from django.template import loader, Context
 
 better_labels = {"degree_log":"degree", "weighted_degree_log":"weighted degree", "length":"length", "conden":"contact density", "abundance":"abundance", "ppi":"ppi","dostol":"dosage tolerance", "dN":"dN", "dS":"dS", "evorate":"evolutionary rate"}
 
-def get_filename(what, species, TMi, TMf, SIDi, SIDf):	#move to FetchEdges (change name of FetchEdges)
-	species_name = Species.objects.get(id=species)
-	current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
-	filename = "attachment; filename={0}_{1}_TM_{2:.2f}-{3:.2f}_SID_{4:.2f}-{5:.2f}_{6}.csv".format(what, species_name, TMi, TMf, SIDi, SIDf, current_time)
-	return filename
-
 @csrf_exempt	#necessary?
 def export_nodes(request):
 	if request.method == 'POST':
 		data = cleanRequest(request.POST)
-		dat = data['columnsnodes']
+		dat = data['columnsnodes']	#is attributes in here?
 		if type(dat)!=list:
 			dat = [dat]		
 		columns = ['id'] + dat
@@ -40,7 +34,7 @@ def export_nodes(request):
        
         # Create the HttpResponse object with the appropriate CSV header.
 		response = HttpResponse(content_type='text/csv')
-		response['Content-Disposition'] = get_filename('NODES', species, float(TMi), float(TMf), float(SIDi), float(SIDf))
+		response['Content-Disposition'] = get_filename('NODES', Species.objects.get(id=species), float(TMi), float(TMf), float(SIDi), float(SIDf))
 
 		csv_data = []	#parse those in TM/SID range?
 
@@ -171,7 +165,6 @@ def fetch_edges(request):
         SIDi = data['SIDi']
         SIDf = data['SIDf']
 
-        i2ID = dict()
         ID2i = dict()
         chains = Chain.objects.filter(species=species)
         edges = Edge.objects.filter(species=species,tm__gte=TMi,tm__lte=TMf,sid__gte=SIDi,sid__lte=SIDf)[:15001]
@@ -187,7 +180,6 @@ def fetch_edges(request):
             return response             #message called in proteome.js file
         nodes = [node.node() for node in chains]
         for i,node in enumerate(nodes):
-            i2ID[i] = node[0]
             ID2i[node[0]] = i
             try:
 	            nodes[ID2i[node[0]]][1]['weighted_degree'] += pow(10,nodes[ID2i[node[0]]][1]['abundance'])

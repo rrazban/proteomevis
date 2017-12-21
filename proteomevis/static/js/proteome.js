@@ -65,7 +65,6 @@ function main () {
 
     }
 
-
     var force, eventHandler = {}, node;
     $( window ).resize(function () { $(eventHandler).trigger("windowResize"); });
     ss.tmi = 0;
@@ -382,6 +381,7 @@ function main () {
 					}
                 }
             });
+
         $(eventHandler)
             .bind("removeClusterHighlightfixed", function (event, _cluster) {
                 highlighter.removeHighlight(_cluster.cluster, _cluster.id);	
@@ -389,7 +389,6 @@ function main () {
 				index_list_cluster.splice(remove_index, 1);
                 highlighter.removeHoverHighlight();	//easiest way cuz need !important tag for color to span pcg, pi, splom
             });
-
 
         $(eventHandler)
             .bind("updateClusterScatter", function (event) {
@@ -401,6 +400,7 @@ function main () {
                 proteinmediaItem.addDomainsToList(_data.domainData,
                     d3.select("#individual_list"));
             });
+
         $(eventHandler)
             .bind("add-to-cluster-list", function (event, _data) {
                 var clusterListItem = '#list' + _data.cluster.id;
@@ -591,13 +591,9 @@ function main () {
 
             var svg = parentElement
                         .append("svg")
-                        .attr("width", width + margin.left + margin.right)	//doesnt matter
-                           .attr("height", height + margin.top + margin.bottom);
 
             var background = svg	
                         .append("svg:image")
-                       // .attr("width",width)	
-                       // .attr("height",height)	//makes it look worse. default behaviour with % looks best
                         .attr("transform", "translate(" + (margin.left * 2) + "," + (margin.top*2) +")")
                         .attr("preserveAspectRatio", "none")
                         .attr("xlink:href", "../static/img/species." + ss.species.id + ".png");	
@@ -1493,6 +1489,7 @@ function main () {
                 });
         }
     };
+
     /***********************************
     ***********************************
     SPLOM
@@ -1690,7 +1687,6 @@ function main () {
             }
             return tmp;
         }
-
         
         var tip = d3.tip()
             .attr('class', 'd3-tip')
@@ -1740,7 +1736,6 @@ function main () {
                 tip.show(data.correlations[d.i][d.j]);
             })
             .on("mouseout", tip.hide);
-
     
 	function setHeight_two () {
   	    _height=$(_parentElement).height() - 40;
@@ -1759,15 +1754,15 @@ function main () {
                 return "matrix(" +scale+','+0+','+0+','+scale+','+ (num_splot - d.i - 1) * (pltsize + margin.inside) + "," + d.j * (pltsize + margin.inside) + ")"});
 					//selecting class messes things up
 	    cells.select(".splom-box")
-		 .attr("height", pltsize)
-		 .attr("width", pltsize)
-	 	 .attr("class", function (d) { return d.i > d.j ? "rect-subgraph" : "rect-diagonal"; });	//only controls outside box
+		     .attr("height", pltsize)
+             .attr("width", pltsize)
+             .attr("class", function (d) { return d.i > d.j ? "rect-subgraph" : "rect-diagonal"; });	//only controls outside box
 	    cells.select(".splom-subgraph-text").attr("y", pltsize / (2*scale));
 	    cells.select(".splom-subgraph-text").style("font-size", 100/scale+"%");	//size changes upon resize
 	    cells.select(".splom-pvalue").attr("x", pltsize - 45);
-            cells.select(".correlation-line").style('stroke-width',2/scale);
-            cells.selectAll("circle").attr("r", 1/scale);	//for firefox		//1 is the initial radius
-            cells.selectAll("circle").style("r", 1/scale);	//for others...
+        cells.select(".correlation-line").style('stroke-width',2/scale);
+        cells.selectAll("circle").attr("r", 1/scale);	//for firefox		//1 is the initial radius
+        cells.selectAll("circle").style("r", 1/scale);	//for others...
 	};
 
 	_height=$(_parentElement).height() - 40;
@@ -2138,7 +2133,6 @@ function main () {
                 setHeight();
             };
 
-
         this.updateVis = function () {
             that.data = data.clusters.filter(function (d) {
                 return d.size > 2;
@@ -2232,7 +2226,6 @@ function main () {
             that.scrunch(true);
         });
     };
-
 
     /***********************************
     ***********************************
@@ -2465,13 +2458,10 @@ function main () {
             }
             return tmp;
         }
-        function chainImgSrc (sDom, sChain) {
 
-            if (sChain) {
-                sDom = sDom.toLowerCase();
-                return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + '.' + sChain + ".png";	
-            }
-            return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + ".png";	//none should go here with updated data cuz even monomers now have chain id (no longer '_')
+        function chainImgSrc (sDom, sChain) {
+            sDom = sDom.toLowerCase();
+            return "../static/img/" + sDom[0] + '/' + sDom[1] + '/' + sDom + '.' + sChain + ".png";	
         }
 
         this.clear = function (_list) {
