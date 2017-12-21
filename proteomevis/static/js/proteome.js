@@ -1269,7 +1269,7 @@ function main () {
             .attr("x",text.position-50)
             .attr("y",text.size*3.75)
 
-        var rho_SP = detail_values.append("text")
+        var rho = detail_values.append("text")
             .attr("x",text.position+20)
             .attr("y",text.size*3.75)
 
@@ -1346,11 +1346,11 @@ function main () {
                 var c = data.correlations[currentPlt.i][currentPlt.j];
 
  
-                pvalue.text(c.p_value.toExponential(2));
-                rvalue.text(formatFloat(c.r_value,3));
+                pvalue.text(c.p_value_PE.toExponential(2));
+                rvalue.text(formatFloat(c.r,3));
                 regression.text(formatFloat(c.slope,3) + "x + " + formatFloat(c.intercept,3));
-             //   std_err.text(c.std_err);
-                rho_SP.text(formatFloat(c.rho_SP,3));
+             //   std_err.text(c.slope_err);
+                rho.text(formatFloat(c.rho,3));
                 pvalue_SP.text(c.p_value_SP.toExponential(2));
 
                 plotData = d3.select(currentThisPlt)
@@ -1576,7 +1576,7 @@ function main () {
                 cell.select("rect").style("fill",
                     function (d) {
                         var dCorrelation = data.correlations[plt.i][plt.j];
-                        if (Math.abs(dCorrelation.rho_SP) > 0.15) {
+                        if (Math.abs(dCorrelation.rho) > 0.15) {
                             return splom_color(data.correlations[plt.i][plt.j].p_value_SP);
                         } else {
                             return 'white';
@@ -1625,12 +1625,6 @@ function main () {
                     brushCell = thisplt;
                     brushCellPlt = plt;
                     brushCellData = cleanData(plt);
-                    // pvalue.text("p-value: " + formatFloat(data.correlations[
-                    //     plt.i][plt.j].p_value));
-                    // rvalue.text("r-value: " + formatFloat(data.correlations[
-                    //     plt.i][plt.j].r_value));
-                    // slopevalue.text("slope: " + formatFloat(data.correlations[
-                    //     plt.i][plt.j].slope));
                 }
                 if (_update) {
                     brushed(plt);
@@ -1692,8 +1686,8 @@ function main () {
             .offset([0,-10])	
             .html(function (corr) {	//change to splom focus table format
                 return "<table style='text-align: center'><tr><td></td><td class='text-subtitle'> PEARSON</td><td class='text-subtitle'>SPEARMAN</tr>" +
-                       "<tr><td class='detail-labels'>cor coef</td><td class='detail-values'>" + formatFloat(corr.r_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.rho_SP,3)+"</td></tr>"+
-                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_SP,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>best-fit </td><td class='detail-values'>" + formatFloat(corr.slope, 3) + "x + " + formatFloat(corr.intercept, 3) + "</td></tr></table>";
+                       "<tr><td class='detail-labels'>cor coef</td><td class='detail-values'>" + formatFloat(corr.r, 3) + "</td><td class='detail-values'>"+formatFloat(corr.rho,3)+"</td></tr>"+
+                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value_PE, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_SP,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>best-fit </td><td class='detail-values'>" + formatFloat(corr.slope, 3) + "x + " + formatFloat(corr.intercept, 3) + "</td></tr></table>";
             });
 
         var svg = parentElement.append("svg");

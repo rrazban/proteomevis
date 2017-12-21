@@ -241,7 +241,6 @@ def export_splom(request):
     if request.method == 'POST':
         import xlwt
         data = cleanRequest(request.POST)
-
         TMi = data['TMi']
         TMf = data['TMf']
         SIDi = data['SIDi']
