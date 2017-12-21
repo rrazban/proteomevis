@@ -12,17 +12,17 @@ class Chain(models.Model):
     pdb = models.CharField(max_length=10)
     length = models.FloatField(blank=True,null=True)
     abundance = models.FloatField(blank=True,null=True)	
-    evorate = models.FloatField(blank=True,null=True)
-    conden = models.FloatField(blank=True,null=True)
-    dostox = models.FloatField(blank=True,null=True)
-    ppi = models.FloatField(null=True, blank=True)
+    evolutionary_rate = models.FloatField(blank=True,null=True)
+    contact_density = models.FloatField(blank=True,null=True)
+    dosage_tolerance = models.FloatField(blank=True,null=True)
+    PPI_degree = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return self.pdb
 
     def node(self):
         pdb_complex, pdb_chain = parse_pdb(self.pdb)
-        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":pdb_complex,"chain":pdb_chain,"length":self.length,"abundance":self.abundance,"evorate":self.evorate,"conden":self.conden,"dostol":self.dostox,"ppi":self.ppi,"degree":0,"weighted_degree":0,"ppi_degree":0})
+        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":pdb_complex,"chain":pdb_chain,"length":self.length,"abundance":self.abundance,"evolutionary_rate":self.evolutionary_rate,"contact_density":self.contact_density,"dosage_tolerance":self.dosage_tolerance,"PPI_degree":self.PPI_degree,"degree":0,"weighted_degree":0,"ppi":0})
 
 
 class Inspect(models.Model):

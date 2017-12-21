@@ -65,7 +65,7 @@ def computeCorrelations(nodes,selected_columns):
 def updateDegrees(deg,ppideg,nodes,ID2i):
 	for e in deg:
 		nodes[ID2i[e]][1]['degree'] = deg[e]
-		nodes[ID2i[e]][1]['ppi_degree'] = ppideg[e]
+		nodes[ID2i[e]][1]['ppi'] = ppideg[e]
 	return nodes
 
 def updateDegrees_log(deg,nodes,ID2i):
