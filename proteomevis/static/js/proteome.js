@@ -216,10 +216,6 @@ function main () {
         var forceVis = new ForceVis("#pcgVis");
         var tmsid = new TMSID();
 
-        var attributeseditor = new AttributesEditor();
-
-        /* MENTIONED HERE */
-
         var nodeColorVis = new NodeColorVis("#nodeColor");
         var clusterScatter = new ClusterScatter(d3.select("#clusterScatter"), 300, $("#clusterList").width());
 
@@ -434,10 +430,6 @@ function main () {
                 ]);
         });
 
-        $(eventHandler).bind("openModal", function (event) {
-            attributeseditor.openModal();
-        });
-
         $(eventHandler).bind("windowResize", function (event) {
             setPanelSizes();
             $("#individual_list").height($("#view").height() - 110);
@@ -457,9 +449,8 @@ function main () {
                 attribute.order = +attribute.order;
                 attribute.decimal = +attribute.decimal;
                 attribute.log = +attribute.log;
-                attribute.cat = (+attribute.cat == 1);
             });
-            attributes = new AttributesManager(_attributes);
+	        attributes = new AttributesManager(_attributes);
             makeRequest(function () { waitDataLoadInitial(0); });
         });
     }
@@ -1209,58 +1200,6 @@ function main () {
                 setHeight();
 				gColorbar.call(colorbar);	//calling twice ensures cbar aligns properly
             };
-    };
-
-
-    AttributesEditor = function () {
-        var that = this,
-            unusedList = d3.select("#attributes-unused"),
-            currentList = d3.select("#attributes-used"),
-            savebutton = d3.select("#btnSaveAttributes");
-
-        savebutton.on("click", function () {
-            that.modalClosed();
-        });
-
-        this.openModal = function () {
-            // refresh the list
-            unusedList.selectAll("li").remove();
-            currentList.selectAll("li").remove();
-
-            // set up the lists
-            var unusedAttributes = attributes.inactive();
-            var currentAttributes = attributes.active();
-
-            // append unused to left, used to right
-            unusedList.selectAll("li")
-                .data(unusedAttributes)
-                .enter()
-                .append("li")
-                .attr("value", function (d) {
-                    return d;
-                })
-                .text(function (d) {
-                    return attributes.prettyprint1(d);
-                });
-
-            currentList.selectAll("li")
-                .data(currentAttributes)
-                .enter()
-                .append("li")
-                .attr("value", function (d) {
-                    return d;
-                })
-                .text(function (d) {
-                    return attributes.prettyprint1(d);
-                });
-        };
-
-        this.modalClosed = function () {
-            var newOrderAttributes = d3.select("#attributes-used").selectAll("li")[0].map(function (d) { return $(d).attr("value"); });
-            attributes.setOrder(newOrderAttributes);
-            $(eventHandler).trigger("updateSplom");
-        };
-
     };
 
    /***********************************
