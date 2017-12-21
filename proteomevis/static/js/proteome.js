@@ -444,12 +444,6 @@ function main () {
 
     function setAttributes () {
         d3.csv("../static/attributes/attributes.csv", function (_attributes) {
-            _attributes.forEach(function (attribute) {
-                attribute.magnitude = +attribute.magnitude;
-                attribute.order = +attribute.order;
-                attribute.decimal = +attribute.decimal;
-                attribute.log = +attribute.log;
-            });
 	        attributes = new AttributesManager(_attributes);
             makeRequest(function () { waitDataLoadInitial(0); });
         });
@@ -460,7 +454,7 @@ function main () {
         // Assign handlers immediately after making the request,
         // and remember the jqxhr object for this request
         var request = $.param({
-            columns: attributes.active(),
+            columns: attributes.all(),
             species: ss.species.id,
             TMi: ss.tmi,
             TMf: ss.tmf,
@@ -997,10 +991,10 @@ function main () {
             .attr("class","form-control")
             .attr("id","nodeColorSelect")
             .selectAll("option")
-            .data(attributes.all().splice(0,10))
+            .data(attributes.all())
             .enter()
             .append("option").attr('value', function (d) { return d; })
-            .html(function (d) { return attributes.prettyprint1(d); });
+            .html(function (d) { return attributes.prettyprint(d); });
         /* when the select changed, trigger an update */
         select.on('change', function () {
             dom = $("#nodeColorSelect option:selected").val();
@@ -1409,8 +1403,8 @@ function main () {
 	
                 circles.exit().remove();
 
-                xText.html(attributes.prettyprint1(currentPlt.x));
-                yText.html(attributes.prettyprint1(currentPlt.y));
+                xText.html(attributes.prettyprint(currentPlt.x));
+                yText.html(attributes.prettyprint(currentPlt.y));
 
                 xAxis = d3.svg.axis()
                     .scale(x)
@@ -1518,7 +1512,7 @@ function main () {
             filter = null,
             that = this,
             brushCell = null,
-            num_splot = attributes.active().length;
+            num_splot = attributes.all().length;
 
         parentElement.html('');
 
@@ -1736,7 +1730,7 @@ function main () {
             .attr("x", 10)
             .attr('class', 'splom-subgraph-text')
             .text(function (d) {
-                return d.i == d.j ? attributes.prettyprint1(data.columns[d.i]) : '';
+                return d.i == d.j ? attributes.prettyprint(data.columns[d.i]) : '';
             });
         cells.append("text")
             .attr("y", 14)
@@ -2550,7 +2544,7 @@ function main () {
             var d = data.nodes[ID2i(chainID)];
             var str = '<span class="lb-chainTitle">'+d.pdb+' <span class="label label-default">' + '</span></span><table class="lb-chainTable"><tbody>';
             attributes.all().forEach(function (attr) {
-                str += "<tr><td>"+attributes.prettyprint2(attr)+"</td><td class='detail-values'>"+formattedNum(d,attr)+"</td></tr>";
+                str += "<tr><td>"+attributes.prettyprint(attr)+"</td><td class='detail-values'>"+formattedNum(d,attr)+"</td></tr>";
             });
             str += "</tbody></table>";
             return str;
@@ -2744,7 +2738,7 @@ function main () {
             .attr("class","btn active")
             .html(function (d) {
                 return "<input name='columns_nodes' type='checkbox' value='" + d +
-                    "' checked>" + (attributes.isAttr(d) ? attributes.prettyprint2(d) : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
+                    "' checked>" + (attributes.isAttr(d) ? attributes.prettyprint(d) : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
             });
 
         mbSPLOMexport.select("#correlation-main-options")
@@ -2754,7 +2748,7 @@ function main () {
             .attr("class","btn active")
             .html(function (d) {
                 return "<input name='columns_correlations' type='checkbox' value='" + d +
-                    "' checked>" + (attributes.isAttr(d) ? attributes.prettyprint2(d) : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
+                    "' checked>" + (attributes.isAttr(d) ? attributes.prettyprint(d) : d.toUpperCase()) + " <span class='modal-button-checkmarks glyphicon glyphicon-ok'></span></input><br>";
             });
 
         $("#mbDataexport").submit(function () {
@@ -2882,7 +2876,6 @@ function main () {
     };
 
     AttributesManager = function (_attributes) {
-
         Array.prototype.attribute_index = function (attr) {
             var attribute_index = -1;
             this.forEach(function (d,i) {
@@ -2904,12 +2897,6 @@ function main () {
             return lookup(attr)[attr_property];
         };
 
-        // CMI = correlation matrix index (what index the 
-        // attribute is in the correlation matrix)
-        this.cmi = function(attr) {
-            return getKey(attr,'cmi');
-        };
-
         this.magnitude = function (attr) {
             return getKey(attr,'magnitude');
         };
@@ -2918,12 +2905,8 @@ function main () {
             return getKey(attr,'order');
         };
 
-        this.prettyprint1 = function (attr) {
-            return getKey(attr,'prettyprint1');
-        };
-
-        this.prettyprint2 = function (attr) {
-            return getKey(attr,'prettyprint2');
+        this.prettyprint = function (attr) {
+            return getKey(attr,'prettyprint');
         };
 
         this.decimalplaces = function (attr) {
@@ -2934,22 +2917,6 @@ function main () {
             return getKey(attr,'log');
         };
 
-        this.setOrder = function (arrAttr) {
-            attributes.forEach(function (attr) {
-                attr.order = null;
-            });
-            arrAttr.forEach(function (d,i) {
-                var index = attributes.attribute_index(d);
-                attributes[index].order = i;
-                attributes[index].cmi = i;
-            });
-        };
-
-        this.setCMI = function (attr,cmi) {
-            var index = attributes.attribute_index(attr);
-            attributes[index].cmi = cmi;
-        };
-
         this.isAttr = function (attr) {
             var t = attributes.attribute_index(attr);
             return (t !== -1);
@@ -2957,24 +2924,6 @@ function main () {
 
         this.all = function () {
             return attributes.map(function (d) { return d.name; })
-        };
-
-        this.categorical = function (_isCat) {
-            return attributes.filter(function (d) { return d.cat == _isCat; }).map(function (d) { return d.name; })
-        };
-
-        this.inactive = function () {
-            return attributes.filter(function (d) { return (d.order == null) && (!(d.cat)); }).map(function (d) { return d.name; })
-        };
-        this.active = function () {
-            var current_attributes = attributes.filter(function (d) { return (d.order !== null) && (!(d.cat)); });
-            var attrArr = d3.range(current_attributes.length);
-
-            current_attributes.forEach(function (d) {
-                attrArr[d.order] = d.name;
-            });
-
-            return attrArr;
         };
     };
 }
