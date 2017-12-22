@@ -341,9 +341,9 @@ function main () {
             });
 
         $(eventHandler)
-            .bind("highlightDomains", function (event, _data) {	//rename to highlightChain
-                _data.data.forEach(function (domains) {
-                    highlighter.highlight(domains);
+            .bind("highlightChains", function (event, _data) {
+                _data.data.forEach(function (pdb) {
+                    highlighter.highlight(pdb);
                 });
             });
         $(eventHandler)
@@ -353,10 +353,10 @@ function main () {
             });
 
         $(eventHandler)
-            .bind("removeHighlight", function (event, _oDomain) {
-                var chainIDs = _oDomain ? _oDomain.chains.map(function (chain) { return chain.id; }) : [node.id];
+            .bind("removeHighlight", function (event, _data) {
+                var chainIDs = _data ? _data.chains.map(function (chain) { return chain.id; }) : [node.id];
                 highlighter.removeHighlight(chainIDs);	
-                proteinsearch.removeProtein(_oDomain.pdb_complex);
+                proteinsearch.removeProtein(_data.pdb_complex);
             });
 
         $(eventHandler)
@@ -396,16 +396,16 @@ function main () {
 
         $(eventHandler)
             .bind("add-to-individual-list", function (event, _data) {
-                proteinmediaItem.addDomainsToList(_data.domainData,
+                proteinmediaItem.addPdbsToList(_data.pdbData,
                     d3.select("#individual_list"));
             });
 
         $(eventHandler)
             .bind("add-to-cluster-list", function (event, _data) {
                 var clusterListItem = '#list' + _data.cluster.id;
-                proteinmediaItem.addDomainsToList(_data.domainData,	//gives type error when delete cluster when not expanded
+                proteinmediaItem.addPdbsToList(_data.pdbData,	
                     d3.select(clusterListItem), _data.cluster.id
-                );
+                );	//gives type error when delete cluster when not expanded
             });
 
         $(eventHandler)
@@ -1869,7 +1869,7 @@ function main () {
             cluster = {
                 cluster: null,
                 domains: [],
-                domainData: [],
+                pdbData: [],
                 dLength: 0
             };
         $('#protein_search').selectivity({
@@ -1960,12 +1960,12 @@ function main () {
                         data: request
                     })
                     .done(function (_data) {
-                        var d = {domainData: _data};
+                        var d = {pdbData: _data};
 	                    $(eventHandler).trigger(triggerDestinationIndividual,d);
 
                         if (_triggerDomainHighlighting) {
                             var dData = getChainIDs(_data);
-                            $(eventHandler).trigger("highlightDomains",dData);
+                            $(eventHandler).trigger("highlightChains",dData);
                         }
                     });
             }
@@ -1976,11 +1976,11 @@ function main () {
             var chunk, request,
                 isDone = false;
             cluster.cluster = _data.cluster;
-            cluster.domainData = [];
-            cluster.domains = _data.clusterdata;
+            cluster.pdbData = [];
+            cluster.pdbcomplexes = _data.clusterdata;
             cluster.dLength = _data.clusterdata.length;
-            while (cluster.domains.length > 0) {
-                chunk = cluster.domains.splice(0, 10);
+            while (cluster.pdbcomplexes.length > 0) {
+                chunk = cluster.pdbcomplexes.splice(0, 10);
                 var request = $.param({
                     species: ss.species.id,
                     pdbcomplexlist: chunk
@@ -1991,16 +1991,16 @@ function main () {
                         data: request
                     })
                     .done(function (d) {
-                        cluster.domainData = cluster.domainData
+                        cluster.pdbData = cluster.pdbData
                             .concat(d);
-                        isDone = (cluster.domainData.length ==
+                        isDone = (cluster.pdbData.length ==
                             cluster.dLength);
                         if (isDone) {
                             // wait for everything else to finish
                             $(eventHandler).trigger(triggerDestinationCluster,cluster);
-                            if (_triggerDomainHighlighting) {	//doesnt seem to go there
-                                var domainIDs = getChainIDs(cluster.domainData);
-                                $(eventHandler).trigger("highlightDomains",domainIDs);
+                            if (_triggerDomainHighlighting) {
+                                var domainIDs = getChainIDs(cluster.pdbData);
+                                $(eventHandler).trigger("highlightChains",domainIDs);
                             }
                         }
                     });
@@ -2536,7 +2536,7 @@ function main () {
             return v ? formatFloat(v,attributes.decimalplaces(attr)) : '';
         }
 
-        this.addDomainsToList = function (_domains, _mediaList,_cID) {
+        this.addPdbsToList = function (_domains, _mediaList,_cID) {
             mediaList = _mediaList;
             closeSpan = (mediaList.attr("id") == 'individual_list');
             cluster = _cID;
