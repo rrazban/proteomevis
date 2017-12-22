@@ -22,7 +22,7 @@ class Chain(models.Model):
 
     def node(self):
         pdb_complex, pdb_chain = parse_pdb(self.pdb)
-        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"domain":pdb_complex,"chain":pdb_chain,"length":self.length,"abundance":self.abundance,"evolutionary_rate":self.evolutionary_rate,"contact_density":self.contact_density,"dosage_tolerance":self.dosage_tolerance,"PPI_degree":self.PPI_degree,"degree":0,"weighted_degree":0,"ppi":0})
+        return (self.chain_id,{"id":self.chain_id,"species":self.species,"pdb":self.pdb,"pdb_complex":pdb_complex,"chain":pdb_chain,"length":self.length,"abundance":self.abundance,"evolutionary_rate":self.evolutionary_rate,"contact_density":self.contact_density,"dosage_tolerance":self.dosage_tolerance,"PPI_degree":self.PPI_degree,"degree":0,"weighted_degree":0,"ppi":0})
 
 
 class Inspect(models.Model):

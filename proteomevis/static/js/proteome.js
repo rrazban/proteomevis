@@ -284,7 +284,7 @@ function main () {
                     highlighter.removeHighlight();
                     typeVis.updateImage();
                     waitDataLoadUpdate(0,true);
-					proteinList = [];
+					proteinMediaList = [];
                 });
             });
         // triggered when you change the coloring scheme of the clusters
@@ -347,7 +347,7 @@ function main () {
                 });
             });
         $(eventHandler)
-            .bind("badgeClicked", function (event, _pID) {
+            .bind("chainClicked", function (event, _pID) {
                 highlighter.removeProtein(_pID);
                 highlighter.highlight(_pID);
             });
@@ -360,12 +360,12 @@ function main () {
             });
 
         $(eventHandler)
-            .bind("clusterHighlight", function (event, _cluster, _center) {	//rename to clusterHoverHighlight
+            .bind("clusterHoverHighlight", function (event, _cluster, _center) {
                 highlighter.hoverHighlight(_cluster, _center);
             });	//responsible for pink color color when hover over
 
         $(eventHandler)
-            .bind("removeClusterHighlight", function (event) {
+            .bind("removeClusterHoverHighlight", function (event) {
                 highlighter.removeHoverHighlight();
             });
 
@@ -382,7 +382,7 @@ function main () {
             });
 
         $(eventHandler)
-            .bind("removeClusterHighlightfixed", function (event, _cluster) {
+            .bind("removeClusterHighlight", function (event, _cluster) {
                 highlighter.removeHighlight(_cluster.cluster, _cluster.id);	
 				remove_index = index_list_cluster.indexOf(_cluster.id);
 				index_list_cluster.splice(remove_index, 1);
@@ -537,7 +537,7 @@ function main () {
 
     setPanelSizes();
     setAttributes();
-    /***********************************  better name would be panel name: Edge Filtering
+    /***********************************
     ***********************************
     TYPE VIS
     ***********************************
@@ -789,7 +789,6 @@ function main () {
 
             var vis = graph.append("g").attr("class", "vis");
 
-            // functions
             var proteinClass = function (a) {
                 return ".graph.p" + a;
             },
@@ -797,11 +796,11 @@ function main () {
                 tooltip.style('opacity', 1)
                     .html(chainImage(d.pdb) + d.pdb);	
                 $(eventHandler)
-                    .trigger("clusterHighlight", [data.clusters[d.cluster],d]);
+                    .trigger("clusterHoverHighlight", [data.clusters[d.cluster],d]);
             },
             nodeMousedOut = function () {
                 tooltip.style('opacity', 0);
-                $(eventHandler).trigger("removeClusterHighlight");
+                $(eventHandler).trigger("removeClusterHoverHighlight");
             };
             this.updateVis = function (_data) {
                 if (_data) {
@@ -1853,7 +1852,7 @@ function main () {
         });
     };
 
-	var proteinList = [];	//more descriptive name. i.e. proteinMediaList
+	var proteinMediaList = [];	//more descriptive name. i.e. proteinMediaList
     /***********************************
     ***********************************
     PROTEIN SEARCH
@@ -1861,7 +1860,7 @@ function main () {
     **********************************/
     ProteinSearch = function (_parentElement) {
         var mediaList = _parentElement.select(".media-list"),
-//            proteinList = [],	 //made into a global variable so that can reset upon species change
+//            proteinMediaList = [],	 //made into a global variable so that can reset upon species change
             that = this;
             triggerDestinationIndividual = 'add-to-individual-list',
             triggerDestinationCluster = 'add-to-cluster-list';
@@ -2009,22 +2008,18 @@ function main () {
 
         function check (pdbs) {
             var notYetAdded = pdbs.filter(function (pdb) {
-                return proteinList.indexOf(pdb) == -1;
+                return proteinMediaList.indexOf(pdb) == -1;
             });
             return (notYetAdded.length) ? notYetAdded : false;
         }
 
         this.removeProtein = function (p) {
-			var proteinListcopy = proteinList.slice();
-			proteinListcopy.forEach(function (protein){
+			var proteinMediaListcopy = proteinMediaList.slice();
+			proteinMediaListcopy.forEach(function (protein){
 				if (protein.pdb_complex == p){
-            		proteinList.remove(protein);
+            		proteinMediaList.remove(protein);
 				}
 			});
-        };
-
-        this.proteins = function () {
-            return proteinList;
         };
     };
 
@@ -2157,14 +2152,14 @@ function main () {
                 .attr("class", function (d, i) {
                     return "cluster c" + i;	
                 })
-                .style("fill", nodeColor)	//doesnt control color
+                .style("fill", nodeColor)
                 .on("mouseover", function (d) {
                     $(eventHandler)
-                        .trigger("clusterHighlight", d);
+                        .trigger("clusterHoverHighlight", d);
                 })
                 .on("mouseout", function (d) {
                     $(eventHandler)
-                        .trigger("removeClusterHighlight");
+                        .trigger("removeClusterHoverHighlight");
                 })
                 .on("click", function (d, i) {
                     $(eventHandler)
@@ -2245,11 +2240,10 @@ function main () {
 
         function wrangleData (_cluster) {
             var chains = {},
-                domain, chain;
+                pdb_complex, chain;
             _cluster.cluster.forEach(function (node) {
-                domain = data.nodes[ID2i(node)].domain;	//easier to do domain
-                chains[domain] = [];
-			console.log(domain);
+                pdb_complex = data.nodes[ID2i(node)].pdb_complex;	//easier to pass pdb_complex
+                chains[pdb_complex] = [];
             });
             return d3.keys(chains);
         }
@@ -2300,14 +2294,14 @@ function main () {
                     $(this)
                         .children(".glyphicon").show();
                     $(eventHandler)
-                        .trigger("clusterHighlight",
+                        .trigger("clusterHoverHighlight",
                             _cluster);
                 })
                 .on("mouseout", function () {
                     $(this)
                         .children(".glyphicon").hide();
                     $(eventHandler)
-                        .trigger("removeClusterHighlight");
+                        .trigger("removeClusterHoverHighlight");
                 })
                 .on("click", function (d) {
                     if (!(d3.select(this)
@@ -2328,7 +2322,7 @@ function main () {
                 })
 				.select(".remove")
 				.on("click", function () {	
-                $(eventHandler).trigger("removeClusterHighlightfixed", _cluster);
+                $(eventHandler).trigger("removeClusterHighlight", _cluster);
 				$('#entirepanel'+_cluster.id).remove();
             	});
         };
@@ -2414,7 +2408,7 @@ function main () {
                 .on('click', function (d) {
                     d3.select(this)
                       .classed("highlight", true);
-                    $(eventHandler).trigger("badgeClicked", d.id);
+                    $(eventHandler).trigger("chainClicked", d.id);
                 });
 
             mediaBody.select(".remove").on("click", function () {	
@@ -2542,7 +2536,7 @@ function main () {
             var pdbs = (!(Array.isArray(_pdbs))) ? [_pdbs] : _pdbs;
 			var addbool = true;
             pdbs.forEach(function (pdb, i) {
-				proteinList.forEach(function (protein){
+				proteinMediaList.forEach(function (protein){
 					if (protein.pdb_complex == pdb.pdb_complex && _mediaList[0][0].id=='individual_list'){
 						addbool = false;
 					}
@@ -2552,7 +2546,7 @@ function main () {
 				}
             })
 			if (_mediaList[0][0].id=='individual_list'){
-	            proteinList = proteinList.concat(pdbs);	//having this here is convenient for determining whether to add media item if already present. dont want cluster to go here
+	            proteinMediaList = proteinMediaList.concat(pdbs);	//having this here is convenient for determining whether to add media item if already present. dont want cluster to go here
 			}
         };
     };
