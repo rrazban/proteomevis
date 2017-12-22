@@ -2249,6 +2249,7 @@ function main () {
             _cluster.cluster.forEach(function (node) {
                 domain = data.nodes[ID2i(node)].domain;	//easier to do domain
                 chains[domain] = [];
+			console.log(domain);
             });
             return d3.keys(chains);
         }
@@ -2340,13 +2341,13 @@ function main () {
 
         var lightboxDiv = d3.select("#lightbox-div");
 
-        function mediaItem (oDomain) {
+        function mediaItem (_data) {
             // called on each of the objects of proteins
             var media = mediaList
                 .append("li")
                 .attr("class", "media")
-                .attr("id", "media-object-" + oDomain.pdb_complex)
-                .datum(oDomain);
+                .attr("id", "media-object-" + _data.pdb_complex)
+                .datum(_data);
 
             var mediaLeft = media.append("div")
                 .attr('class', 'media-left');
@@ -2356,13 +2357,13 @@ function main () {
 
             mediaView.append("img")
                 .attr('class', 'media-object')
-                .attr("src", chainImgSrc(oDomain.pdb_complex,oDomain.chains[0].chain))
-                .attr("alt", oDomain.pdb_complex);
+                .attr("src", chainImgSrc(_data.pdb_complex,_data.chains[0].chain))
+                .attr("alt", _data.pdb_complex);
 
             mediaView.append('div')
                 .attr("class","mask")
                 .html('<a href="#" class="info" title="Full Image">+</a>')
-                .on('click', function () { showChainDetails(oDomain); });
+                .on('click', function () { showChainDetails(_data); });
 
             var chainBadges = mediaLeft.append("div")
                 .attr("class","label-chains-group");
@@ -2370,33 +2371,33 @@ function main () {
             var mediaBody = media.append("div").attr("class",
                 'media-body');
             mediaBody.append("h4").attr("class",
-                "media-heading").html(mediaHeading(oDomain.pdb_complex, oDomain.function2));
+                "media-heading").html(mediaHeading(_data.pdb_complex, _data.function2));
 
             if (ss.species.has_localization) {
                 mediaBody.append("div").html("localization: " +
-                    ((oDomain.localizations.length) ? oDomain.localizations.reduce(
+                    ((_data.localizations.length) ? _data.localizations.reduce(
                             function (a, b) {
                                 return a + ', ' + b;
                             }) : " - "));
             };
 
             mediaBody.append("div").html(createGeneLinks(
-                oDomain.uniprot, oDomain.pdb_complex));
+                _data.uniprot, _data.pdb_complex));
 
             mediaBody.append("div").attr("class", 'collapse')
                 .attr("id", "collapse-" + (closeSpan ?
-                    "individual-" : "cluster-") + oDomain.pdb_complex)
+                    "individual-" : "cluster-") + _data.pdb_complex)
                 .attr("aria-expanded", "false")
                 .attr("aria-controls", "collapse-" + (closeSpan ?
-                    "individual-" : "cluster-") + oDomain.pdb_complex)
+                    "individual-" : "cluster-") + _data.pdb_complex)
                 .append("div").attr("class",
                     "well function-well")
-                .html(oDomain.function1.length ? oDomain.function1
+                .html(_data.function1.length ? _data.function1
                     .reduce(function (a, b) {
                         return a + "<br>" + b;
                     }) : "");
 
-            var chainData = oDomain.chains.map(function (d) {
+            var chainData = _data.chains.map(function (d) {
                 return data.nodes[ID2i(d.id)];
             });
 
@@ -2418,7 +2419,7 @@ function main () {
 
             mediaBody.select(".remove").on("click", function () {	
                 media.remove();
-                $(eventHandler).trigger("removeHighlight", oDomain);
+                $(eventHandler).trigger("removeHighlight", _data);
             });
             mediaBody.select(".glyphicon.more").on("click",
                 function () {
@@ -2439,11 +2440,11 @@ function main () {
                 });
         }
 
-        function mediaHeading (sDomain, sFunction) {
+        function mediaHeading (sPdbcomplex, sFunction) {
             var tmp = "<h4>";
             tmp +=
                 "<a href='http://www.rcsb.org/pdb/explore/explore.do?structureId=";
-            tmp += sDomain + "' target='_blank'>" + sDomain +
+            tmp += sPdbcomplex + "' target='_blank'>" + sPdbcomplex +
                 "</a>  ";
             tmp += "<small>" + sFunction + "</small>";
             if (closeSpan) {
@@ -2469,7 +2470,7 @@ function main () {
             }
         };
 
-        function createGeneLinks (oUniprot, sDomain) {
+        function createGeneLinks (oUniprot, sPdbcomplex) {
             var str = "gene: ";
 			if (oUniprot.length>1){
 				str = "genes: ";
@@ -2490,28 +2491,28 @@ function main () {
             str +=
                 '<a data-toggle="collapse" href="#collapse-' +
                 (closeSpan ? "individual-" : "cluster-") +
-                sDomain +
+                sPdbcomplex +
                 '" title="More..." aria-expanded="false" aria-controls="collapse-' +
                 (closeSpan ? "individual-" : "cluster-") +
-                sDomain + '">';
+                sPdbcomplex + '">';
             str +=
                 "<span style='float:right' class='more glyphicon glyphicon-plus'></span></a>";
             return str;
         }
 
-        function showChainDetails (oDomain) {
+        function showChainDetails (_data) {
             lightboxDiv.html('');
 
             lightboxDiv.selectAll("a")
-                .data(oDomain.chains)
+                .data(_data.chains)
             	.enter()
                 .append("a")
                 .attr("class",'lightbox-modal')
-                .attr('href',function (d) { return chainImgSrc(oDomain.pdb_complex,d.chain); })
+                .attr('href',function (d) { return chainImgSrc(_data.pdb_complex,d.chain); })
                 .attr('data-lightbox','lightbox-modal')
                 .attr('data-title',function (d) { return generateChainDetailsTable(d.id); })
                 .append('img')
-                .attr('src',function (d) { return chainImgSrc(oDomain.pdb_complex,d.chain); });
+                .attr('src',function (d) { return chainImgSrc(_data.pdb_complex,d.chain); });
 
             $('.lightbox-modal')[0].click();
         }
@@ -2534,24 +2535,24 @@ function main () {
             return v ? formatFloat(v,attributes.decimalplaces(attr)) : '';
         }
 
-        this.addPdbsToList = function (_domains, _mediaList,_cID) {
+        this.addPdbsToList = function (_pdbs, _mediaList,_cID) {
             mediaList = _mediaList;
             closeSpan = (mediaList.attr("id") == 'individual_list');
             cluster = _cID;
-            var domains = (!(Array.isArray(_domains))) ? [_domains] : _domains;
+            var pdbs = (!(Array.isArray(_pdbs))) ? [_pdbs] : _pdbs;
 			var addbool = true;
-            domains.forEach(function (domain, i) {
+            pdbs.forEach(function (pdb, i) {
 				proteinList.forEach(function (protein){
-					if (protein.pdb_complex == domain.pdb_complex && _mediaList[0][0].id=='individual_list'){
+					if (protein.pdb_complex == pdb.pdb_complex && _mediaList[0][0].id=='individual_list'){
 						addbool = false;
 					}
 				});
 				if (addbool) {
-	                mediaItem(domain);
+	                mediaItem(pdb);
 				}
             })
 			if (_mediaList[0][0].id=='individual_list'){
-	            proteinList = proteinList.concat(domains);	//having this here is convenient for determining whether to add media item if already present. dont want cluster to go here
+	            proteinList = proteinList.concat(pdbs);	//having this here is convenient for determining whether to add media item if already present. dont want cluster to go here
 			}
         };
     };
