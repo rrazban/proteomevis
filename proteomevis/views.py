@@ -3,7 +3,7 @@ from django.http import HttpResponse,StreamingHttpResponse
 import json
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
-from .FetchEdges import *
+from .views_utlts import *
 from django.template import loader, Context
 
 

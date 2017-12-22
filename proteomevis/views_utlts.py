@@ -6,7 +6,7 @@ import json
 import datetime
 from .models import parse_pdb
 import csv
-#change name of FetchEdges to views_utlts
+
 
 def get_filename(what, species, TMi, TMf, SIDi, SIDf):
 	current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
