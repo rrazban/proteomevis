@@ -376,7 +376,7 @@ function main () {
                     highlighter.highlight(_cluster.cluster, _index); 
 					if (index_list_cluster.indexOf(_index)==-1){
 						index_list_cluster.push(_index);
-       		             clusterList.addContent(_cluster);
+       		            clusterList.addContent(_cluster);
 					}
                 }
             });
@@ -1853,7 +1853,7 @@ function main () {
         });
     };
 
-	var proteinList = [];
+	var proteinList = [];	//more descriptive name. i.e. proteinMediaList
     /***********************************
     ***********************************
     PROTEIN SEARCH
@@ -1868,7 +1868,6 @@ function main () {
 
             cluster = {
                 cluster: null,
-                domains: [],
                 pdbData: [],
                 dLength: 0
             };
@@ -1941,18 +1940,18 @@ function main () {
             };
         };
 
-        this.individualSearch = function (domains,
-            _triggerDomainHighlighting) {
-            if (!(Array.isArray(domains))) {
-                domains = [domains];
+        this.individualSearch = function (pdbs,
+            _triggerPdbHighlighting) {
+            if (!(Array.isArray(pdbs))) {
+                pdbs = [pdbs];
             }
             $('#protein_search').selectivity("clear");
             // for the individual proteins, you need to check that they aren't already on the list of proteins shown
-            var newDomains = check(domains);
-            if (newDomains) {
+            var newPdbs = check(pdbs);
+            if (newPdbs) {
                 var request = $.param({
                     species: ss.species.id,
-                    pdblist: newDomains		//cant pass _, pdb_list becomes pdblist Python-side
+                    pdblist: newPdbs		//cant pass _, pdb_list becomes pdblist Python-side
                 });
                 var jqxhr_data = $.ajax({
                         url: "fetch_proteins/", // the endpoint
@@ -1963,7 +1962,7 @@ function main () {
                         var d = {pdbData: _data};
 	                    $(eventHandler).trigger(triggerDestinationIndividual,d);
 
-                        if (_triggerDomainHighlighting) {
+                        if (_triggerPdbHighlighting) {
                             var dData = getChainIDs(_data);
                             $(eventHandler).trigger("highlightChains",dData);
                         }
@@ -1972,7 +1971,7 @@ function main () {
             return true;
         }
         this.clusterSearch = function (_data,
-            _triggerDomainHighlighting) {
+            _triggerPdbHighlighting) {
             var chunk, request,
                 isDone = false;
             cluster.cluster = _data.cluster;
@@ -1998,9 +1997,9 @@ function main () {
                         if (isDone) {
                             // wait for everything else to finish
                             $(eventHandler).trigger(triggerDestinationCluster,cluster);
-                            if (_triggerDomainHighlighting) {
-                                var domainIDs = getChainIDs(cluster.pdbData);
-                                $(eventHandler).trigger("highlightChains",domainIDs);
+                            if (_triggerPdbHighlighting) {
+                                var chainIDs = getChainIDs(cluster.pdbData);
+                                $(eventHandler).trigger("highlightChains",chainIDs);
                             }
                         }
                     });
@@ -2008,9 +2007,9 @@ function main () {
             }
         };
 
-        function check (domains) {
-            var notYetAdded = domains.filter(function (domain) {
-                return proteinList.indexOf(domain) == -1;
+        function check (pdbs) {
+            var notYetAdded = pdbs.filter(function (pdb) {
+                return proteinList.indexOf(pdb) == -1;
             });
             return (notYetAdded.length) ? notYetAdded : false;
         }
@@ -2251,7 +2250,6 @@ function main () {
                 domain = data.nodes[ID2i(node)].domain;	//easier to do domain
                 chains[domain] = [];
             });
-
             return d3.keys(chains);
         }
 
