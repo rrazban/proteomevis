@@ -356,7 +356,7 @@ function main () {
             .bind("removeHighlight", function (event, _oDomain) {
                 var chainIDs = _oDomain ? _oDomain.chains.map(function (chain) { return chain.id; }) : [node.id];
                 highlighter.removeHighlight(chainIDs);	
-                proteinsearch.removeProtein(_oDomain.domain);
+                proteinsearch.removeProtein(_oDomain.pdb_complex);
             });
 
         $(eventHandler)
@@ -2018,7 +2018,7 @@ function main () {
         this.removeProtein = function (p) {
 			var proteinListcopy = proteinList.slice();
 			proteinListcopy.forEach(function (protein){
-				if (protein.domain == p){
+				if (protein.pdb_complex == p){
             		proteinList.remove(protein);
 				}
 			});
@@ -2347,7 +2347,7 @@ function main () {
             var media = mediaList
                 .append("li")
                 .attr("class", "media")
-                .attr("id", "media-object-" + oDomain.domain)
+                .attr("id", "media-object-" + oDomain.pdb_complex)
                 .datum(oDomain);
 
             var mediaLeft = media.append("div")
@@ -2358,8 +2358,8 @@ function main () {
 
             mediaView.append("img")
                 .attr('class', 'media-object')
-                .attr("src", chainImgSrc(oDomain.domain,oDomain.chains[0].chain))
-                .attr("alt", oDomain.domain);
+                .attr("src", chainImgSrc(oDomain.pdb_complex,oDomain.chains[0].chain))
+                .attr("alt", oDomain.pdb_complex);
 
             mediaView.append('div')
                 .attr("class","mask")
@@ -2372,8 +2372,7 @@ function main () {
             var mediaBody = media.append("div").attr("class",
                 'media-body');
             mediaBody.append("h4").attr("class",
-                "media-heading").html(mediaHeading(oDomain
-                .domain, oDomain.function2));
+                "media-heading").html(mediaHeading(oDomain.pdb_complex, oDomain.function2));
 
             if (ss.species.has_localization) {
                 mediaBody.append("div").html("localization: " +
@@ -2384,14 +2383,14 @@ function main () {
             };
 
             mediaBody.append("div").html(createGeneLinks(
-                oDomain.uniprot, oDomain.domain));
+                oDomain.uniprot, oDomain.pdb_complex));
 
             mediaBody.append("div").attr("class", 'collapse')
                 .attr("id", "collapse-" + (closeSpan ?
-                    "individual-" : "cluster-") + oDomain.domain)
+                    "individual-" : "cluster-") + oDomain.pdb_complex)
                 .attr("aria-expanded", "false")
                 .attr("aria-controls", "collapse-" + (closeSpan ?
-                    "individual-" : "cluster-") + oDomain.domain)
+                    "individual-" : "cluster-") + oDomain.pdb_complex)
                 .append("div").attr("class",
                     "well function-well")
                 .html(oDomain.function1.length ? oDomain.function1
@@ -2510,11 +2509,11 @@ function main () {
             	.enter()
                 .append("a")
                 .attr("class",'lightbox-modal')
-                .attr('href',function (d) { return chainImgSrc(oDomain.domain,d.chain); })
+                .attr('href',function (d) { return chainImgSrc(oDomain.pdb_complex,d.chain); })
                 .attr('data-lightbox','lightbox-modal')
                 .attr('data-title',function (d) { return generateChainDetailsTable(d.id); })
                 .append('img')
-                .attr('src',function (d) { return chainImgSrc(oDomain.domain,d.chain); });
+                .attr('src',function (d) { return chainImgSrc(oDomain.pdb_complex,d.chain); });
 
             $('.lightbox-modal')[0].click();
         }
@@ -2545,7 +2544,7 @@ function main () {
 			var addbool = true;
             domains.forEach(function (domain, i) {
 				proteinList.forEach(function (protein){
-					if (protein.domain == domain.domain && _mediaList[0][0].id=='individual_list'){
+					if (protein.pdb_complex == domain.pdb_complex && _mediaList[0][0].id=='individual_list'){
 						addbool = false;
 					}
 				});

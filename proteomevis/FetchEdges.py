@@ -175,7 +175,8 @@ def cleanRequest(queryDict):
 class Inspect_data:
 	def __init__(self, inspect_list):
 		self.inspect_list = inspect_list
-		self.data = {parse_pdb(inspect.pdb)[0]:dict(domain=parse_pdb(inspect.pdb)[0],function1=[],function1_chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for inspect in inspect_list}
+		self.data = {parse_pdb(inspect.pdb)[0]:dict(pdb_complex=parse_pdb(inspect.pdb)[0],function1=[],function1_chain=[],function2=[],uniprot=[],chains=[],localizations=[]) for inspect in inspect_list}
+
 	def get_uniprot(self, pdb_complex, uniprot, genes):
 		self.data[pdb_complex]['uniprot'].append(dict(uniprot=uniprot,genes=genes))
 
@@ -228,7 +229,7 @@ class Inspect_data:
 
 	def get_chains(self, pdb_list, pdb, pdb_complex, pdb_chain, pdb_id):
             if pdb_complex not in self.data:
-				data[pdb_complex] = dict(domain=pdb_complex,chains=[])
+				data[pdb_complex] = dict(pdb_complex=pdb_complex,chains=[])
 
             if pdb in pdb_list:			#used only for PI, Individual tab
 				highlight_bool = True
