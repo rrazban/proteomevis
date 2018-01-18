@@ -189,7 +189,7 @@ def export_nodes(request):
 					csv_row.append('')
 				elif column in attributes:
 					if attributes[column]['log']=='1':
-						csv_row.append(pow10(row[column],attributes[column]['decimal']))
+						csv_row.append(format(10**row[column], '.{0}f'.format(attributes[column]['decimal'])))
 				else:
 					csv_row.append(row[column])
 			csv_data.append(csv_row)

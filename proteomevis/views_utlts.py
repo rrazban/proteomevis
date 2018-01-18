@@ -115,8 +115,6 @@ def correlationJSON(x,xArr,y,yArr):	#why JSON added to name? call this computeCo
 
 def getClusters(_clusters,nodes,ID2i):
 	attr = get_attributes().keys()
-	attr.extend(["species", "pdb"])	#are these necessary?
-#	attr = ["ppi","species","pdb","length","abundance","evorate","conden","dostol","degree_log","weighted_degree"]	#seems useful to define as a global variable in proteomevis/views.py and pass it
 	unique_sizes = sorted(list(set(map(lambda x: len(x),_clusters))))
 	clusters, cluster_frequencies = emptyClusters(unique_sizes,attr)
 	for i,c in enumerate(_clusters):
@@ -155,11 +153,6 @@ def emptyClusters(unique_sizes,attr):
 		cluster_frequencies[size]['size'] = size
 		cluster_frequencies[size]['frequency'] = 0
 	return [],cluster_frequencies
-
-def pow10(n,d):	#remove, only one occurance of it
-	tmp = 10**n
-	format_str = "{:0."+str(d)+"f}"
-	return format_str.format(tmp)
 
 def cleanRequest(queryDict):
     cleaned_request = {}
@@ -249,7 +242,7 @@ class Inspect_data:
 				self.get_localization(pdb_complex, inspect.location)
 			self.get_chains(pdb_list, inspect.pdb, pdb_complex, pdb_chain, inspect.chain_id)
 
-	def add_chain_to_function1(self, pdb_complex_list):	#have this done on javascript side
+	def add_chain_to_function1(self, pdb_complex_list):	#hard to do on javascript side
 		for pdb_complex in pdb_complex_list:
 			if len(self.data[pdb_complex]['chains'])>1:
 				for f in range(len(self.data[pdb_complex]['function1'])):
@@ -257,7 +250,7 @@ class Inspect_data:
 
 def get_attributes():
 	d={}
-	filename = 'proteomevis/static/attributes/attributes.csv'	#serve through static? 
+	filename = 'proteomevis/static/attributes/attributes.csv'	#serve through static since javascript also accesses? 
 	with open(filename) as csvfile:
 		reader = csv.DictReader(csvfile)
 		for x in reader:
