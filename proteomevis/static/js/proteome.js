@@ -2566,9 +2566,16 @@ function main () {
             return arrProteins;
         };
 
+		d3.selection.prototype.moveToFront = function() {
+			return this.each(function(){
+			    this.parentNode.appendChild(this);
+			});
+		};
+
         var singleHighlight = function (protein, index) {
-            d3.selectAll(".splom.p" +protein).attr('r',3);	//for firefox
-            return "<style id='style-p" + protein +
+           d3.selectAll(".splom.p" +protein).attr('r',3);	//for firefox. seems like firefox quantum no longer needs this
+           d3.selectAll(".splom.p" +protein).moveToFront();	//have point come to front
+           return "<style id='style-p" + protein +
                 "' class='style-highlight'> " +
                 "circle.p" + protein + "{ fill: " + color(i) +	
                 " !important;}" +
