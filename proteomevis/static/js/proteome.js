@@ -691,7 +691,7 @@ function main () {
                 height = $(_parentElement).height() - margin.top - margin.bottom - titlePadding - formPadding;
                 width = $(_parentElement).width() - margin.left - margin.right;
 
-                force.size([width, height]);
+                force.size([width/4, (height+15)/4]);
 
                 parentElement.select("svg").attr("width", width + margin.left + margin.right)
                      .attr("height", height + margin.top + margin.bottom);
@@ -702,7 +702,7 @@ function main () {
                 rect.attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom);
 
-                vis.attr("transform", "translate(" + width / 2 + "," + height / 2 + ") scale(0.35)");
+                vis.attr("transform", "translate(" + width / 2 + "," + height / 2 + ") scale(0.25)");
                 tooltip.style("top", $('#forceLayoutDiv').position().top + "px");
             }
 
@@ -754,7 +754,7 @@ function main () {
                 .friction(0.7)
                 .gravity(0.35)
                 .linkDistance(80)
-                .size([width, height]);
+                .size([width/4, (height-15)/4]);	//15 refers to progress bar height 
             var zoom = function () {
                     var trans = [d3.event.translate[0] + width / 2, d3.event.translate[1] + height / 2 ];
                     vis.attr("transform", "translate(" + trans +
@@ -874,7 +874,6 @@ function main () {
                         return linkID(link.source.id, link.target.id);
                     });
                 links.exit().remove();
-                vis.attr("transform", "translate(" + width / 2 + "," + height / 2 + ") scale(0.35)");
                 force.start();
             };
 
@@ -925,7 +924,7 @@ function main () {
                         return linkID(link.source.id, link.target.id);
                     });
                 links.exit().remove();
-                vis.attr("transform", "translate(" + width / 2 + "," + height / 2 + ") scale(0.35)");
+                vis.attr("transform", "translate(" + width / 2 + "," + height / 2 + ") scale(0.25)");	//scale is set to maximum pcg possible to fit	
                 force.start();
             };
 
