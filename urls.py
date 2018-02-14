@@ -18,6 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^proteomevis/', include('proteomevis.urls'), name='proteomevis'),
-
+    url(r'^proteomevis/', include('proteomevis.urls'), name='proteomevis'),	#keep this since in paper draft
+    url(r'', include('proteomevis.urls'), name='proteomevis'),
 ]
