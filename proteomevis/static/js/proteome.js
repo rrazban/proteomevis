@@ -803,7 +803,8 @@ function main () {
                 $(eventHandler).trigger("removeClusterHoverHighlight");
             };
 			edgeMousedOver = function (d) {
-				tooltip.style('opacity', 1).html('TM: '+d.tm+'<br>SID: '+d.sid+'<br>Align length: ');
+				console.log(d);
+				tooltip.style('opacity', 1).html('TM: '+(d.tm).toFixed(4)+'<br>SID: '+(d.sid).toFixed(4)+'<br>Align length: '+d.align_length);
             },
             edgeMousedOut = function () {
                 tooltip.style('opacity', 0);

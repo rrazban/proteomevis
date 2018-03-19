@@ -50,7 +50,7 @@ def fetch_edges(request):
         SG.add_nodes_from(nodes)
         SG_ppi.add_nodes_from(nodes)
 
-        links = [dict(sourceID=source,targetID=target,source=ID2i[source],target=ID2i[target],tm=data["tm"],sid=data["sid"],ppi=data["ppi"],dashed=False) for source,target,data in edges]
+        links = [dict(sourceID=source,targetID=target,source=ID2i[source],target=ID2i[target],tm=data["tm"],sid=data["sid"],align_length=data['align_length'],ppi=data["ppi"],dashed=False) for source,target,data in edges]	#is dashed ever used? remove
 
         # add the edges to the graph
         SG.add_edges_from(edges)
@@ -224,7 +224,7 @@ def export_edges(request):
 			csv_data = [edge.edgeCSV() for edge in edges if edge.edgeCSV()[0] in id_list and edge.edgeCSV()[1] in id_list]
         else:
         	csv_data = [edge.edgeCSV() for edge in edges]
-        columns = ["sourceID","targetID","sid","tm","ppi"]
+        columns = edge.keys()
 
         response = HttpResponse(content_type='text/csv')	#to use StreamingHttpResponse, need to change syntax
         response['Content-Disposition'] = get_filename('EDGES', species, float(TMi), float(TMf), float(SIDi), float(SIDf))

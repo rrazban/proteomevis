@@ -45,15 +45,16 @@ class Edge(models.Model):
     targetID = models.IntegerField(default=0)
     sid = models.FloatField(blank=True,null=True)
     tm = models.FloatField(blank=True,null=True)
+    align_length = models.IntegerField(blank=True,null=True)
     ppi = models.BooleanField(blank=True)
 
     def __str__(self):
         return str(self.sourceID) + " to " + str(self.targetID)
 
     def edgeCSV(self):
-        return [self.sourceID,self.targetID,self.sid,self.tm,self.ppi]
+        return [self.sourceID,self.targetID,self.sid,self.tm,self.align_length,self.ppi]
     def keys(self):	#matches edgeCSV
-        return ["sourceID","targetID","sid","tm","ppi"]
+        return ["sourceID","targetID","sid","tm","align_length","ppi"]
 
 
 class Species(models.Model):
