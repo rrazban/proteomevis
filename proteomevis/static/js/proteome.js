@@ -802,6 +802,13 @@ function main () {
                 tooltip.style('opacity', 0);
                 $(eventHandler).trigger("removeClusterHoverHighlight");
             };
+			edgeMousedOver = function (d) {
+				tooltip.style('opacity', 1).html('TM: '+d.tm+'<br>SID: '+d.sid+'<br>Align length: ');
+            },
+            edgeMousedOut = function () {
+                tooltip.style('opacity', 0);
+            };
+
             this.updateVis = function (_data) {
                 if (_data) {
                     edgeData = _data.edges;
@@ -942,7 +949,9 @@ function main () {
                     })
                     .attr("id", function (link) {
                         return linkID(link.source.id, link.target.id);
-                    });
+                    })
+					.on('mouseover', edgeMousedOver)
+					.on('mouseout', edgeMousedOut);
                 links.exit().remove();
                 vis.attr("transform", "translate(" + width / 2 + "," + height / 2 + ") scale(0.25)");	//scale is set to maximum pcg possible to fit	
                 force.start();

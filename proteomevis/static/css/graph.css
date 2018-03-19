@@ -175,6 +175,10 @@ circle.pcg{
   opacity: 1;
   fill: none;
 }
+.link:hover {
+  stroke:springgreen !important;
+  stroke-width:7.5px;
+}
 .link.ppi {
   stroke: yellowgreen;
 }
