@@ -876,7 +876,8 @@ function main () {
                 links.exit().remove();
                 force.start();
             };
-
+			var iterator = 0;
+			var first_link_ids = [];
             var update = function () {
                 force.linkDistance(50);
                 nodes = vis.selectAll("circle.pcg").
@@ -910,11 +911,30 @@ function main () {
 
                 links = vis.selectAll(".link").data(data.edges,
                     function (d) {
+						if (iterator==0){
+							first_link_ids.push(linkID(d.source.id, d.target.id));
+						}
                         return linkID(d.source.id, d.target.id);
                     });
+				iterator += 1;
                 links.enter()
                     .insert('path', ".pcg")
                     .attr("class", "link");
+
+				if (iterator>0){
+					links.style('stroke', function(link){
+						if (first_link_ids.indexOf(linkID(link.targetID, link.sourceID))==-1){
+							return 'red';
+						}
+						else {
+							return 'grey';
+						}
+					}); 
+				}
+				else {
+					links.attr('stroke', 'grey')	//attr gets overriden by style (for ppi to show as green)
+				}
+
 
                 links
                     .classed("ppi", function (link) {

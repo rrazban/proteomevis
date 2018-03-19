@@ -170,7 +170,7 @@ circle.pcg{
   stroke-width:3px;
 }
 .link {
-  stroke: grey;
+/*  stroke: grey;*/
   stroke-width: 2.5px;
   opacity: 1;
   fill: none;
