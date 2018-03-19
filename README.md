@@ -1,10 +1,15 @@
 # ProteomeVis
 
+ProteomeVis is written in the Django web framework. The structure of this webapp follows Django guidelines.
 To deploy the web app locally:
 
-1. `./install.sh`, making sure any dependencies are installed.
+1. `./install.sh`
+	* installs python dependencies
 2. `make_database/csvtosqlite3.py`
+	* makes db.sqlite3 from the .csv files in `make_database/`
+		* to create your own unique database, change the contents of the csv files
 3. `python manage.py runserver`
-4. In any web browser, go to [http://localhost:8000/proteomevis/](http://localhost:8000/proteomevis/)
+	* starts development server
+4. Go to [http://localhost:8000/proteomevis/](http://localhost:8000/proteomevis/)
 
-To learn more about how the database and static images are created, check out [this](https://github.com/rrazban/proteomevis_scripts) GitHub repository
+To learn how the .csv files in `make_database/` are generated, check out [this](https://github.com/rrazban/proteomevis_scripts) GitHub repository
