@@ -1,6 +1,7 @@
 # ProteomeVis
 
 ProteomeVis is written in the Django web framework. The structure of this webapp follows Django guidelines.
+
 To deploy the web app locally:
 
 1. `./install.sh`
