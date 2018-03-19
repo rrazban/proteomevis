@@ -916,7 +916,6 @@ function main () {
 						}
                         return linkID(d.source.id, d.target.id);
                     });
-				iterator += 1;
                 links.enter()
                     .insert('path', ".pcg")
                     .attr("class", "link");
@@ -932,8 +931,9 @@ function main () {
 					}); 
 				}
 				else {
-					links.attr('stroke', 'grey')	//attr gets overriden by style (for ppi to show as green)
+					links.attr('stroke', 'grey');	//attr gets overriden by style (for ppi to show as green)
 				}
+				iterator += 1;
 
 
                 links
