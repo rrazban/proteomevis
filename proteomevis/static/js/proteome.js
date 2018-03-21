@@ -1376,12 +1376,12 @@ function main () {
                 var c = data.correlations[currentPlt.i][currentPlt.j];
 
  
-                pvalue.text(c.p_value_PE.toExponential(2));
+                pvalue.text(c.p_value_r.toExponential(2));
                 rvalue.text(formatFloat(c.r,3));
                 regression.text(formatFloat(c.slope,3) + "x + " + formatFloat(c.intercept,3));
              //   std_err.text(c.slope_err);
                 rho.text(formatFloat(c.rho,3));
-                pvalue_SP.text(c.p_value_SP.toExponential(2));
+                pvalue_SP.text(c.p_value_rho.toExponential(2));
 
                 plotData = d3.select(currentThisPlt)
                     .selectAll("circle").data();
@@ -1607,7 +1607,7 @@ function main () {
                     function (d) {
                         var dCorrelation = data.correlations[plt.i][plt.j];
                         if (Math.abs(dCorrelation.rho) > 0.15) {
-                            return splom_color(data.correlations[plt.i][plt.j].p_value_SP);
+                            return splom_color(data.correlations[plt.i][plt.j].p_value_rho);
                         } else {
                             return 'white';
                         }
@@ -1717,7 +1717,7 @@ function main () {
             .html(function (corr) {	//change to splom focus table format
                 return "<table style='text-align: center'><tr><td></td><td class='text-subtitle'> PEARSON</td><td class='text-subtitle'>SPEARMAN</tr>" +
                        "<tr><td class='detail-labels'>cor coef</td><td class='detail-values'>" + formatFloat(corr.r, 3) + "</td><td class='detail-values'>"+formatFloat(corr.rho,3)+"</td></tr>"+
-                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value_PE, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_SP,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>best-fit </td><td class='detail-values'>" + formatFloat(corr.slope, 3) + "x + " + formatFloat(corr.intercept, 3) + "</td></tr></table>";
+                       "<tr><td class='detail-labels'>p-value</td><td class='detail-values'>" + formatFloat(corr.p_value_r, 3) + "</td><td class='detail-values'>"+formatFloat(corr.p_value_rho,3)+"</td></tr></td></tr></table>"+"<table><tr><td class='detail-labels'>best-fit </td><td class='detail-values'>" + formatFloat(corr.slope, 3) + "x + " + formatFloat(corr.intercept, 3) + "</td></tr></table>";
             });
 
         var svg = parentElement.append("svg");

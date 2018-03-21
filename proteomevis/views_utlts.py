@@ -45,7 +45,7 @@ def computeCorrelations(nodes,selected_columns):
 		resultsArray.append([])
 		for j,column2 in enumerate(selected_columns):
 			if i == j:
-				resultsArray[i].append({'slope':1.0, 'intercept':0.0, 'r':1.0, 'p_value_PE':0.0, 'slope_err':0.0, 'rho':0, 'p_value_SP':0})
+				resultsArray[i].append({'slope':1.0, 'intercept':0.0, 'r':1.0, 'p_value_r':0.0, 'slope_err':0.0, 'rho':0, 'p_value_rho':0})
 			else:
 				# putting it into tuples to filter it pair-wise
 				data_tupled = map(lambda x,y: (x,y),columnDict[column1],columnDict[column2])
@@ -57,7 +57,7 @@ def computeCorrelations(nodes,selected_columns):
 				# linear regressions
 					results = correlationJSON(column1,column1_data,column2,column2_data)
 				except:
-					results = {'slope':0.0, 'intercept':-1, 'r':0.0, 'p_value_PE':1.0, 'slope_err':0.0, 'rho':0, 'p_value_SP':1}
+					results = {'slope':0.0, 'intercept':-1, 'r':0.0, 'p_value_r':1.0, 'slope_err':0.0, 'rho':0, 'p_value_rho':1}
 				# save it
 				resultsArray[i].append(results)
 	return resultsArray, limits, columnDict
@@ -102,10 +102,10 @@ def correlationJSON(x,xArr,y,yArr):	#why JSON added to name? call this computeCo
 	results = {}
 	arr_corr = linregress(xArr,yArr)
 	arr_sp = spearmanr(xArr,yArr)
-	corr_attr = ['slope', 'intercept', 'r', 'p_value_PE', 'slope_err'] #order in which returned by linregress
+	corr_attr = ['slope', 'intercept', 'r', 'p_value_r', 'slope_err'] #order in which returned by linregress
 	for i,attribute in enumerate(corr_attr):
 		results[attribute] = parse_nan(arr_corr[i])
-	for i,attribute in enumerate(['rho','p_value_SP']):
+	for i,attribute in enumerate(['rho','p_value_rho']):
 		results[attribute] = arr_sp[i]
 	results['x'] = x
 	results['y'] = y
