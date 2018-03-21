@@ -611,13 +611,13 @@ function main () {
             graph.append("text")
                         .attr("class", "x label")
                         .attr("text-anchor", "end")
-                        .text("TM");
+                        .text("TM-score");
             graph.append("text")
                         .attr("class", "y label")
                         .attr("y", margin.top)
                         .attr("x", margin.left + 10)
                         .attr("dy",".75em")
-                        .text("SID");
+                        .text("Sequence ID");
 
             var brush = d3.svg.brush()
                         .x(x)
@@ -804,7 +804,7 @@ function main () {
                 $(eventHandler).trigger("removeClusterHoverHighlight");
             };
 			edgeMousedOver = function (d) {
-				tooltip.style('opacity', 1).html('TM: '+(d.tm).toFixed(4)+'<br>SID: '+(d.sid).toFixed(4)+'<br>Align length: '+d.align_length);
+				tooltip.style('opacity', 1).html('TM-score: '+(d.tm).toFixed(4)+'<br>Sequence ID: '+(d.sid).toFixed(4)+'<br>Alignment length: '+d.align_length);
             },
             edgeMousedOut = function () {
                 tooltip.style('opacity', 0);

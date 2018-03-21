@@ -35,7 +35,7 @@
 					<option value='1'>E. coli</option>
 				</select>
             </div>
-             <div class="navbar-form navbar-left" id='typeLimitsBtnGroup'>
+             <div class="navbar-form navbar-left" id='typeLimitsBtnGroup1'>
                 <label>TM-score</label> <input class="typeLimitsInput form-control" id='TMi' placeholder='min' type="text" align='bottom'> to <input class="typeLimitsInput form-control" id='TMf' placeholder='max' type="text"> 
             </div>
            <div class="navbar-form navbar-left" id='typeLimitsBtnGroup' display='block'>
@@ -56,16 +56,16 @@
         <tr>
             <td>
                 <div class='vis-panel' id='typeVis' style="min-width:303.13px;min-height:158.19px">
-                    Edge Filtering<span id='helpHover-ef' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Edge Filtering" data-content="Scatter plot of the structure similarity (TM) and sequence identity (SID) for all protein chain pairs for the chosen organism in the Control Strip. Green edges denote physical protein-protein interactions. TM and SID range for protein chain graph generation can be set by brushing over points."></span>
+                    Edge Filtering<span id='helpHover-ef' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Edge Filtering" data-content="Scatter plot of the structure similarity (measured by TM-score) and sequence identity for all protein chain pairs for the chosen organism in the Control Strip. Green datapoints denote physical protein-protein interactions. TM-score and sequence ID ranges for protein chain graph generation can be set by brushing over points."></span>
                 </div>
                 <div class='vis-panel' id='pcgVis' style="min-width:303.13px;min-height:281.8px">
-                    Protein Chain Graph<span id='helpHover-pcg' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="PCG" data-content="Each node denotes a protein chain and each edge denotes a pair of protein chains that has a TM and SID in the chosen ranges. Green edges denote physical protein-protein interactions. After the first formed PCG, red edges signify pairs not present in the first PCG. The bar below indicates the number of nodes visualized in black and the number of orphan nodes not visualized in light grey. The color fill of each node reflects the relative value of the property as indicated and selected for in the Control Strip."></span>
+                    Protein Chain Graph<span id='helpHover-pcg' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="PCG" data-content="Each node denotes a protein chain and each edge denotes a pair of protein chains that has a TM-score and sequence ID in the chosen ranges. Green edges denote physical protein-protein interactions. After generating the first PCG, red edges signify pairs not present in the first PCG. The bar below indicates the number of nodes visualized in black and the number of orphan nodes not visualized in light grey. The color fill of each node reflects the relative value of the property as indicated in the Control Strip."></span>
                 </div>
                 <div class="fixed-tooltip" id='tooltip'></div>
             </td>
             <td>
                 <div class='container vis-panel' id='view' style="min-width:303.13px;min-height:443px">
-                    Protein Inspection<span id='helpHover-pi' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Protein Inspection" data-content="Proteins searched in the search bar below or clicked-on nodes in the Protein Chain Graph can be further studied in the Individual tab. All clusters in the Protein Chain Graph greater than size 2 are tabulated in the Cluster tab."></span>
+                    Protein Inspection<span id='helpHover-pi' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="Protein Inspection" data-content="Proteins searched in the search bar or clicked-on nodes in the Protein Chain Graph can be further studied in the Individual tab. All clusters in the Protein Chain Graph greater than size 2 are tabulated in the Cluster tab."></span>
 
                     <ul class="nav nav-tabs" id='viewTabGroup'>
                         <li class="tab active" id='nodeListTab' role="presentation">
@@ -88,7 +88,7 @@
             </td>
             <td>
                 <div class='vis-panel' id='splomVis' style="min-width:399.59px;min-height:443px">
-                    Scatter Plot Matrix<span id='helpHover-splom' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="SPloM" data-content="Log-log (base 10) plots for protein chain properties. Color fill of each plot follows the Spearman correlation p-value scale below when the Spearman correlation is greater than 0.15. Clicking a plot will show it magnified in the bottom right of the panel alongside its statistics."></span>
+                    Scatter Plot Matrix<span id='helpHover-splom' class='glyphicon glyphicon-asterisk pull-right' data-toggle="popover" title="SPloM" data-content="Log-log (base 10) scatter plots for protein chain properties. Color fill of each plot follows the Spearman correlation p-value scale below when the Spearman correlation is greater than 0.15. Clicking a plot will show it magnified in the bottom right of the panel alongside its correlation analysis."></span>
                     <div id='splom-bar'></div>
                     <div id='splom'></div>
                 </div>
