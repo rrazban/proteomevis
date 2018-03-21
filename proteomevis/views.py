@@ -227,7 +227,7 @@ def export_edges(request):
         columns = edge.keys()
 
         response = HttpResponse(content_type='text/csv')	#to use StreamingHttpResponse, need to change syntax
-        response['Content-Disposition'] = get_filename('EDGES', species, float(TMi), float(TMf), float(SIDi), float(SIDf))
+        response['Content-Disposition'] = get_filename('EDGES', Species.objects.get(id=species), float(TMi), float(TMf), float(SIDi), float(SIDf))
 
         t = loader.get_template('proteomevis/data.csv')	
         response.write(t.render({'data': csv_data,'header': columns}))
@@ -257,7 +257,7 @@ def export_splom(request):
 
         wb = xlwt.Workbook(encoding='utf-8')
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = get_filename('CORRELATIONS', data['species'], float(TMi), float(TMf), float(SIDi), float(SIDf))
+        response['Content-Disposition'] = get_filename('CORRELATIONS', Species.objects.get(id=int(data['species'])), float(TMi), float(TMf), float(SIDi), float(SIDf))
 
         for corr in correlation_option:
             corr = corr.decode('utf-8', 'ignore')
