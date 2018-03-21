@@ -285,7 +285,7 @@ function main () {
                     typeVis.updateImage();
                     waitDataLoadUpdate(0,true);
 					proteinMediaList = [];
-					forceVis.iterator = 0;//for distinguishing edges after first highlight
+					forceVis.reset_first();//for distinguishing edges after first highlight
                 });
             });
         // triggered when you change the coloring scheme of the clusters
@@ -884,8 +884,10 @@ function main () {
                 links.exit().remove();
                 force.start();
             };
-			var iterator = 0;
 			var first_link_ids = [];
+			this.reset_first = function () {
+				first_link_ids = [];
+			};
             var update = function () {
                 force.linkDistance(50);
                 nodes = vis.selectAll("circle.pcg").
@@ -919,16 +921,12 @@ function main () {
 
                 links = vis.selectAll(".link").data(data.edges,
                     function (d) {
-						if (iterator==0){	//do by clearing first_link_ids and add if list is empty
-							first_link_ids.push(linkID(d.source.id, d.target.id));
-						}
                         return linkID(d.source.id, d.target.id);
                     });
                 links.enter()
                     .insert('path', ".pcg")
                     .attr("class", "link");
-
-				if (iterator>0){
+				if (first_link_ids.length>0){
 					links.style('stroke', function(link){
 						if (first_link_ids.indexOf(linkID(link.targetID, link.sourceID))==-1){
 							return 'red';
@@ -939,9 +937,11 @@ function main () {
 					}); 
 				}
 				else {
-					links.attr('stroke', 'grey');	//attr gets overriden by style (for ppi to show as green)
+					links.attr('stroke', function(link){
+							first_link_ids.push(linkID(link.targetID, link.sourceID));
+							return 'grey'
+							});	//attr gets overriden by style (for ppi to show as green)
 				}
-				iterator += 1;
 
 
                 links
