@@ -285,6 +285,7 @@ function main () {
                     typeVis.updateImage();
                     waitDataLoadUpdate(0,true);
 					proteinMediaList = [];
+					forceVis.iterator = 0;//for distinguishing edges after first highlight
                 });
             });
         // triggered when you change the coloring scheme of the clusters
@@ -918,7 +919,7 @@ function main () {
 
                 links = vis.selectAll(".link").data(data.edges,
                     function (d) {
-						if (iterator==0){
+						if (iterator==0){	//do by clearing first_link_ids and add if list is empty
 							first_link_ids.push(linkID(d.source.id, d.target.id));
 						}
                         return linkID(d.source.id, d.target.id);
@@ -1117,14 +1118,11 @@ function main () {
             txtTMf = document.getElementById("TMf"),
             txtSIDi = document.getElementById("SIDi"),
             txtSIDf = document.getElementById("SIDf"),
-            speciesBtn = d3.selectAll("[name=speciesBtn]");
-        speciesBtn.on("click", function () {
-            if (parseInt(this.value) !== ss.species.id) {
-                ss.species.id = parseInt(this.value);
-                speciesBtn.classed("active", false);
-                d3.select(this).classed("active", true);
+            speciesBtn = d3.selectAll("[id=speciesSelectorBtnGroup]");
+        speciesBtn.on('change', function () {
+            	ss.species.id = parseInt($("#proteome option:selected").val());
+//			    ss.species.id = parseInt(this.value);
                 $(eventHandler).trigger("speciesChanged");
-            }
         });
         $(".typeLimitsInput").on("enterKey", function () {
             $(this).value = this.value;

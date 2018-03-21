@@ -30,8 +30,10 @@
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="btn-group navbar-form navbar-left" id='speciesSelectorBtnGroup'>
 				<label>Proteome</label>
-                <button class="btn btn-default active" name='speciesBtn' type="button" value='0'><i>S. cerevisiae</i></button>
-                <button class="btn btn-default" name='speciesBtn' type="button" value='1'><i>E. coli</i></button>
+				<select class='form-control' id='proteome' style='vertical-align: top;'>
+					<option value='0'>S. cerevisiae</option>
+					<option value='1'>E. coli</option>
+				</select>
             </div>
              <div class="navbar-form navbar-left" id='typeLimitsBtnGroup'>
                 <label>TM-score</label> <input class="typeLimitsInput form-control" id='TMi' placeholder='min' type="text" align='bottom'> to <input class="typeLimitsInput form-control" id='TMf' placeholder='max' type="text"> 
