@@ -1,11 +1,11 @@
 # ProteomeVis
 
-ProteomeVis is written in the Django web framework. The structure of this webapp follows Django guidelines.
+ProteomeVis is written in the Django web framework. The structure of this web app follows Django guidelines.
 
 To deploy the web app locally:
 
 1. `./install.sh`
-	* installs python dependencies
+	* installs Python dependencies
 2. `make_database/csvtosqlite3.py`
 	* makes db.sqlite3 from the .csv files in `make_database/`
 		* to create your own unique database, change the contents of the csv files
