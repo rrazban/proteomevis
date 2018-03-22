@@ -257,7 +257,7 @@ function main () {
                 _tries += 1;
                 if (_tries > 3) {
                     errorMessage.show(
-                        "You've selected too many edges. Try selecting a smaller area."
+                        "You've selected too many edges. Try selecting a smaller area."	//any issue with dataload will go here 
                     );
                 } else {
                     setTimeout(function () {
@@ -301,10 +301,6 @@ function main () {
         $(eventHandler)
             .bind("displayData", function (event, status) {
                 typelimitsVis.updateVis();
-            });
-        $(eventHandler)
-            .bind("focus-forcevis", function (event, _data) {
-                forceVis.updateVis(_data);
             });
 
         $(eventHandler)
@@ -810,80 +806,10 @@ function main () {
                 tooltip.style('opacity', 0);
             };
 
-            this.updateVis = function (_data) {
-                if (_data) {
-                    edgeData = _data.edges;
-                    updateSpecial();
-                } else {
-                    update();
-                }
+            this.updateVis = function () {
+                update();
             };
 
-            var updateSpecial = function () {
-                force.linkDistance(100);
-
-                updateProgress();
-
-                var center = d3.select(".highlight-center").data()[0].id;
-
-                force.nodes(data.nodes)
-                    .links(edgeData)
-                    .start();
-
-                nodes = vis.selectAll("circle.pcg")
-                        .data(data.nodes.filter(
-                                function (d) {
-                                    return d.highlight;
-                                }),
-                            function (d) {
-                                return d.id;
-                            }
-                        );
-                // Enter any new nodes.
-                nodes.enter().append("circle").attr('class', function (
-                    d) {
-                    return "highlight pcg p" + d.id + " c" + d.cluster;
-                });
-
-                nodes
-                    .attr("fill", nodeColor)
-                    .on("click", function (d) {
-                        d3.select(this).classed("highlight", true); 
-                        $(eventHandler)
-                            .trigger("nodeClicked", d);
-                        force.start();
-                    });
-
-                vis.selectAll(".highlight:not(.center)")
-                    .on("mouseover", function (d) {
-                        linkTip.show(center, d, getEdge(d.id));
-                    })
-                    .on("mouseout", function (d) {
-                        linkTip.hide();
-                    });
-                nodes.exit().remove();
-
-                links = vis.selectAll(".link").data(edgeData, function (d) {
-                    return linkID(d.source.id, d.target.id);
-                });
-
-                links.enter()
-                    .insert('path', ".pcg")
-                    .attr("class", "link");
-
-                links
-                    .classed("ppi", function (link) {
-                        return link.ppi;
-                    })
-                    .classed("dashed", function (link) {
-                        return link.dashed;
-                    })
-                    .attr("id", function (link) {
-                        return linkID(link.source.id, link.target.id);
-                    });
-                links.exit().remove();
-                force.start();
-            };
 			var first_link_ids = [];
 			this.reset_first = function () {
 				first_link_ids = [];
