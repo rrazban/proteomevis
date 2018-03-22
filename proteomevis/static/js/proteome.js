@@ -2775,13 +2775,11 @@ function main () {
                                 source: p1,
                                 target: p2,
                                 id: linkID(p1, p2),
-                                dashed: false
                             };
                         if ($(tmp.id)
                             .length) {
                             addLinkLabel(d3.select(tmp.id))
                         } else {
-                            tmp.dashed = true;
                             links.push(tmp);
                         }
                     }

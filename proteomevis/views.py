@@ -50,7 +50,7 @@ def fetch_edges(request):
         SG.add_nodes_from(nodes)
         SG_ppi.add_nodes_from(nodes)
 
-        links = [dict(sourceID=source,targetID=target,source=ID2i[source],target=ID2i[target],tm=data["tm"],sid=data["sid"],align_length=data['align_length'],ppi=data["ppi"],dashed=False) for source,target,data in edges]	#is dashed ever used? remove
+        links = [dict(sourceID=source,targetID=target,source=ID2i[source],target=ID2i[target],tm=data["tm"],sid=data["sid"],align_length=data['align_length'],ppi=data["ppi"]) for source,target,data in edges]
 
         # add the edges to the graph
         SG.add_edges_from(edges)
