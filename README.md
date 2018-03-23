@@ -1,8 +1,8 @@
 # ProteomeVis
 
-ProteomeVis is written in the Django web framework. The structure of this web app follows Django guidelines.
+ProteomeVis is a web app for visualizing protein properties from structure to sequence and from individual protein to its effect in the cell. The web app is written in the Django web framework. 
 
-To deploy the web app locally:
+To deploy the web app locally as seen publicly at [http://proteomevis.chem.harvard.edu](http://proteomevis.chem.harvard.edu) :
 
 1. `./install.sh`
 	* installs Python dependencies
