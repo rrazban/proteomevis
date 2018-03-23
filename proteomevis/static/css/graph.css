@@ -231,11 +231,6 @@ circle.big-graph.splom {
     height: 38px;
     margin: 5px 0px 0px 5px;
 }
-#editAttributesButton {
-  padding-left: 10px;
-  padding-right:10px;
-  vertical-align: bottom;
-}
 #protein_search {
     width: 100% !important;
     padding-top: 5px;
@@ -301,8 +296,6 @@ circle.big-graph.splom {
   display: none;
 }
 
-/* ANYTHING TO DO WITH RIGHTCLICK MENU STYLING */
-/*avoiding the custom right click menu*/
 .custom-menu {
     display: none;
     z-index: 1000;
@@ -380,70 +373,6 @@ div.fixed-tooltip {
   margin: -1px 0 0 0;
   top: 100%;
   left: 0;
-}
-.dashed {
-  stroke-dasharray: 5px, 5px;
-}
-
-/*draggable sortable droppable*/
-ul.source, ul.target {
-  min-height: 50px;
-  margin: 0px 25px 10px 0px;
-  padding: 2px;
-  border-width: 1px;
-  border-style: solid;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  list-style-type: none;
-  list-style-position: inside;
-}
-ul.source {
-  border-color: #f8e0b1;
-}
-ul.target {
-  border-color: #add38d;
-}
-.source li, .target li {
-  margin: 5px;
-  padding: 5px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-.source li {
-  background-color: #fcf8e3;
-  border: 1px solid #fbeed5;
-  color: #c09853;
-}
-.target li {
-  background-color: #ebf5e6;
-  border: 1px solid #d6e9c6;
-  color: #468847;
-}
-.sortable-dragging {
-  border-color: #ccc !important;
-  background-color: #fafafa !important;
-  color: #bbb !important;
-}
-.sortable-placeholder {
-  height: 40px;
-}
-.source .sortable-placeholder {
-  border: 2px dashed #f8e0b1 !important;
-  background-color: #fefcf5 !important;
-}
-.target .sortable-placeholder {
-  border: 2px dashed #add38d !important;
-  background-color: #f6fbf4 !important;
-}
-.lb-chainTable > tbody > tr >td {
-  text-align:right;
-  padding-right:10px;
-}
-td.r {
-  font
 }
 
 /***********************************/
