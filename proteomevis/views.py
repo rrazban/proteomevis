@@ -168,8 +168,14 @@ def export_nodes(request):
 
 		attributes = get_attributes()
         # Create the HttpResponse object with the appropriate CSV header.
+		if 'cluster' in node_data[0]:
+			cluster_id = node_data[0]['cluster']
+			pre_filename = 'cluster_{0}_'.format(cluster_id)
+		else:
+			pre_filename = ''
+
 		response = HttpResponse(content_type='text/csv')
-		response['Content-Disposition'] = get_filename('NODES', Species.objects.get(id=species), float(TMi), float(TMf), float(SIDi), float(SIDf))
+		response['Content-Disposition'] = get_filename(pre_filename, 'NODES', Species.objects.get(id=species), float(TMi), float(TMf), float(SIDi), float(SIDf))
 
 		csv_data = []
 		id_list = []
@@ -221,13 +227,16 @@ def export_edges(request):
         node_data = json.loads(data['nodes'])
         if node_data!= 0:
 			id_list = [node['id'] for node in node_data]
+			cluster_id = node_data[0]['cluster']	#all nodes have the same cluster_id 
 			csv_data = [edge.edgeCSV() for edge in edges if edge.edgeCSV()[0] in id_list and edge.edgeCSV()[1] in id_list]
+			pre_filename = 'cluster_{0}_'.format(cluster_id)
         else:
-        	csv_data = [edge.edgeCSV() for edge in edges]
+			csv_data = [edge.edgeCSV() for edge in edges]
+			pre_filename = ''
         columns = edge.keys()
 
         response = HttpResponse(content_type='text/csv')	#to use StreamingHttpResponse, need to change syntax
-        response['Content-Disposition'] = get_filename('EDGES', Species.objects.get(id=species), float(TMi), float(TMf), float(SIDi), float(SIDf))
+        response['Content-Disposition'] = get_filename(pre_filename, 'EDGES', Species.objects.get(id=species), float(TMi), float(TMf), float(SIDi), float(SIDf))
 
         t = loader.get_template('proteomevis/data.csv')	
         response.write(t.render({'data': csv_data,'header': columns}))
@@ -257,7 +266,7 @@ def export_splom(request):
 
         wb = xlwt.Workbook(encoding='utf-8')
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = get_filename('CORRELATIONS', Species.objects.get(id=int(data['species'])), float(TMi), float(TMf), float(SIDi), float(SIDf))
+        response['Content-Disposition'] = get_filename('', 'CORRELATIONS', Species.objects.get(id=int(data['species'])), float(TMi), float(TMf), float(SIDi), float(SIDf))
 
         for corr in correlation_option:
             corr = corr.decode('utf-8', 'ignore')

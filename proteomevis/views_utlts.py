@@ -8,9 +8,9 @@ from .models import parse_pdb
 import csv
 
 
-def get_filename(what, species, TMi, TMf, SIDi, SIDf):
+def get_filename(pre, what, species, TMi, TMf, SIDi, SIDf):
 	current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d_%H%M')
-	filename = "attachment; filename={0}_{1}_TM_{2:.2f}-{3:.2f}_SID_{4:.2f}-{5:.2f}_{6}.csv".format(what, species, TMi, TMf, SIDi, SIDf, current_time)
+	filename = "attachment; filename={0}{1}_{2}_TM_{3:.2f}-{4:.2f}_SID_{5:.2f}-{6:.2f}_{7}.csv".format(pre, what, species, TMi, TMf, SIDi, SIDf, current_time)
 	return filename
 
 class SetEncoder(json.JSONEncoder):

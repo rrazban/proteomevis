@@ -2475,7 +2475,7 @@ function main () {
 
         function formattedNum (d,attr) {
             var v = d[attr];
-            if (attributes.log(attr) && v!=null) {
+            if (attributes.log(attr)==1 && v!=null) {
                 v = Math.pow(10,v);
             }
             return v ? formatFloat(v,attributes.decimalplaces(attr)) : '';
