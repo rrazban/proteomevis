@@ -5,6 +5,7 @@ from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from .views_utlts import *
 from django.template import loader, Context
+import networkx as nx
 
 
 def index(request):	#displays web page

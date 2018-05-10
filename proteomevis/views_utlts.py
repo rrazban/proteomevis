@@ -1,6 +1,5 @@
 import re
 from scipy.stats import linregress, spearmanr
-import networkx as nx
 import numpy as np
 import json
 import datetime
